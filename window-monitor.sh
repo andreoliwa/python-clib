@@ -1,14 +1,14 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opcoes]
-Monitora janelas do sistema.
+	echo "USAGE: [$(dirname $0)/]$(basename $0) [options]
+Monitors system windows.
 
 OPCOES
--n   Dry-run
--t   Tail no log
--h   Ajuda
-EOF
+-n   Dry-run (doesn't write the log file)
+-t   Tail log
+-h   Help
+EOF"
+	exit $1
 }
 
 # Parse dos argumentos da linha de comando
@@ -16,20 +16,10 @@ V_DRY_RUN=
 V_TAIL=
 while getopts "nth" OPTION ; do
 	case $OPTION in
-	n)
-		V_DRY_RUN=1
-		;;
-	t)
-		V_TAIL=1
-		;;
-	h)
-		usage
-		exit 1
-		;;
-	?)
-		usage
-		exit 1
-		;;
+	n)	V_DRY_RUN=1 ;;
+	t)	V_TAIL=1 ;;
+	h)	usage 1	;;
+	?)	usage 1	;;
 	esac
 done
 
@@ -56,7 +46,7 @@ fi
 
 [ -z "$V_DRY_RUN" ] && echo >> $V_LOGFILE
 
-echo 'Monitor de janelas...'
+echo 'Starting the window monitor...'
 while true ; do
 
 	sleep .2
@@ -66,12 +56,13 @@ while true ; do
 		V_TITLE=$(echo "$V_CURRENT_WINDOWS" | grep -e "^$V_APP" | sed "s/^${V_APP} ${HOSTNAME}\|N\/A //g")
 		if [ "$V_APP" = "$V_VLC" ] ; then
 			if [ "$V_TITLE" != ' VLC media player' ] ; then
-				V_TITLE=$(lsof -F -c vlc | grep /media/ | sed "s#.\+$G_BACKUP_HDD/system/##')
+				V_TITLE=$(lsof -F -c vlc | grep /media/ | sed "s#.\+${G_BACKUP_HDD}/system/##")
 			fi
 		fi
-		V_NOW="$(date '+%Y-%m-%dT%H:%M:%S')"
 
 		if [ "${V_LAST_TITLE["$V_APP"]}" != "$V_TITLE" ] ; then
+			V_NOW="$(date '+%Y-%m-%dT%H:%M:%S')"
+
 			V_DIFF=0
 			if [ -n "${V_LAST_DATE["$V_APP"]}" ] ; then
 				V_SEC1=$(date -d ${V_LAST_DATE["$V_APP"]} +%s)
@@ -87,6 +78,8 @@ while true ; do
 
 			V_LAST_TITLE["$V_APP"]=$V_TITLE
 			V_LAST_DATE["$V_APP"]=$V_NOW
+
+			echo "Current window as of $V_NOW: $V_TITLE"
 		fi
 	done
 done
