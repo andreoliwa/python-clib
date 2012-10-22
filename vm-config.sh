@@ -13,7 +13,7 @@ Veja o help com:
 man ssh_config
 
 OPCOES
--u   Usuário (default $G_VM_DEFAULT_USERNAME).
+-u   Usuário (default $G_WORK_USERNAME).
 -s   Nome curto do servidor / host / VM. Pode ser usado várias vezes.
 -l   Listar servidores do arquivo de configuração.
 -a   Configura todos os servidores do arquivo de configuração ssh.
@@ -53,7 +53,7 @@ if [ -n "$V_LIST_SERVERS" ] || [ -n "$V_CONFIG_ALL" ] ; then
 fi
 
 if [ -z "$V_USERNAME" ]; then
-	V_USERNAME=$G_VM_DEFAULT_USERNAME
+	V_USERNAME=$G_WORK_USERNAME
 	echo "Usuário default: $V_USERNAME"
 fi
 
