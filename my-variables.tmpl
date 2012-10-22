@@ -22,3 +22,12 @@ export G_SVN_TECHNOTE_URL=
 export G_PERSONAL_BANK_ACCOUNT=
 export G_WORK_BANK_ACCOUNT=
 export G_BANK_STATEMENTS_DIR=
+
+# HDD
+V_MEDIA_SUBDIR=
+if [ "$(lsb_release -rs)" = '12.10' ] ; then
+	V_MEDIA_SUBDIR=/$(whoami)
+fi
+export G_EXTERNAL_HDD=
+export G_MOVIES_HDD=
+export G_BACKUP_HDD=

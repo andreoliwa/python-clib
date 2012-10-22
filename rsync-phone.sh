@@ -4,7 +4,7 @@ if [ -n "$ARGS" ] ; then
 	echo "Arguments: <$ARGS>"
 fi
 
-SOURCE_DIR='/media/black-samsung-1tb/.audio/music/in/phone/'
+SOURCE_DIR='$G_EXTERNAL_HDD/.audio/music/in/phone/'
 DESTINATION_DIR='/media/MOTO DEFY/Music/phone/'
 [ ! -d $SOURCE_DIR ] &&	echo "Source directory not found: $SOURCE_DIR" && exit
 [ ! -d "$DESTINATION_DIR" ] && echo "Destination directory not found: $DESTINATION_DIR" && exit
@@ -18,7 +18,7 @@ ntfs-check-filenames.sh $SOURCE_DIR
 echo "Nao copia diretorio unknown ainda..."
 exit
 
-SOURCE_DIR='/media/black-samsung-1tb/.audio/music/unknown/'
+SOURCE_DIR='$G_EXTERNAL_HDD/.audio/music/unknown/'
 DESTINATION_DIR='/media/MOTO DEFY/Music/unknown/'
 #@todo Nao fazer copy/paste
 [ ! -d $SOURCE_DIR ] &&	echo "Source directory not found: $SOURCE_DIR" && exit

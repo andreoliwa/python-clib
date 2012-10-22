@@ -25,4 +25,4 @@ done
 
 V_ARGS="$*"
 V_QUERY="$(echo $V_ARGS | tr ' ' '*')"
-find /media/red-samsung-1tb/Movies/All/ -mindepth 1 -maxdepth 1 -type d -iname "*${V_QUERY}*"
+find $G_MOVIES_HDD/Movies/All/ -mindepth 1 -maxdepth 1 -type d -iname "*${V_QUERY}*"

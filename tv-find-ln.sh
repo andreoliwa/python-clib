@@ -1,5 +1,5 @@
 #!/bin/bash
-TV_DIR=/media/red-samsung-1tb/TV
+TV_DIR=$G_MOVIES_HDD/TV
 
 ARGS="$*"
 VIDEO_FILENAME_PART=$1

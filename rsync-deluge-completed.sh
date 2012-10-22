@@ -1,6 +1,6 @@
 #!/bin/bash
 DELUGE=$HOME/.config/deluge/completed-downloads
-HD=/media/black-samsung-1tb/
+HD=$G_EXTERNAL_HDD/
 
 [ ! -d $HD ] && echo "External HD not found: $HD"
 [ ! -d $DELUGE ] && echo "Deluge directory not found: $DELUGE"

@@ -1,3 +1,3 @@
 #!/bin/bash
 V_FIND="$*"
-find /media/black-samsung-1tb/.audio/music -iwholename "*${V_FIND}*"
+find $G_EXTERNAL_HDD/.audio/music -iwholename "*${V_FIND}*"

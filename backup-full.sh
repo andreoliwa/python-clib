@@ -59,7 +59,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_CONFIG" ] ; then
 fi
 
 V_LINUX_VERSION=$(lsb_release -d -s | sed 's/ /-/g')
-V_BACKUP_EXTERNAL_DIR=/media/black-samsung-1tb/.backup/linux
+V_BACKUP_EXTERNAL_DIR=$G_EXTERNAL_HDD/.backup/linux
 if [ -d $V_BACKUP_EXTERNAL_DIR ] ; then
 	V_BACKUP_EXTERNAL_DIR=$V_BACKUP_EXTERNAL_DIR/$HOSTNAME-$V_LINUX_VERSION
 	mkdir -p $V_BACKUP_EXTERNAL_DIR
@@ -105,7 +105,7 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	fi
 fi
 
-V_POSSIBLE_BACKUP_DIRS='/media/black-samsung-1tb/.backup /media/samsung-500gb/.backup'
+V_POSSIBLE_BACKUP_DIRS='$G_EXTERNAL_HDD/.backup $G_BACKUP_HDD/.backup'
 V_BACKUP_DIRS=
 for V_DIR in $V_POSSIBLE_BACKUP_DIRS ; do
 	if [ -d "$V_DIR" ] ; then

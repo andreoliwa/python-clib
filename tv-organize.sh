@@ -54,8 +54,8 @@ IFS='|
 
 # http://wiki.xbmc.org/index.php?title=XBMC_databases#The_Video_Library
 V_XBMC_MOVIE_DB=$HOME/.xbmc/userdata/Database/MyVideos60.db
-V_MOVIES_DIR=/media/red-samsung-1tb/Movies
-V_SERIES_DIR=/media/red-samsung-1tb/TV
+V_MOVIES_DIR=$G_MOVIES_HDD/Movies
+V_SERIES_DIR=$G_MOVIES_HDD/TV
 
 if [ -n "$V_SAVE_NFO" ] ; then
 	for V_XML in $(find "$V_MOVIES_DIR/All" -type f -iname '*.xml' | sort) ; do
