@@ -17,7 +17,6 @@ OPTIONS
 	exit $1
 }
 
-# Parse dos argumentos da linha de comando
 V_DRY_RUN=
 V_ALL=
 V_CONFIG=

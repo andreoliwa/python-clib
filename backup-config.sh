@@ -21,7 +21,7 @@ echo "Saving keys in $V_FILE"
 apt-key exportall &> $V_FILE
 
 V_FILE=$V_CONFIG_DIR/symbolic-links.txt
-echo "Gravando links simbolicos em $V_FILE"
+echo "Saving symbolic links in $V_FILE"
 V_IGNORE_LIST='.teamviewer;google-chrome;.pulse;share;.adobe;.kde;autostart'
 V_IMPLODE_IGNORE_LIST="-wholename */${V_IGNORE_LIST//;/\/* -or -wholename *\/}/*"
 find . -type l -not \( $V_IMPLODE_IGNORE_LIST \) -exec ls -l --color=auto '{}' \; &> $V_FILE

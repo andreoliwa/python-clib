@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $(git st | grep 'nothing to commit (working directory clean)' | wc -l) != 1 ] ; then
+if [ $(git st | grep -i 'nothing to commit.\+working directory clean' | wc -l) != 1 ] ; then
 	echo -en $COLOR_LIGHT_RED
 	echo '/*------------------------------------------------------------------'
 	echo 'Erro: Arquivos alterados na working copy: ok (nenhum encontrado)'

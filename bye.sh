@@ -21,23 +21,23 @@ wmctrl -c thunderbird
 # Show download folder if not empty
 [ $(find $G_DOWNLOAD_DIR -type f | wc -l) -ne 0 ] && nautilus $G_DOWNLOAD_DIR
 
-# Procura diretórios Trash que eu possa ter largado nos servidores
+# Search for 'Trash' directories I might have left in the servers
 [ -d /net/ ] &&	V_FIND=$(find /net/ -maxdepth 3 -type d -name '.Trash-*') && [ -n "$V_FIND" ] && echo "$V_FIND" | xargs nautilus
 
 backup-config.sh
 
 for V_MEDIA in $(ls -d /media/*samsung* 2> /dev/null) ; do
-	echo "Desmontando $V_MEDIA"
+	echo "Unmounting $V_MEDIA"
 	sudo umount $V_MEDIA
 
 	V_LABEL=$(basename $V_MEDIA)
 	V_DEVICE=$(sudo blkid -L $V_LABEL)
-	echo "Removendo com segurança $V_LABEL (${V_DEVICE%?})"
+	echo "Safely removing $V_LABEL (${V_DEVICE%?})"
 	udisks --detach ${V_DEVICE%?}
 done
 
 if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
-	# Copia o PDF de padroes para o diretorio do meu Code Sniffer
+	# Copies the Standards PDF to the Code Sniffer directory
 	V_PDF_SOURCE_DIR=/net/srvfol1/groups/desenvolvimento
 	V_PDF_DEST_DIR=$HOME/src/home-office/dev_bin/codesniffer/_archive
 	for V_PDF in $V_PDF_SOURCE_DIR/*.pdf ; do
@@ -46,5 +46,5 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	done
 
 	google-chrome http://ponto.cpndin.com.br/ &
-	zenity --warning --text='Guarde o fone na gaveta!'
+	zenity --warning --text="For safety reasons, please put the headphones inside the drawer."
 fi

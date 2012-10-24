@@ -46,11 +46,11 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 
 	# Move windows to corresponding workspaces
 	sleep 5
-	$HOME/bin/wmctrl-move-windows.sh
+	wmctrl-move-windows.sh
 
 	google-chrome http://ponto.cpndin.com.br/ &
 
-	$HOME/bin/work-log-active-window.sh &
+	work-log-active-window.sh &
 fi
 
 V_HOME_OFFICE="$(git-home-office.sh -d)"
