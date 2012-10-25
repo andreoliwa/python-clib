@@ -1,12 +1,10 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USAGE: [$(dirname $0)/]$(basename $0) [options]
+	echo "USAGE: [$(dirname $0)/]$(basename $0) [options]
 Creates a new shell script (if it does not exist), or else opens the existing script.
 
 OPTIONS
--h   Help
-EOF
+-h   Help"
 	exit $1
 }
 
@@ -38,13 +36,11 @@ else
 		echo "Creating shell script $V_SCRIPT_FILE"
 		echo '#!/bin/bash
 usage() {
-	cat << EOF
-USAGE: [$(dirname $0)/]$(basename $0) [options]
+	echo "USAGE: [$(dirname $0)/]$(basename $0) [options]
 Here goes a brief description of the shell script.
 
 OPTIONS
--h   Help
-EOF
+-h   Help"
 	exit $1
 }
 
