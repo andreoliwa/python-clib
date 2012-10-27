@@ -1,21 +1,16 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opcoes]
-Compara o código fonte da Folha com os diretórios de home office.
-Sou um idiota mesmo por me importar com essa merda toda.
+	echo "Usage: $(basename $0) [options]
+Compares source files from work to home office directories.
 
-OPÇÕES
--o   Mostrar diferenças do repositório Home Office (geralmente DevQA).
--b   Mostrar diferenças do repositório Boilerplate OO.
--g   Mudar de branches no Git do boilerplate OO.
--d   Diferenças entre as classes beta do Gandalf e o Boilerplate oficial.
--h   Ajuda
-EOF
+  -o  Show differences from the Home Office repository (usually called DevQA).
+  -b  Show differences from the Object Oriented Boilerplate repository.
+  -g  Change branches in the Object Oriented Boilerplate Git repository.
+  -d  Show differences between the Boilerplate and Gandalf.
+  -h  Help"
 	exit $1
 }
 
-# Argumentos da linha de comando
 V_REPO_HOME_OFFICE=
 V_REPO_BOILERPLATE=
 V_CHANGE_BRANCHES=
@@ -31,7 +26,6 @@ while getopts "obgdh" V_ARG ; do
 	esac
 done
 
-V_LOCAL_DIR=$HOME/src/local
 V_BOILERPLATE_OO_DIR=$HOME/Dropbox/src/boilerplate-oo
 
 V_OLD_IFS=$IFS
@@ -58,15 +52,12 @@ fi
 
 if [ -n "$V_DIFF_BETA" ] ; then
 	V_MELD_ARGS=
-	echo "Comparando Gandalf e classes comuns:"
-	for V_BETA_FILE in $(find $(project-folders.sh -cup gandalf) -type f -iname '*beta_*') ; do
-		V_NEW_CLASS=_
-		[ "$(basename $V_BETA_FILE)" = "beta_render.class.php" ] && V_NEW_CLASS=
-
-		V_COMMON_FILE="$V_LOCAL_DIR/dev_htdocs/common/classes/$(basename $V_BETA_FILE | sed "s/beta/${V_NEW_CLASS}spiffy/")"
+	echo "Comparing Boilerplate and Gandalf files:"
+	V_FIND="find $G_WORK_SRC_DIR/dev_htdocs/boilerplate.corp.folha.com.br/webapp/admin/ -type f | grep -vi -e example -e boilerplate_"
+	for V_BETA_FILE in $(eval "$V_FIND") ; do
+		V_COMMON_FILE="$G_WORK_SRC_DIR/dev_htdocs/gandalf.corp.folha.com.br/$(echo $V_BETA_FILE | sed 's#\(/[^/]\+\)\{8\}/##')"
 
 		V_PAIR=" --diff $V_BETA_FILE $V_COMMON_FILE"
-		echo $V_PAIR
 		V_MELD_ARGS="${V_MELD_ARGS}${V_PAIR}"
 	done
 	eval "meld $V_MELD_ARGS"
@@ -78,9 +69,9 @@ if [ -z "$V_COMPARE" ] ; then
 fi
 
 V_MELD_FILTER=$(find $HOME/src/local/dev_htdocs/common/classes/ -mindepth 1 -maxdepth 1 -type d -or \( -type f -and \( -iname 'geoip*' -or -iname 'enhance*' -or -iname 'lightopenid*' \) \) | sed 's#\(/[^/]\+\)\{7\}/##' | sort -u)
-echo "Filtro de classes comuns no Meld: "$V_MELD_FILTER
+echo "Commons classes filter in Meld: "$V_MELD_FILTER
 
-echo -e "\nComparando estes diretorios:"
+echo -e "\nComparing these directories:"
 echo $V_COMPARE
 
 if [ -n "$V_REPO_BOILERPLATE" ] && [ -n "$V_CHANGE_BRANCHES" ] ; then
@@ -93,10 +84,10 @@ for V_DIR in $V_COMPARE ; do
 	V_FOLHA_DIR="$(echo "$V_DIR" | sed 's#\(/[^/]\+\)\{5\}/##')"
 	V_HOME_OFFICE_DIR="$V_DIR"
 
-	V_PAIR=" --diff $V_LOCAL_DIR/$V_FOLHA_DIR $V_HOME_OFFICE_DIR"
+	V_PAIR=" --diff $G_WORK_SRC_DIR/$V_FOLHA_DIR $V_HOME_OFFICE_DIR"
 	echo $V_PAIR
 	V_MELD_ARGS="${V_MELD_ARGS}${V_PAIR}"
-	#diff -qN $V_LOCAL_DIR/$V_FOLHA_DIR $V_HOME_OFFICE_DIR
+	#diff -qN $G_WORK_SRC_DIR/$V_FOLHA_DIR $V_HOME_OFFICE_DIR
 done
 IFS=$V_OLD_IFS
 

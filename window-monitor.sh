@@ -1,17 +1,14 @@
 #!/bin/bash
 usage() {
-	echo "USAGE: [$(dirname $0)/]$(basename $0) [options]
+	echo "Usage: $(basename $0) [options]
 Monitors system windows.
 
-OPCOES
--n   Dry-run (doesn't write the log file)
--t   Tail log
--h   Help
-EOF"
+  -n   Dry-run (doesn't write the log file)
+  -t   Tail log
+  -h   Help"
 	exit $1
 }
 
-# Parse dos argumentos da linha de comando
 V_DRY_RUN=
 V_TAIL=
 while getopts "nth" OPTION ; do

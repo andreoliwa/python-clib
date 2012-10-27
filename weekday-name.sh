@@ -1,17 +1,13 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) -d <data> [-sh]
+	echo "Usage: $(basename $0) -d <data> [-sh]
 Retorna o nome do dia da semana, em portugues.
 
-OPCOES
--d   data desejada
--s   nome curto
--h   ajuda
-EOF
+  -d   data desejada
+  -s   nome curto
+  -h   ajuda"
 }
 
-# Parse dos argumentos da linha de comando
 V_SHORT=
 V_DATE=
 while getopts "d:sh" OPTION ; do

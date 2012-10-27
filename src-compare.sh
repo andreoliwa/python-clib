@@ -1,9 +1,8 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-Uso: [$(dirname $0)/]$(basename $0) <pessoa> <projeto>
-Compara os diretorios de uma pessoa da equipe com os meus.
-EOF
+	echo "Usage: $(basename $0) <person> <project>
+Compara os diretorios de uma pessoa da equipe com os meus."
+	exit $1
 }
 
 V_PERSON=$1

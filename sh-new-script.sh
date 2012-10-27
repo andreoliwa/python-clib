@@ -1,6 +1,6 @@
 #!/bin/bash
 usage() {
-	echo "USAGE: [$(dirname $0)/]$(basename $0) [options]
+	echo "Usage: $(basename $0) [options]
 Creates a new shell script (if it does not exist), or else opens the existing script.
 
 OPTIONS
@@ -36,7 +36,7 @@ else
 		echo "Creating shell script $V_SCRIPT_FILE"
 		echo '#!/bin/bash
 usage() {
-	echo "USAGE: [$(dirname $0)/]$(basename $0) [options]
+	echo "Usage: $(basename $0) [options]
 Here goes a brief description of the shell script.
 
 OPTIONS

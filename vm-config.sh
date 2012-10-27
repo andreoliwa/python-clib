@@ -1,7 +1,6 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opcoes]
+	echo "Usage: $(basename $0) [options]
 Configura uma VM, criando diretório .ssh/ e bin/, copiando .bashrc, etc.
 
 Ordem de autenticação:
@@ -12,17 +11,14 @@ Tem usuários default, hosts, opções de autenticação.
 Veja o help com:
 man ssh_config
 
-OPCOES
--u   Usuário (default $G_WORK_USERNAME).
--s   Nome curto do servidor / host / VM. Pode ser usado várias vezes.
--l   Listar servidores do arquivo de configuração.
--a   Configura todos os servidores do arquivo de configuração ssh.
--h   Ajuda
-EOF
+  -u   Usuário (default $G_WORK_USERNAME).
+  -s   Nome curto do servidor / host / VM. Pode ser usado várias vezes.
+  -l   Listar servidores do arquivo de configuração.
+  -a   Configura todos os servidores do arquivo de configuração ssh.
+  -h   Ajuda"
 	exit $1
 }
 
-# Parse dos argumentos da linha de comando
 V_USERNAME=
 V_ALL_HOSTS=
 V_LIST_SERVERS=

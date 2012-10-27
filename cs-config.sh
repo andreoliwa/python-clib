@@ -1,16 +1,13 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opcoes]
+	echo "Usage: $(basename $0) [options]
 Mostra a configuracao do Code Sniffer.
 
-OPCOES
--c   Configura Code Sniffer e hooks.
--h   Ajuda
-EOF
+  -c   Configura Code Sniffer e hooks.
+  -h   Ajuda"
+	exit $1
 }
 
-# Parse dos argumentos da linha de comando
 V_CONFIG=
 while getopts "ch" OPTION ; do
 	case $OPTION in

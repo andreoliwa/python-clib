@@ -1,19 +1,16 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opcoes]
+	echo "Usage: $(basename $0) [options]
 Cria hardlinks para um diretorio de filmes.
 
-OPCOES
--s   Diretorio origem
--t   Diretorio alvo
--r   Nova raiz (Wagner, Jaque, Both)
--m   Caminho do filme ou legenda (resultado de um find)
--h   Ajuda
-EOF
+  -s   Diretorio origem
+  -t   Diretorio alvo
+  -r   Nova raiz (Wagner, Jaque, Both)
+  -m   Caminho do filme ou legenda (resultado de um find)
+  -h   Ajuda"
+	exit $1
 }
 
-# Parse dos argumentos da linha de comando
 V_SOURCE_DIR=
 V_TARGET_DIR=
 V_NEW_ROOT_PLACE=

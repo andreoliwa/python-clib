@@ -1,21 +1,17 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [-cuh] [<projeto>]
+	echo "Usage: $(basename $0) [-cuh] [<projeto>]
 Mostra os diretorios dos projetos, consultando os arquivos de projeto do Sublime.
 Se nenhum projeto for informado, mostra todos os diretorios de todos os projetos encontrados no Sublime.
 
-OPCOES
--c   Ignora diretorio de classes comuns
--u   Ignora diretorio de testes unitarios e outros
--p   Mostra o caminho completo dos diretórios
--s   Mostra o sufixo escolhido no final de cada diretório
--h   Ajuda
-EOF
+  -c   Ignora diretorio de classes comuns
+  -u   Ignora diretorio de testes unitarios e outros
+  -p   Mostra o caminho completo dos diretórios
+  -s   Mostra o sufixo escolhido no final de cada diretório
+  -h   Ajuda"
 	exit $1
 }
 
-# Parse dos argumentos da linha de comando
 V_IGNORE_COMMON=
 V_IGNORE_UNIT_TESTS=
 V_SHOW_FULL_PATH=

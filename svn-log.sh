@@ -1,27 +1,19 @@
 #!/bin/bash
-usage()
-{
-	cat << EOF
-Uso: $(basename $0) [-hn1w] [-s <repositorio>] [-u <usuario SVN>] [-d <data inicial> | -r <numero de revisao>]
+usage() {
+	echo "Usage: $(basename $0) [options]
 Mostra revisoes recentes do SVN (por repositorio e usuario).
 
-Opcoes:
--n  Mostra somente os numeros das revisoes (o default e mostrar comentarios e tudo o mais).
--1  Mostra somente uma linha por revisao.
--w  Mostra somente as URLs do SVN web.
--s  Repositorio SVN (default todos: dev_bin e dev_htdocs).
--u  Login (completo ou parcial) de um usuario SVN (default: todos os usuarios).
--d  Numero de dias atras, para pesquisar nos logs (default: ultimas 24 horas a partir de agora).
--r  Numero de revisao inicial; se informado, a data acima e ignorada.
--h  Mostra esta ajuda.
-EOF
+  -n  Mostra somente os numeros das revisoes (o default e mostrar comentarios e tudo o mais).
+  -1  Mostra somente uma linha por revisao.
+  -w  Mostra somente as URLs do SVN web.
+  -s  Repositorio SVN (default todos: dev_bin e dev_htdocs).
+  -u  Login (completo ou parcial) de um usuario SVN (default: todos os usuarios).
+  -d  Numero de dias atras, para pesquisar nos logs (default: ultimas 24 horas a partir de agora).
+  -r  Numero de revisao inicial; se informado, a data acima e ignorada.
+  -h  Mostra esta ajuda."
 	exit $1
 }
 
-# Argumentos recebidos na linha de comando
-V_ARGS=$*
-
-# Parse dos argumentos da linha de comando
 V_NUMBER_ONLY=
 V_ONE_LINE=
 V_URL=

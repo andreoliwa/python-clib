@@ -1,18 +1,14 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opcoes] texto
+	echo "Usage: $(basename $0) [options] texto
 Muda o case do texto recebido.
 
-OPCOES
--c   Camel case
--s   Slug
--h   Ajuda
-EOF
+  -c   Camel case
+  -s   Slug
+  -h   Ajuda"
 	exit $1
 }
 
-# Parse dos argumentos da linha de comando
 V_CAMEL_CASE=
 V_SLUG=
 while getopts "csh" OPTION ; do

@@ -1,12 +1,10 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USAGE: [$(dirname $0)/]$(basename $0) directory1 [directory2...]
+	echo "Usage: $(basename $0) directory1 [directory2...]
 Searches directories looking for recently modified files, and tails them.
 
 OPTIONS
--h   Help
-EOF
+-h   Help"
 	exit $1
 }
 

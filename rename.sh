@@ -1,19 +1,17 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opcoes] [arquivo1 arquivo2 ...]
-Renomeia arquivos recebidos na linha de comando e/ou via stdin.
+	echo "Usage: $(basename $0) [options] [file1 file2 ...]
+Renames files using slug or camel case notation.
+Accepts files from the command line or stdin.
 
-OPCOES
+OPTIONS
 -n   Dry run
--c   Camel case
--s   Slug
--h   Ajuda
-EOF
+-s   rename-files-using-the-slug-notation
+-c   RenameFilesUsingTheCamelCaseNotation
+-h   Help"
 	exit $1
 }
 
-# Parse dos argumentos da linha de comando
 V_CASE_OPTION=
 V_DRY_RUN=
 while getopts "ncsh" OPTION ; do
@@ -27,13 +25,13 @@ while getopts "ncsh" OPTION ; do
 done
 
 if [ -z "$V_CASE_OPTION" ] ; then
+	echo "Please chose slug or camel case."
 	usage 3
 fi
 
 V_ALL_FILES=
 while (( "$#" )) ; do
-	# Se nao for uma opcao, e se for um arquivo valido
-	#&& [ -f "$1" ]
+	# If it's not an option, assume it's a file
 	if [ "${1:0:1}" != '-' ] ; then
 		if [ -z "$V_ALL_FILES" ] ; then
 			V_ALL_FILES="$1"
@@ -43,7 +41,7 @@ $1"
 		fi
 	fi
 
-	# Remove o primeiro argumento da linha de comando
+	# Removes the first argument from the command line
 	shift
 done
 
@@ -55,7 +53,7 @@ for V_FULL_PATH in $V_ALL_FILES ; do
 	V_BASENAME=$(basename "$V_FULL_PATH")
 	V_BASENAME_WITHOUT_EXTENSION="$(basename $(echo ${V_FULL_PATH%.*}))"
 
-	# Tratamento especial para arquivos sem extensão
+	# Special treatment for files without extension
 	V_EXTENSION="${V_FULL_PATH##*.}"
 	if [ "$V_EXTENSION" == "$V_FULL_PATH" ] ; then
 		V_EXTENSION=
@@ -63,8 +61,10 @@ for V_FULL_PATH in $V_ALL_FILES ; do
 		V_EXTENSION=".${V_EXTENSION}"
 	fi
 
-	# Normaliza só o nome base, sem extensão
+	# Normalizes only the basename without extension
 	V_NEW_BASENAME_WITHOUT_EXTENSION="$(normalize.sh ${V_CASE_OPTION} ${V_BASENAME_WITHOUT_EXTENSION} | sed -e 's/^-\+//' -e 's/-\+$//')"
+
+	# Lowercase extension
 	V_NEW_EXTENSION="$(echo "$V_EXTENSION" | tr '[:upper:]' '[:lower:]')"
 
 	V_NEW_FULL_PATH="${V_DIRNAME}${V_NEW_BASENAME_WITHOUT_EXTENSION}${V_NEW_EXTENSION}"

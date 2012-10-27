@@ -1,14 +1,12 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opcoes]
+	echo "Usage: $(basename $0) [options]
 Copia os hosts da vm206 para a máquina local.
 
 OPÇÕES
 -c   Copia os hosts da vm206.
 -e   Edita o arquivo com os hosts extras.
--h   Ajuda
-EOF
+-h   Ajuda"
 	exit $1
 }
 

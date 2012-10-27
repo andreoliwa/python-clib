@@ -1,16 +1,12 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [-h]
+	echo "Usage: $(basename $0) [-h]
 Soma horarios recebidos via stdin.
 Aceita horarios no formatos hh:mm:ss e hh:mm.
 
-OPCOES
--h   Ajuda
-EOF
+  -h   Ajuda"
 }
 
-# Parse dos argumentos da linha de comando
 while getopts "h" OPTION ; do
 	case $OPTION in
 	h)

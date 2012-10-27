@@ -1,12 +1,10 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USAGE: [$(dirname $0)/]$(basename $0) [-h]
+	echo "Usage: $(basename $0) [-h]
 My last commit in this Git repo.
 
 OPTIONS
--h   Help
-EOF
+-h   Help"
 	exit $1
 }
 

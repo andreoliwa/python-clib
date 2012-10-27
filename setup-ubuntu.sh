@@ -1,24 +1,20 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-Uso: $0 [-rifah]
+	echo "Usage: $(basename $0) [options]
 Setup automatizado do Ubuntu (casa/trabalho).
 Antes de executar este script pela primeira vez:
 - Instale o Linux (Ubuntu ou Mint) em um PC ou VM;
 - Na VM, instale tambem o VBox Guest Additions (para poder compartilhar diretorios) e ative dispositivos USB.
 
-Opcoes:
--a  Executa todas as opcoes abaixo.
--r  Atualiza repositorios PPA.
--u  Executa upgrade e dist-upgrade.
--i  Instala/desinstala pacotes.
--f  Testa o FlexGet.
--h  Mostra esta ajuda.
-EOF
+  -a  Executa todas as opcoes abaixo.
+  -r  Atualiza repositorios PPA.
+  -u  Executa upgrade e dist-upgrade.
+  -i  Instala/desinstala pacotes.
+  -f  Testa o FlexGet.
+  -h  Mostra esta ajuda."
 	exit $1
 }
 
-# Parse dos argumentos da linha de comando
 V_PPA=
 V_UPDATE=
 V_UPGRADE=
@@ -177,7 +173,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_VIRTUALBOX='virtualbox virtualbox-guest-x11 virtualbox-guest-utils virtualbox-qt'
 	V_JAVA='openjdk-6-jre icedtea6-plugin'
 	V_AUDIO='rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 ruby vorbisgain eyed3 python-eyed3 rubyripper gcstar'
-	V_UNITY='indicator-weather calendar-indicator'
+	V_UNITY='indicator-weather'
 	# lo-menubar
 	V_TWEAK='ubuntu-tweak myunity y-ppa-manager unsettings'
 	V_ARCHIVE='unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack lha arj cabextract file-roller'
@@ -225,7 +221,8 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_EMAIL='thunderbird'
 	V_TORRENT='deluge deluge-gtk'
 	V_FTP='filezilla'
-	sleep 1 && sudo apt-get --yes $V_ACTION $V_SYSTEM $V_SHARE $V_EMAIL $V_TORRENT $V_FTP
+	V_INDICATOR='calendar-indicator'
+	sleep 1 && sudo apt-get --yes $V_ACTION $V_SYSTEM $V_SHARE $V_EMAIL $V_TORRENT $V_FTP $V_INDICATOR
 
 	# Home
 	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then

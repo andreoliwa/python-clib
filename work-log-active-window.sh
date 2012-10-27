@@ -1,14 +1,11 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [-th]
+	echo "Usage: $(basename $0) [-th]
 Grava no log dados sobre a janela ativa (atual).
 Execute sempre em background (&).
 
-OPCOES
--t   Executa tail -f no log
--h   Ajuda
-EOF
+  -t   Executa tail -f no log
+  -h   Ajuda"
 }
 
 V_LOGFILE=$HOME/.gtimelog/active-window.log

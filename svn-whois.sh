@@ -1,16 +1,14 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opções]
+	echo "Usage: $(basename $0) [opções]
 Mostra usuários e seus ambientes.
 
 OPÇÔES
 -u   Usuário (parte do login) ou número do ambiente
--h   Ajuda
-EOF
+-h   Ajuda"
+	exit $1
 }
 
-# Parse dos argumentos da linha de comando
 V_USER='='
 while getopts "n:u:h" OPTION ; do
 	case $OPTION in

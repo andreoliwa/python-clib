@@ -1,18 +1,15 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opcoes]
+	echo "Usage: $(basename $0) [options]
 Cria um arquivo movie.nfo no diretorio recebido via stdin (resultado da busca com tv-find-movie.sh).
 Exemplo:
 tv-find-movie.sh filme | $(basename $0) -i 12345
 
-OPCOES
--i   URL ou id do filme no IMDB
--h   Ajuda
-EOF
+  -i   URL ou id do filme no IMDB
+  -h   Ajuda"
+	exit $1
 }
 
-# Parse dos argumentos da linha de comando
 V_ID=
 while getopts "hi:" OPTION ; do
 	case $OPTION in

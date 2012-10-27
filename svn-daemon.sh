@@ -1,12 +1,10 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opcoes]
+	echo "Usage: $(basename $0) [options]
 Descrição do script.
 
 OPÇÕES
--h   Ajuda
-EOF
+-h   Ajuda"
 	exit $1
 }
 

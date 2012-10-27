@@ -1,6 +1,6 @@
 #!/bin/bash
 usage() {
-	echo "USAGE: [$(dirname $0)/]$(basename $0) [options]
+	echo "Usage: $(basename $0) [options]
 Restarts the wireless mouse module ('usbhid', in fact).
 Use this after resuming from suspend mode on Ubuntu 12.10 (mouse is freezing, probably a bug).
 

@@ -1,17 +1,13 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [-h]
+	echo "Usage: $(basename $0) [-h]
 Parse do log de janela ativa.
 
-OPCOES
--h, --help   ajuda
-EOF
+  -h  Help"
 }
 
 V_LOGFILE=$HOME/.gtimelog/active-window.log
 
-# Parse dos argumentos da linha de comando
 while getopts "h" OPTION ; do
 	case $OPTION in
 		h)

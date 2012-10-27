@@ -1,16 +1,14 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [-epah] [-s segundos]
+	echo "Usage: $(basename $0) [-epah] [-s segundos]
 Abre os clientes de linha de comando com bancos MySQL e Mongo.
 
-OPCOES
--e   Edita o arquivo de conexoes
--p   Mostra todos os processos do MySQL (SHOW FULL PROCESSLIST)
--a   Mostra todos os processos ATIVOS do MySQL (SHOW FULL PROCESSLIST, exceto Sleep)
--s   Segundos para SHOW FULL PROCESSLIST
--h   Ajuda
-EOF
+  -e   Edita o arquivo de conexoes
+  -p   Mostra todos os processos do MySQL (SHOW FULL PROCESSLIST)
+  -a   Mostra todos os processos ATIVOS do MySQL (SHOW FULL PROCESSLIST, exceto Sleep)
+  -s   Segundos para SHOW FULL PROCESSLIST
+  -h   Ajuda"
+	exit $1
 }
 
 V_FILE=$HOME/Dropbox/Docs/connections.txt
@@ -19,7 +17,6 @@ if [ ! -f "$V_FILE" ] ; then
 	exit
 fi
 
-# Parse dos argumentos da linha de comando
 V_PROCESSLIST=
 V_ACTIVE=
 V_SECONDS=2

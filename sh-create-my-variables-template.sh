@@ -1,12 +1,10 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USAGE: [$(dirname $0)/]$(basename $0) [options]
+	echo "Usage: $(basename $0) [options]
 Creates a template from the "my-variables" file.
 
 OPTIONS
--h   Help
-EOF
+-h   Help"
 	exit $1
 }
 

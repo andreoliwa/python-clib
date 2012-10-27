@@ -1,20 +1,16 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opcoes]
+	echo "Usage: $(basename $0) [options]
 Organiza filmes pela nota e duracao, gera movie.nfo, cria links para filmes e series.
 
-OPCOES
--n   Dry-run
--v   Verbose
--k   Apaga os diretorios de destino antes de comecar a organizar
--i   Grava movie.nfo em vez de organizar os filmes
--l   Cria links para os filmes e series que nao existem no diretorio principal
--h   Ajuda
-EOF
+  -n   Dry-run
+  -v   Verbose
+  -k   Apaga os diretorios de destino antes de comecar a organizar
+  -i   Grava movie.nfo em vez de organizar os filmes
+  -l   Cria links para os filmes e series que nao existem no diretorio principal
+  -h   Ajuda"
 }
 
-# Parse dos argumentos da linha de comando
 V_DRY_RUN=
 V_VERBOSE=
 V_KILL=

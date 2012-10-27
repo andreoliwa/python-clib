@@ -1,15 +1,11 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [opcoes] <parte do nome do filme>
+	echo "Usage: $(basename $0) [options] <parte do nome do filme>
 Procura um filme usando parte do nome (wildcards sao permitidos).
 
-OPCOES
--h   Ajuda
-EOF
+  -h   Ajuda"
 }
 
-# Parse dos argumentos da linha de comando
 while getopts "h" OPTION ; do
 	case $OPTION in
 	h)

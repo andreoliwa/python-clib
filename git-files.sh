@@ -1,15 +1,12 @@
 #!/bin/bash
 usage() {
-	cat << EOF
-USO: [$(dirname $0)/]$(basename $0) [-h]
+	echo "Usage: $(basename $0) [-h]
 Mostra os arquivos de um commit
 
-OPCOES
--h   Ajuda
-EOF
+  -h   Ajuda"
+	exit $1
 }
 
-# Parse dos argumentos da linha de comando
 while getopts "h" OPTION ; do
 	case $OPTION in
 	h)
