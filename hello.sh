@@ -1,8 +1,14 @@
 #!/bin/bash
 
+. ~/.bashrc
+
 [ -z "$(pidof rescuetime)" ] && rescuetime &
 
-if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
+echo "Hostname=$HOSTNAME"
+echo "Work computer=$G_WORK_COMPUTER"
+echo "Home computer=$G_HOME_COMPUTER"
+
+if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	# First workspace
 	wmctrl -s 0
 	gtimelog-lock-unlock.sh
@@ -18,7 +24,7 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	V_DOC_DIR='2work'
 fi
 
-if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
+if [ "$HOSTNAME" = "$G_HOME_COMPUTER" ] ; then
 	V_DOC_DIR='2home'
 fi
 
@@ -40,7 +46,7 @@ V_FIND=$(find $HOME -type d -not -empty -and \( -name 2both -or -name $V_DOC_DIR
 
 indicator-workspaces-restart.sh
 
-if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
+if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	# Returns to the first workspace
 	wmctrl -s 0
 
@@ -59,3 +65,5 @@ if [ -n "$V_HOME_OFFICE" ] ; then
 There are pending remote work hours to send:
 $(git-home-office.sh -td)" &
 fi
+
+sleep 30
