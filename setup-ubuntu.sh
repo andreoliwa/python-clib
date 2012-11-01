@@ -133,7 +133,8 @@ fi
 setup_python() {
 	echo 'Instalando coisas do Python'
 
-	if [ -z "$(which pylint)" ] ; then
+	# Using type instead of which, according to this answer: http://stackoverflow.com/a/677212/1391315
+	if [ -z "$(type -p pylint)" ] ; then
 		cd $G_DOWNLOAD_DIR
 		V_ZIP_BASENAME=pylint-0.25.2
 		V_ZIP=$V_ZIP_BASENAME.tar.gz
@@ -143,7 +144,7 @@ setup_python() {
 		sudo python setup.py install
 	fi
 
-	if [ -z "$(which pep8)" ] ; then
+	if [ -z "$(type -p pep8)" ] ; then
 		sudo pip install -U pep8
 	fi
 
@@ -200,7 +201,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	sudo mkdir -p "$V_DIR"
 	sleep 1 && sudo apt-get --yes install nautilus-compare
 
-	if [ -z "$(which beet)" ] ; then
+	if [ -z "$(type -p beet)" ] ; then
 		sudo pip install -U beets
 	fi
 
@@ -209,7 +210,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 		echo 'Instalando pacotes exclusivos para trabalho'
 		V_ACTION=install
 
-		if [ -z "$(which flexget)" ] ; then
+		if [ -z "$(type -p flexget)" ] ; then
 			sudo pip install -U flexget
 		fi
 	else
@@ -274,7 +275,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 
 	setup_python
 
-	V_RESCUE_TIME="$(which rescuetime)"
+	V_RESCUE_TIME="$(type -p rescuetime)"
 	if [ -z "$V_RESCUE_TIME" ] ; then
 		google-chrome https://www.rescuetime.com/setup/installer?os=amd64deb
 		zenity --info --text='Faça login na página do Rescue Time antes de continuar'
@@ -303,7 +304,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	fi
 
 	# http://www.webupd8.org/2012/09/subliminal-command-line-tool-to.html
-	V_SUBLIMINAL="$(which subliminal)"
+	V_SUBLIMINAL="$(type -p subliminal)"
 	if [ -z "$V_SUBLIMINAL" ] ; then
 		sudo pip install -U beautifulsoup4 guessit requests enzyme html5lib lxml
 		cd $G_DOWNLOAD_DIR
@@ -312,7 +313,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 		sudo python setup.py install
 	fi
 
-	if [ -z "$(which teamviewer)" ] ; then
+	if [ -z "$(type -p teamviewer)" ] ; then
 		echo 'Instalando Teamviewer'
 		V_DEB=$G_DOWNLOAD_DIR/teamviewer_linux_x64.deb
 		wget -O $V_DEB http://www.teamviewer.com/download/teamviewer_linux_x64.deb
@@ -349,7 +350,7 @@ fi
 
 if [ -n "$V_ALL" ] || [ -n "$V_TEST_FLEXGET" ] ; then
 	echo "Testando funcionamento do Flexget"
-	if [ -n "$(which flexget)" ] ; then
+	if [ -n "$(type -p flexget)" ] ; then
 		echo "  Flexget nao instalado"
 	else
 		flexget --check

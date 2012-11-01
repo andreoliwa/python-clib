@@ -55,6 +55,6 @@ fi
 exec_ls /usr/share/php/PHP/CodeSniffer/Standards/
 exec_ls $HOME/Dropbox/svn-repo/hooks
 exec_ls /srv/dev_logs
-exec_command "which code-sniffer.sh"
-exec_ls "$(which code-sniffer.sh)"
-exec_ls "$(readlink $(which code-sniffer.sh))"
+exec_command "type -p code-sniffer.sh"
+exec_ls "$(type -p code-sniffer.sh)"
+exec_ls "$(readlink $(type -p code-sniffer.sh))"

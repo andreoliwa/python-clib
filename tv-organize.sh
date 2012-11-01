@@ -1,14 +1,15 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Organiza filmes pela nota e duracao, gera movie.nfo, cria links para filmes e series.
+Organize directories using movies' rating and duration, save movie.nfo files, create hard links to movies and series.
 
   -n   Dry-run
   -v   Verbose
-  -k   Apaga os diretorios de destino antes de comecar a organizar
-  -i   Grava movie.nfo em vez de organizar os filmes
-  -l   Cria links para os filmes e series que nao existem no diretorio principal
-  -h   Ajuda"
+  -k   Remove destination directories first
+  -i   Save movie.nfo instead of organizing movies' directories
+  -l   Create hardlinks to movies and series that don't exist in the main directory
+  -h   Help"
+	exit $!
 }
 
 V_DRY_RUN=
@@ -18,31 +19,20 @@ V_SAVE_NFO=
 V_MAKE_LINKS=
 while getopts "nvkilh" OPTION ; do
 	case $OPTION in
-	n)
-		V_DRY_RUN=1
-		;;
-	v)
-		V_VERBOSE='-v'
-		;;
-	k)
-		V_KILL=1
-		;;
-	i)
-		V_SAVE_NFO=1
-		;;
-	l)
-		V_MAKE_LINKS=1
-		;;
-	h)
-		usage
-		exit 1
-		;;
-	?)
-		usage
-		exit
-		;;
+	n)	V_DRY_RUN=1 ;;
+	v)	V_VERBOSE='-v' ;;
+	k)	V_KILL=1 ;;
+	i)	V_SAVE_NFO=1 ;;
+	l)	V_MAKE_LINKS=1 ;;
+	h)	usage 1 ;;
+	?)	usage 1 ;;
 	esac
 done
+
+if [ -n "$(pidof xbmc.bin)" ] ; then
+	echo -e "XBMC is running, close it before running this script (we need exclusive access to XBMC's database).\n"
+	usage 2
+fi
 
 V_OLD_IFS=$IFS
 IFS='|
