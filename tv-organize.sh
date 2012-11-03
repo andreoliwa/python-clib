@@ -80,13 +80,13 @@ for V_ROOT in $V_ALL_ROOTS ; do
 	V_GENRE_ROOT_DIR="$V_MOVIES_DIR/${V_ROOT}-genre"
 
 	if [ -n "$V_KILL" ] ; then
-		[ -n "$V_VERBOSE" ] && echo "Apagando diretorio de notas $V_RATING_ROOT_DIR"
+		echo "Erasing ratings directory $V_RATING_ROOT_DIR"
 		[ -z "$V_DRY_RUN" ] && rm $V_VERBOSE -rf "$V_RATING_ROOT_DIR"
 
-		[ -n "$V_VERBOSE" ] && echo "Apagando diretorio de duracoes $V_DURATION_ROOT_DIR"
+		echo "Erasing durations directory $V_DURATION_ROOT_DIR"
 		[ -z "$V_DRY_RUN" ] && rm $V_VERBOSE -rf "$V_DURATION_ROOT_DIR"
 
-		[ -n "$V_VERBOSE" ] && echo "Apagando diretorio de generos $V_GENRE_ROOT_DIR"
+		echo "Erasing genres directory $V_GENRE_ROOT_DIR"
 		[ -z "$V_DRY_RUN" ] && rm $V_VERBOSE -rf "$V_GENRE_ROOT_DIR"
 	fi
 

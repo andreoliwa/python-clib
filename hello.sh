@@ -44,8 +44,6 @@ V_FIND=$(find $HOME -type d -not -empty -and \( -name 2both -or -name $V_DOC_DIR
 # Show download folder if not empty
 [ $(find $G_DOWNLOAD_DIR -type f | wc -l) -ne 0 ] && nautilus $G_DOWNLOAD_DIR
 
-indicator-workspaces-restart.sh
-
 if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	# Returns to the first workspace
 	wmctrl -s 0
@@ -67,3 +65,5 @@ $(git-home-office.sh -td)" &
 fi
 
 sleep 30
+
+indicator-workspaces-restart.sh

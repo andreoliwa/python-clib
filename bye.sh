@@ -45,6 +45,8 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 		cp -uv "$V_PDF" "$V_PDF_DEST_DIR"/$(normalize.sh -s $V_BASENAME)
 	done
 
+	[ -n "$(which deluge-gtk)" ] && deluge-gtk &
+
 	google-chrome http://ponto.cpndin.com.br/ &
 	zenity --warning --text="For safety reasons, please put the headphones inside the drawer."
 fi

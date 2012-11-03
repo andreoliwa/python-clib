@@ -51,7 +51,7 @@ if [ -n "$V_DRY_RUN" ] ; then
 fi
 
 if [ -n "$V_ALL" ] || [ -n "$V_CONFIG" ] ; then
-	~/bin/backup-config.sh
+	backup-config.sh
 fi
 
 V_LINUX_VERSION=$(lsb_release -d -s | sed 's/ /-/g')
