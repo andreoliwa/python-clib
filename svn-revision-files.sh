@@ -10,4 +10,4 @@ if [ "$V_REPO" = 'b' -o "$V_REPO" = 'bin' ] ; then
 fi
 
 # Show modified files in a revision
-svn log $G_SVN_ROOT/$V_REPO -r $V_REVISION -qv | awk '/\//{print $1 $2}'
+svn log $G_SVN_URL/$V_REPO -r $V_REVISION -qv | awk '/\//{print $1 $2}'

@@ -15,4 +15,4 @@ while getopts "h" OPTION ; do
 	esac
 done
 
-git log -1 --author=$G_WORK_USERNAME
+git log -1 --author=$G_WORK_SVN_USERNAME

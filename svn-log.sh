@@ -54,15 +54,15 @@ fi
 for V_REPO in $V_REPOS ; do
 	if [ -n "$V_NUMBER_ONLY" ] ; then
 		# Ultimas revisoes de um usuario, somente numeros
-		svn log $G_SVN_ROOT/$V_REPO $V_QUERY -q | grep -v -e '----------' | grep "$V_USER" | cut -d ' ' -f 1 | cut -b 2-
+		svn log $G_SVN_URL/$V_REPO $V_QUERY -q | grep -v -e '----------' | grep "$V_USER" | cut -d ' ' -f 1 | cut -b 2-
 	elif [ -n "$V_URL" ] ; then
 		# Ultimas revisoes de um usuario, uma linha por revisao, com URL
-		svn log $G_SVN_ROOT/$V_REPO $V_QUERY -q | grep -v -e '----------' | grep "$V_USER" | cut -d ' ' -f 1 | cut -b 2- | sed "s#^#http://svn.ops.corp.folha.com.br/wsvn/revision.php?repname=${V_REPO}\&rev=#"
+		svn log $G_SVN_URL/$V_REPO $V_QUERY -q | grep -v -e '----------' | grep "$V_USER" | cut -d ' ' -f 1 | cut -b 2- | sed "s#^#http://svn.ops.corp.folha.com.br/wsvn/revision.php?repname=${V_REPO}\&rev=#"
 	elif [ -n "$V_ONE_LINE" ] ; then
 		# Ultimas revisoes de um usuario, uma linha por revisao
-		svn log $G_SVN_ROOT/$V_REPO $V_QUERY -q | grep -v -e '----------' | grep "$V_USER" | sed "s/^/${V_REPO} | /"
+		svn log $G_SVN_URL/$V_REPO $V_QUERY -q | grep -v -e '----------' | grep "$V_USER" | sed "s/^/${V_REPO} | /"
 	else
 		# Ultimas revisoes de um usuario, com comentario e tudo
-		svn log $G_SVN_ROOT/$V_REPO $V_QUERY | sed -n "/$V_USER/,/-----$/ p"
+		svn log $G_SVN_URL/$V_REPO $V_QUERY | sed -n "/$V_USER/,/-----$/ p"
 	fi
 done
