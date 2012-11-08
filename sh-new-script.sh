@@ -1,12 +1,12 @@
 #!/bin/bash
 usage() {
-	echo "Usage: $(basename $0) [options]
+	echo "Usage: $(basename $0) [options] script_name
 Creates a new shell script (if it does not exist), or else opens the existing script.
 
 OPTIONS
--f   Desired file name (.sh extension is used if none is given)
--n   Dry-run: doesn't create the script, only shows its full name
--h   Help"
+-f  Desired file name (.sh extension is used if none is given)
+-n  Dry-run: doesn't create the script, only shows its full name
+-h  Help"
 	exit $1
 }
 
@@ -22,7 +22,14 @@ while getopts "f:nh" V_ARG ; do
 done
 
 if [ -z "$V_SCRIPT_NAME" ] ; then
-	echo -e "Please suplly a script name with the -f option.\n"
+	# If it's not an option, we'll consider it text
+	if [ "${1:0:1}" != '-' ] ; then
+		V_SCRIPT_NAME="$1"
+	fi
+fi
+
+if [ -z "$V_SCRIPT_NAME" ] ; then
+	echo -e "Please suplly a script name with the -f option, or as the first argument in the command line.\n"
 	usage 3
 fi
 

@@ -4,7 +4,7 @@ usage() {
 Backs up some system and personal configuration files.
 
 OPTIONS
--h   Help"
+-h  Help"
 	exit $1
 }
 
@@ -15,65 +15,53 @@ while getopts "h" V_ARG ; do
 	esac
 done
 
-# Dummy command, just to ask for the sudo password
-sudo ls /etc/crontab &> /dev/null
-
 V_LINUX_VERSION=$(lsb_release -d -s | sed 's/ /-/g')
 V_CONFIG_DIR=~/Dropbox/linux/$HOSTNAME-$V_LINUX_VERSION
 mkdir -p $V_CONFIG_DIR
 
+save_if_needed() {
+	V_FILE=$1
+	V_MESSAGE=$2
+	V_CMD=$3
+
+	V_EXTENSION="${V_FILE##*.}"
+	V_FULL_PATH="$V_CONFIG_DIR/$V_FILE"
+
+	if [ -n "$(find $V_FULL_PATH -mmin 60)" ] ; then
+		echo "Saving $V_MESSAGE in $V_FULL_PATH"
+		if [ "$V_EXTENSION" = 'txt' ] ; then
+			eval $V_CMD &> $V_FULL_PATH
+		else
+			eval $V_CMD
+		fi
+	fi
+}
+
 echo "Saving some config files (bash, git, beets) in $V_CONFIG_DIR"
 cp -ruvL ~/.bash* ~/.beetsconfig ~/.git* $V_CONFIG_DIR
 
-V_FILE=$V_CONFIG_DIR/ifconfig.txt
-echo "Saving IP and Ethernet configuration in $V_FILE"
-ifconfig -a -v &> $V_FILE
+save_if_needed ifconfig.txt "IP and Ethernet configuration" "ifconfig -a -v"
+save_if_needed dpkg-get-selections.txt "list of installed packages" "dpkg --get-selections"
+save_if_needed apt-get-install-manual.txt "list of manually installed packages" "cat ~/.bash_history | grep 'apt-get install' | grep -v grep | cut -b 22- | sed -e 's/ \+/\n/g' | sort -u"
+save_if_needed apt-key-exportall.txt "keys" "apt-key exportall"
 
-V_FILE=$V_CONFIG_DIR/dpkg-get-selections.txt
-echo "Saving list of installed packages in $V_FILE"
-dpkg --get-selections &> $V_FILE
-
-V_FILE=$V_CONFIG_DIR/apt-get-install-manual.txt
-echo "Saving list of manually installed packages in $V_FILE"
-cat ~/.bash_history | grep 'apt-get install' | grep -v grep | cut -b 22- | sed -e 's/ \+/\n/g' | sort | uniq &> $V_FILE
-
-V_FILE=$V_CONFIG_DIR/apt-key-exportall.txt
-echo "Saving keys in $V_FILE"
-apt-key exportall &> $V_FILE
-
-V_FILE=$V_CONFIG_DIR/symbolic-links.txt
-echo "Saving symbolic links in $V_FILE"
 V_IGNORE_LIST='.teamviewer;google-chrome;.pulse;share;.adobe;.kde;autostart'
 V_IMPLODE_IGNORE_LIST="-wholename */${V_IGNORE_LIST//;/\/* -or -wholename *\/}/*"
-find . -type l -not \( $V_IMPLODE_IGNORE_LIST \) -exec ls -l --color=auto '{}' \; &> $V_FILE
+save_if_needed symbolic-links.txt "symbolic links" "find . -type l -not \( $V_IMPLODE_IGNORE_LIST \) -exec ls -l --color=auto '{}' \;"
 
 if [ -d "/net" ] ; then
-	V_FILE=$V_CONFIG_DIR/net-directory.txt
-	echo "Saving /net/ directory structure in $V_FILE"
-	find /net/ -mindepth 2 -maxdepth 2 -type d | sort | uniq &> $V_FILE
+	save_if_needed net-directory.txt "/net/ directory structure" "find /net/ -mindepth 2 -maxdepth 2 -type d | sort -u"
 fi
 
-V_FILE=$V_CONFIG_DIR/pip-freeze.txt
-echo "Saving pip modules in $V_FILE"
-pip freeze --local &> $V_FILE
+save_if_needed pip-freeze.txt "pip modules" "pip freeze --local"
+save_if_needed user-crontab.txt "user crontab" "crontab -l"
+save_if_needed gtimelog.tar "gtimelog files" "tar -czf $V_CONFIG_DIR/gtimelog.tar $HOME/.gtimelog/*"
 
-V_FILE=$V_CONFIG_DIR/user-crontab.txt
-echo "Saving user crontab in $V_FILE"
-crontab -l &> $V_FILE
-
-V_FILE=$V_CONFIG_DIR/gtimelog.tar
-echo "Saving gtimelog files in $V_FILE"
-tar -czf $V_FILE $HOME/.gtimelog/*
-
-V_FILE=$V_CONFIG_DIR/etc.tar
-echo "Saving some configuration files in $V_FILE"
 V_FILES_TO_BACKUP="/etc/hosts /etc/crontab /etc/resolv.conf /etc/environment /etc/fstab /etc/lynx-cur/lynx.cfg /etc/apt/sources.list /etc/apt/sources.list.d/ /etc/samba/smb.conf /boot/grub/grub.cfg /etc/grub.d/40_custom /etc/default/couchpotato /etc/apache2/sites-available/*"
 [ -f etc/crypttab ] && V_FILES_TO_BACKUP="$V_FILES_TO_BACKUP etc/crypttab"
-tar -czf $V_FILE -C / $V_FILES_TO_BACKUP
+save_if_needed etc.tar "some configuration files" "tar -czf $V_CONFIG_DIR/etc.tar -C / $V_FILES_TO_BACKUP"
 
-V_FILE=$V_CONFIG_DIR/etc-all.tar
-echo "Backing up all configuration files from /etc in $V_FILE"
-sudo tar -czf $V_FILE -C / etc
+save_if_needed etc-all.tar "all configuration files from /etc" "sudo tar -czf $V_CONFIG_DIR/etc-all.tar -C / etc"
 
 # Pidgin log compression shoul be on the crontab someday
 #pidgin-tar-logs.sh

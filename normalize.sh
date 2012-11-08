@@ -1,11 +1,11 @@
 #!/bin/bash
 usage() {
-	echo "Usage: $(basename $0) [options] texto
-Muda o case do texto recebido.
+	echo "Usage: $(basename $0) [options] text
+Changes the case of text.
 
-  -c   Camel case
-  -s   Slug
-  -h   Ajuda"
+-c  Camel case
+-s  Slug
+-h  Help"
 	exit $1
 }
 
@@ -21,18 +21,18 @@ while getopts "csh" OPTION ; do
 done
 
 if [ -z "$V_CAMEL_CASE" ] && [ -z "$V_SLUG" ] ; then
-	echo 'Escolha camel case (-c) ou slug (-s)'
+	echo -e "Choose a case option: camel case (-c) or slug (-s).\n"
 	usage 2
 fi
 
 V_TEXT=
 while (( "$#" )) ; do
-	# Se nao for uma opcao, eh texto
+	# If it's not an option, we'll consider it text
 	if [ "${1:0:1}" != '-' ] ; then
 		V_TEXT="$V_TEXT $1"
 	fi
 
-	# Remove o primeiro argumento da linha de comando
+	# Removes the first argument from the command line
 	shift
 done
 V_TEXT="${V_TEXT:1}"
