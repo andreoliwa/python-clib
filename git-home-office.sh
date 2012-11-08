@@ -21,14 +21,14 @@ V_DRY_RUN=
 V_SHOW_LAST_REPORT=
 while getopts "tdg:rnlh" OPTION ; do
 	case $OPTION in
-	t)	V_TOTAL=1 ;;
-	d)	V_DETAIL=1 ;;
-	g)	V_GREP="$V_GREP --grep=$OPTARG" ;;
-	r)	V_REPORT=1 ;;
-	n)	V_DRY_RUN=1 ;;
-	l)	V_SHOW_LAST_REPORT=1 ;;
-	h)	usage 1 ;;
-	?)	usage 1 ;;
+		t)	V_TOTAL=1 ;;
+		d)	V_DETAIL=1 ;;
+		g)	V_GREP="$V_GREP --grep=$OPTARG" ;;
+		r)	V_REPORT=1 ;;
+		n)	V_DRY_RUN=1 ;;
+		l)	V_SHOW_LAST_REPORT=1 ;;
+		h)	usage 1 ;;
+		?)	usage 1 ;;
 	esac
 done
 

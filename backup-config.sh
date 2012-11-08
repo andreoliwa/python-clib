@@ -1,4 +1,21 @@
 #!/bin/bash
+usage() {
+	echo "Usage: $(basename $0) [options]
+Backs up some system and personal configuration files.
+
+OPTIONS
+-h   Help"
+	exit $1
+}
+
+while getopts "h" V_ARG ; do
+	case $V_ARG in
+		h)	usage 1 ;;
+		?)	usage 2 ;;
+	esac
+done
+
+# Dummy command, just to ask for the sudo password
 sudo ls /etc/crontab &> /dev/null
 
 V_LINUX_VERSION=$(lsb_release -d -s | sed 's/ /-/g')
@@ -7,6 +24,10 @@ mkdir -p $V_CONFIG_DIR
 
 echo "Saving some config files (bash, git, beets) in $V_CONFIG_DIR"
 cp -ruvL ~/.bash* ~/.beetsconfig ~/.git* $V_CONFIG_DIR
+
+V_FILE=$V_CONFIG_DIR/ifconfig.txt
+echo "Saving IP and Ethernet configuration in $V_FILE"
+ifconfig -a -v &> $V_FILE
 
 V_FILE=$V_CONFIG_DIR/dpkg-get-selections.txt
 echo "Saving list of installed packages in $V_FILE"
@@ -41,11 +62,11 @@ echo "Saving user crontab in $V_FILE"
 crontab -l &> $V_FILE
 
 V_FILE=$V_CONFIG_DIR/gtimelog.tar
-echo "Backup do gtimelog em $V_FILE"
+echo "Saving gtimelog files in $V_FILE"
 tar -czf $V_FILE $HOME/.gtimelog/*
 
 V_FILE=$V_CONFIG_DIR/etc.tar
-echo "Gravando arquivos de configuração em $V_FILE"
+echo "Saving some configuration files in $V_FILE"
 V_FILES_TO_BACKUP="/etc/hosts /etc/crontab /etc/resolv.conf /etc/environment /etc/fstab /etc/lynx-cur/lynx.cfg /etc/apt/sources.list /etc/apt/sources.list.d/ /etc/samba/smb.conf /boot/grub/grub.cfg /etc/grub.d/40_custom /etc/default/couchpotato /etc/apache2/sites-available/*"
 [ -f etc/crypttab ] && V_FILES_TO_BACKUP="$V_FILES_TO_BACKUP etc/crypttab"
 tar -czf $V_FILE -C / $V_FILES_TO_BACKUP
@@ -54,7 +75,7 @@ V_FILE=$V_CONFIG_DIR/etc-all.tar
 echo "Backing up all configuration files from /etc in $V_FILE"
 sudo tar -czf $V_FILE -C / etc
 
-# Fazer isso so no cron...
+# Pidgin log compression shoul be on the crontab someday
 #pidgin-tar-logs.sh
 
 echo "Done."
