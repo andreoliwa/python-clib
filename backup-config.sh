@@ -27,7 +27,10 @@ save_if_needed() {
 	V_EXTENSION="${V_FILE##*.}"
 	V_FULL_PATH="$V_CONFIG_DIR/$V_FILE"
 
-	if [ -n "$(find $V_FULL_PATH -mmin 60)" ] ; then
+	# Let's create the file if:
+	# - it doesn't exist, or
+	# - it was last modified a while ago (more than 1 hour).
+	if [ ! -f $V_FULL_PATH ] || [ -z "$(find $V_FULL_PATH -type f -mmin -60 2>/dev/null)" ] ; then
 		echo "Saving $V_MESSAGE in $V_FULL_PATH"
 		if [ "$V_EXTENSION" = 'txt' ] ; then
 			eval $V_CMD &> $V_FULL_PATH
@@ -47,7 +50,7 @@ save_if_needed apt-key-exportall.txt "keys" "apt-key exportall"
 
 V_IGNORE_LIST='.teamviewer;google-chrome;.pulse;share;.adobe;.kde;autostart'
 V_IMPLODE_IGNORE_LIST="-wholename */${V_IGNORE_LIST//;/\/* -or -wholename *\/}/*"
-save_if_needed symbolic-links.txt "symbolic links" "find . -type l -not \( $V_IMPLODE_IGNORE_LIST \) -exec ls -l --color=auto '{}' \;"
+save_if_needed symbolic-links.txt "symbolic links" "find ~ -type l -not \( $V_IMPLODE_IGNORE_LIST \) -exec ls -l --color=auto '{}' \;"
 
 if [ -d "/net" ] ; then
 	save_if_needed net-directory.txt "/net/ directory structure" "find /net/ -mindepth 2 -maxdepth 2 -type d | sort -u"

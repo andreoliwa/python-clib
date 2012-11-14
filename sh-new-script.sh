@@ -14,10 +14,10 @@ V_SCRIPT_NAME=
 V_DRY_RUN=
 while getopts "f:nh" V_ARG ; do
 	case $V_ARG in
-		f)	V_SCRIPT_NAME=$OPTARG ;;
-		n)	V_DRY_RUN="(DRY-RUN) " ;;
-		h)	usage 1 ;;
-		?)	usage 2 ;;
+	f)	V_SCRIPT_NAME=$OPTARG ;;
+	n)	V_DRY_RUN="(DRY-RUN) " ;;
+	h)	usage 1 ;;
+	?)	usage 2 ;;
 	esac
 done
 
@@ -79,19 +79,19 @@ fi
 
 echo '#!/bin/bash
 usage() {
-echo "Usage: $(basename $0) [options]
+	echo "Usage: $(basename $0) [options]
 Here goes a brief description of the shell script.
 
 OPTIONS
--h   Help"
-exit $1
+-h  Help"
+	exit $1
 }
 
 while getopts "h" V_ARG ; do
-case $V_ARG in
-h)	usage 1 ;;
-?)	usage 2 ;;
-esac
+	case $V_ARG in
+	h)	usage 1 ;;
+	?)	usage 2 ;;
+	esac
 done' > $V_FULL_PATH
 chmod +x $V_FULL_PATH
 open_script_file $V_FULL_PATH

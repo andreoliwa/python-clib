@@ -4,16 +4,16 @@ function usage() {
 A single script to do all backups.
 
 OPTIONS
--n   Dry-run
--a   All options below
--c   Configuration files (calls backup-config.sh)
--d   Deja-dup files (backup tool)
--f   Source code
--j   Jaque
--p   Pictures (/pix directory)
--v   Videos
--w   Windows 7 files
--h   Help"
+-n  Dry-run
+-a  All options below
+-c  Configuration files (calls backup-config.sh)
+-d  Deja-dup files (backup tool)
+-f  Source code
+-j  Jaque
+-p  Pictures (/pix directory)
+-v  Videos
+-w  Windows 7 files
+-h  Help"
 	exit $1
 }
 

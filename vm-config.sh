@@ -88,5 +88,5 @@ for V_HOST in $V_ALL_HOSTS ; do
 	ssh $V_USERNAME_AT_HOST 'mkdir -p bin'
 
 	echo 'Copiando alguns scripts'
-	scp ~/bin/vm-config.sh $V_USERNAME_AT_HOST:~/bin
+	scp $(path-find.sh vm-config.sh) $V_USERNAME_AT_HOST:~/bin
 done
