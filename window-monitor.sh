@@ -3,18 +3,21 @@ usage() {
 	echo "Usage: $(basename $0) [options]
 Monitors system windows.
 
-  -n   Dry-run (doesn't write the log file)
-  -t   Tail log
-  -h   Help"
+-n  Dry-run (doesn't write the log file)
+-t  Tail log
+-e  Edit log
+-h  Help"
 	exit $1
 }
 
 V_DRY_RUN=
 V_TAIL=
-while getopts "nth" OPTION ; do
+V_EDIT=
+while getopts "nteh" OPTION ; do
 	case $OPTION in
 	n)	V_DRY_RUN=1 ;;
 	t)	V_TAIL=1 ;;
+	e)	V_EDIT=1 ;;
 	h)	usage 1	;;
 	?)	usage 1	;;
 	esac
@@ -35,10 +38,14 @@ for V_APP in $V_APPS ; do
 done
 
 V_LOGFILE=$HOME/.gtimelog/$(basename $0).log
+if [ -n "$V_EDIT" ] ; then
+	subl $V_LOGFILE
+	exit 0
+fi
 if [ -n "$V_TAIL" ] ; then
 	echo $V_LOGFILE
 	tail -F $V_LOGFILE
-	exit
+	exit 0
 fi
 
 [ -z "$V_DRY_RUN" ] && echo >> $V_LOGFILE

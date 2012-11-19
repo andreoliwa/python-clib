@@ -26,7 +26,7 @@ wmctrl -c thunderbird
 
 backup-config.sh
 
-for V_MEDIA in $(ls -d /media/*samsung* 2> /dev/null) ; do
+for V_MEDIA in $(find /media/ -maxdepth 2 -type d -name '*samsung*' 2> /dev/null) ; do
 	echo "Unmounting $V_MEDIA"
 	sudo umount $V_MEDIA
 
@@ -37,14 +37,16 @@ for V_MEDIA in $(ls -d /media/*samsung* 2> /dev/null) ; do
 done
 
 if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
-	# Copies the Standards PDF to the Code Sniffer directory
+	# Copies the "Standards Documentation" to the QA directory
 	V_PDF_SOURCE_DIR=/net/srvfol1/groups/desenvolvimento
-	V_PDF_DEST_DIR=$HOME/src/home-office/dev_bin/codesniffer/_archive
+	V_PDF_DEST_DIR=~/Dropbox/src/home-office/dev_bin/devqa/_archive
 	for V_PDF in $V_PDF_SOURCE_DIR/*.pdf ; do
 		V_BASENAME=$(basename "$V_PDF")
 		cp -uv "$V_PDF" "$V_PDF_DEST_DIR"/$(normalize.sh -s $V_BASENAME)
 	done
 
+	# Start resource-consuming applications before going home
+	dropbox start
 	[ -n "$(type -p deluge-gtk)" ] && deluge-gtk &
 
 	google-chrome http://ponto.cpndin.com.br/ &
