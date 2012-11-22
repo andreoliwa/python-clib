@@ -1,7 +1,7 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Compares source files from work to home office directories.
+Compare source files from work to home office directories.
 
   -o  Show differences from the Home Office repository (usually called DevQA).
   -b  Show differences from the Object Oriented Boilerplate repository.

@@ -3,7 +3,7 @@ usage() {
 	echo "Usage: $(basename $0) [options] <parte do nome do filme>
 Procura um filme usando parte do nome (wildcards sao permitidos).
 
-  -h   Ajuda"
+-h  Help"
 }
 
 while getopts "h" OPTION ; do

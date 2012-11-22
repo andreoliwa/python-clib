@@ -1,5 +1,5 @@
 #!/bin/bash
-function usage() {
+usage() {
 	echo "Usage: $(basename $0) [-hancdfjpvw]
 A single script to do all backups.
 

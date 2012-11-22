@@ -6,7 +6,7 @@ Exemplo:
 tv-find-movie.sh filme | $(basename $0) -i 12345
 
   -i   URL ou id do filme no IMDB
-  -h   Ajuda"
+-h  Help"
 	exit $1
 }
 

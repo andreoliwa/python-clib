@@ -1,7 +1,7 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options] text
-Changes the case of text.
+Change the case of text.
 
 -c  Camel case
 -s  Slug

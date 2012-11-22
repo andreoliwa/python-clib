@@ -1,9 +1,9 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [-h]
-Mostra os arquivos de um commit
+Show files from a Git commit.
 
-  -h   Ajuda"
+-h  Help"
 	exit $1
 }
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Backs up some system and personal configuration files.
+Back up some system and personal configuration files.
 
 OPTIONS
 -h  Help"

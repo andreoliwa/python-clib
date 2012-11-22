@@ -1,8 +1,8 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options] [file1 file2 ...]
-Renames files using slug or camel case notation.
-Accepts files from the command line or stdin.
+Rename files using slug or camel case notation.
+Accept files from the command line or stdin.
 
 OPTIONS
 -n   Dry run

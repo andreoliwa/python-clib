@@ -1,14 +1,14 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [-cuh] [<projeto>]
-Mostra os diretorios dos projetos, consultando os arquivos de projeto do Sublime.
+Query Sublime project files and show their project directories.
 Se nenhum projeto for informado, mostra todos os diretorios de todos os projetos encontrados no Sublime.
 
   -c   Ignora diretorio de classes comuns
   -u   Ignora diretorio de testes unitarios e outros
   -p   Mostra o caminho completo dos diretórios
   -s   Mostra o sufixo escolhido no final de cada diretório
-  -h   Ajuda"
+-h  Help"
 	exit $1
 }
 

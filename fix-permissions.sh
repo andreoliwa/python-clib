@@ -1,9 +1,9 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Conserta permissoes do Code Sniffer.
+Fix PHP Code Sniffer permissions.
 
-  -h   Ajuda"
+-h  Help"
 	exit $1
 }
 

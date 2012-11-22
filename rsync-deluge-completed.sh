@@ -1,11 +1,11 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Rsyncs complete Deluge downloads to an external HDD.
+Copy completed Deluge downloads to an external HDD, using rsync.
 
 OPTIONS
--o   Open directory in Nautilus after rsync is over
--h   Help"
+-o  Open directory in Nautilus after rsync is over
+-h  Help"
 	exit $1
 }
 

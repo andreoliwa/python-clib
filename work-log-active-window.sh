@@ -4,8 +4,8 @@ usage() {
 Grava no log dados sobre a janela ativa (atual).
 Execute sempre em background (&).
 
-  -t   Executa tail -f no log
-  -h   Ajuda"
+-t  Executa tail -f no log
+-h  Help"
 }
 
 V_LOGFILE=$HOME/.gtimelog/active-window.log

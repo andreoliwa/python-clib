@@ -1,7 +1,7 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Pushes the changes to all remotes, not only 'origin'.
+Push the changes to all remotes, not only 'origin'.
 
 OPTIONS
 -n   Dry-run

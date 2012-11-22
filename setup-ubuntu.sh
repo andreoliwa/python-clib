@@ -1,7 +1,7 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Setup automatizado do Ubuntu (casa/trabalho).
+Automated Ubuntu setup for home and work computers.
 Antes de executar este script pela primeira vez:
 - Instale o Linux (Ubuntu ou Mint) em um PC ou VM;
 - Na VM, instale tambem o VBox Guest Additions (para poder compartilhar diretorios) e ative dispositivos USB.
@@ -11,7 +11,7 @@ Antes de executar este script pela primeira vez:
   -u  Executa upgrade e dist-upgrade.
   -i  Instala/desinstala pacotes.
   -f  Testa o FlexGet.
-  -h  Mostra esta ajuda."
+  -h  Help"
 	exit $1
 }
 

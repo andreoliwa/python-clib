@@ -4,9 +4,9 @@ usage() {
 Copia os hosts da vm206 para a máquina local.
 
 OPÇÕES
--c   Copia os hosts da vm206.
--e   Edita o arquivo com os hosts extras.
--h   Ajuda"
+-c  Copia os hosts da vm206.
+-e  Edita o arquivo com os hosts extras.
+-h  Help"
 	exit $1
 }
 

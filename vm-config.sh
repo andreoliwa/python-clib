@@ -11,11 +11,11 @@ Tem usuários default, hosts, opções de autenticação.
 Veja o help com:
 man ssh_config
 
-  -u   Usuário (default $G_WORK_UNIX_USERNAME).
-  -s   Nome curto do servidor / host / VM. Pode ser usado várias vezes.
-  -l   Listar servidores do arquivo de configuração.
-  -a   Configura todos os servidores do arquivo de configuração ssh.
-  -h   Ajuda"
+-u  Usuário (default $G_WORK_UNIX_USERNAME).
+-s  Nome curto do servidor / host / VM. Pode ser usado várias vezes.
+-l  Listar servidores do arquivo de configuração.
+-a  Configura todos os servidores do arquivo de configuração ssh.
+-h  Help"
 	exit $1
 }
 

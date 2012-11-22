@@ -1,10 +1,10 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Mostra a configuracao do Code Sniffer.
+Show PHP Code Sniffer configuration.
 
-  -c   Configura Code Sniffer e hooks.
-  -h   Ajuda"
+-c  Configura Code Sniffer e hooks.
+-h  Help"
 	exit $1
 }
 

@@ -5,7 +5,7 @@ Mostra usuários e seus ambientes.
 
 OPÇÔES
 -u   Usuário (parte do login) ou número do ambiente
--h   Ajuda"
+-h  Help"
 	exit $1
 }
 

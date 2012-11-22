@@ -4,7 +4,7 @@ V_MY_VARIABLES_FILE=~/bin/my-variables
 
 usage() {
 	echo "Usage: $(basename $0) [options]
-Creates a sample file called $V_SAMPLE_FILE from the $V_MY_VARIABLES_FILE file.
+Create a sample file called $V_SAMPLE_FILE from the $V_MY_VARIABLES_FILE file.
 
 OPTIONS
 -h   Help"

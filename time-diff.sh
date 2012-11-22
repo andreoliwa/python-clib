@@ -1,31 +1,41 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [-h]
-Calcula a diferenca entre horarios.
+Calculates the difference between times.
+When starting and ending times are supplied, return the time difference in seconds.
+When no starting and ending times are supplied, read data from STDIN.
 
-  -h   Ajuda"
+-s  Starting time
+-e  Ending time
+-h  Help"
 	exit $1
 }
 
-while getopts "h" OPTION ; do
+V_START_TIME=
+V_END_TIME=
+while getopts "s:e:h" OPTION ; do
 	case $OPTION in
-	h)
-		usage
-		exit 1
-		;;
-	?)
-		usage
-		exit
-		;;
+	s)	V_START_TIME=$OPTARG ;;
+	e)	V_END_TIME=$OPTARG ;;
+	h)	usage 1 ;;
+	?)	usage 1 ;;
 	esac
 done
+
+if [ -n "$V_START_TIME" -a -n "$V_END_TIME" ] ; then
+	V_TIME1=$(date -d "$V_START_TIME" +"%s")
+	V_TIME2=$(date -d "$V_END_TIME" +"%s")
+	V_DIFF_SECONDS=$(($V_TIME2-$V_TIME1))
+	echo $V_DIFF_SECONDS
+	exit
+fi
 
 # http://stackoverflow.com/questions/8903239/how-to-calculate-time-difference-in-bash-script
 V_OLD_IFS=$IFS
 IFS='
 '
 V_PREVIOUS=0
-for V_LINE in $(cat); do
+for V_LINE in $(cat) ; do
 	V_SECONDS=$(echo "$V_LINE" | cut -b 12-19 | awk '
 	function convert_hms_to_seconds( time_hms ) {
 		split( time_hms , piece , ":" )

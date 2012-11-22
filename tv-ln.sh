@@ -7,7 +7,7 @@ Cria hardlinks para um diretorio de filmes.
   -t   Diretorio alvo
   -r   Nova raiz (Wagner, Jaque, Both)
   -m   Caminho do filme ou legenda (resultado de um find)
-  -h   Ajuda"
+-h  Help"
 	exit $1
 }
 

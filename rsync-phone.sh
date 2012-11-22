@@ -1,7 +1,7 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Synchronizes music files between the hard drive and the mobile phone.
+Synchronize music files between the hard drive and the mobile phone.
 
 OPTIONS
 -n  Dry-run

@@ -1,11 +1,11 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options] script_name
-Creates a new shell script (if it does not exist), or else opens the existing script.
+Create a new shell script (if it does not exist), or else opens the existing script.
 
 OPTIONS
 -f  Desired file name (.sh extension is used if none is given)
--n  Dry-run: doesn't create the script, only shows its full name
+-n  Dry-run: don't create the script, only show its full name
 -h  Help"
 	exit $1
 }
@@ -80,7 +80,7 @@ fi
 echo '#!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Here goes a brief description of the shell script.
+Type here your brief description of the shell script.
 
 OPTIONS
 -h  Help"

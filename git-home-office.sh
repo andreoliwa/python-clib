@@ -1,15 +1,15 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [-tdgrh]
-Mostra horas de trabalho em home office.
+Show total working hours at home office.
 
-  -t   Total de horas
-  -d   Relatorio detalhado para Adm TI
-  -g   Faz grep no log do Git, trazendo so o que foi escolhido aqui
-  -r   Gera um mini-relatorio em um .txt
-  -n   Dry-run, não muda a data do último relatório no arquivo
-  -l   Mostra a data de geração do último relatório
-  -h   Ajuda"
+-t  Total de horas
+-d  Relatorio detalhado para Adm TI
+-g  Faz grep no log do Git, trazendo so o que foi escolhido aqui
+-r  Gera um mini-relatorio em um .txt
+-n  Dry-run, não muda a data do último relatório no arquivo
+-l  Mostra a data de geração do último relatório
+-h  Help"
 	exit $1
 }
 

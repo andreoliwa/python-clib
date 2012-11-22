@@ -1,13 +1,14 @@
 #!/bin/bash
 usage() {
-	echo "Usage: $(basename $0) [-epah] [-s segundos]
-Abre os clientes de linha de comando com bancos MySQL e Mongo.
+	echo "Usage: $(basename $0) [options]
+Open MySQL and MongoDB command line clients, selecting the connections from a list.
 
-  -e   Edita o arquivo de conexoes
-  -p   Mostra todos os processos do MySQL (SHOW FULL PROCESSLIST)
-  -a   Mostra todos os processos ATIVOS do MySQL (SHOW FULL PROCESSLIST, exceto Sleep)
-  -s   Segundos para SHOW FULL PROCESSLIST
-  -h   Ajuda"
+OPTIONS
+-e  Edita o arquivo de conexoes
+-p  Mostra todos os processos do MySQL (SHOW FULL PROCESSLIST)
+-a  Mostra todos os processos ATIVOS do MySQL (SHOW FULL PROCESSLIST, exceto Sleep)
+-s  Segundos para SHOW FULL PROCESSLIST
+-h  Help"
 	exit $1
 }
 

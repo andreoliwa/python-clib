@@ -4,7 +4,7 @@ usage() {
 Soma horarios recebidos via stdin.
 Aceita horarios no formatos hh:mm:ss e hh:mm.
 
-  -h   Ajuda"
+-h  Help"
 }
 
 while getopts "h" OPTION ; do

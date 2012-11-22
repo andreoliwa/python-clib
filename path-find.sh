@@ -1,7 +1,7 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Finds a file in the PATH environment variable.
+Find a file in the PATH environment variable.
 If the file exists, shows the full file path; otherwise, shows nothing.
 
 OPTIONS

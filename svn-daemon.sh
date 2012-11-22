@@ -4,7 +4,7 @@ usage() {
 Descrição do script.
 
 OPÇÕES
--h   Ajuda"
+-h  Help"
 	exit $1
 }
 

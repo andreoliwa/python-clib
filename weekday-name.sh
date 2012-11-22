@@ -3,9 +3,9 @@ usage() {
 	echo "Usage: $(basename $0) -d <data> [-sh]
 Retorna o nome do dia da semana, em portugues.
 
-  -d   data desejada
-  -s   nome curto
-  -h   ajuda"
+-d  Data desejada
+-s  Nome curto
+-h  Help"
 }
 
 V_SHORT=
