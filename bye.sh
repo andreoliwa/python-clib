@@ -6,7 +6,7 @@ fi
 
 # Close gracefully
 # http://how-to.wikia.coim/wiki/How_to_gracefully_kill_(close)_programs_and_processes_via_command_line
-for V_GRACE in pidgin rhythmbox thunderbird ; do
+for V_GRACE in pidgin rhythmbox ; do
 	echo "Killing $V_GRACE"
 	if [ -n "$(pidof $V_GRACE)" ] ; then
 		kill $(pidof $V_GRACE)
@@ -14,9 +14,6 @@ for V_GRACE in pidgin rhythmbox thunderbird ; do
 	fi
 	pkill $V_GRACE
 done
-
-# Close windows
-wmctrl -c thunderbird
 
 # Show download folder if not empty
 [ $(find $G_DOWNLOAD_DIR -type f | wc -l) -ne 0 ] && nautilus $G_DOWNLOAD_DIR
