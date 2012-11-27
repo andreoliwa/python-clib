@@ -53,8 +53,6 @@ if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	wmctrl-move-windows.sh
 
 	google-chrome http://ponto.cpndin.com.br/ &
-
-	work-log-active-window.sh &
 fi
 
 V_HOME_OFFICE="$(git-home-office.sh -d)"

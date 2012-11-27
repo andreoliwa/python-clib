@@ -20,3 +20,6 @@ for V_REPO in $V_ALL_REPOS ; do
 	cd $V_REPO
 	git bs
 done
+
+# Shows the current date
+echo -e "\nLast execution: $(date --rfc-3339=seconds)"

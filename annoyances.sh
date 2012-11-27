@@ -4,23 +4,57 @@ usage() {
 Log every time someone annoys and/or interrupts me.
 
 OPTIONS
+-c  Create the SQLite database (recreate if it already exists)
+-o  Open the SQLite database
 -v  Verbose mode
 -h  Help"
 	exit $1
 }
 
 V_VERBOSE=
-while getopts "vh" V_ARG ; do
+V_CREATE_DATABASE=
+V_OPEN_DATABASE=
+while getopts "covh" V_ARG ; do
 	case $V_ARG in
+	c)	V_CREATE_DATABASE=1 ;;
+	o)	V_OPEN_DATABASE=1 ;;
 	v)	V_VERBOSE=1 ;;
 	h)	usage 1 ;;
 	?)	usage 2 ;;
 	esac
 done
 
-V_ANNOYANCES_DIR=/home/wagner/.gtimelog/annoyances
+V_ANNOYANCES_DIR=~/.gtimelog/annoyances
 mkdir -p $V_ANNOYANCES_DIR
 V_CURRENT=$V_ANNOYANCES_DIR/current
+V_PEOPLE_FILE=$V_ANNOYANCES_DIR/people
+
+V_DATABASE=$V_ANNOYANCES_DIR/annoyances.db
+
+if [ -n "$V_CREATE_DATABASE" ] ; then
+	[ -n "$V_VERBOSE" ] && echo "Creating the SQLite database in $V_DATABASE"
+	[ -f "$V_DATABASE" ] && rm $V_DATABASE
+
+	# http://stackoverflow.com/questions/200309/sqlite-database-default-time-value-now
+	echo "DROP TABLE IF EXISTS people;
+CREATE TABLE people (person_id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(100), counter INTEGER, added TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+DROP TABLE IF EXISTS annoyances;
+CREATE TABLE annoyances (annoyance_id INTEGER PRIMARY KEY AUTOINCREMENT, person_id INTEGER, start TIMESTAMP, end TIMESTAMP, what VARCHAR(500));
+" | sqlite3 $V_DATABASE
+
+	# http://stackoverflow.com/questions/75675/how-do-i-dump-the-data-of-some-sqlite3-tables
+	sqlite3 $V_DATABASE .dump
+	exit 0
+fi
+
+if [ -n "$V_OPEN_DATABASE" ] ; then
+	echo "People:"
+	echo "SELECT * FROM people ORDER BY counter DESC, added;" | sqlite3 $V_DATABASE
+	echo "Annoyances:"
+	echo "SELECT * FROM annoyances;" | sqlite3 $V_DATABASE
+	sqlite3 $V_DATABASE
+	exit 0
+fi
 
 get_playing_song() {
 	V_PLAYING_SONG="$(rhythmbox-client --print-playing)"
@@ -38,6 +72,8 @@ start_annoyance() {
 		get_playing_song
 		rhythmbox-client --pause
 	fi
+
+	zenity --error --text="Stopping music..."
 }
 
 end_annoyance() {
@@ -50,8 +86,35 @@ end_annoyance() {
 		[ -n "$V_PLAYING_SONG" ] && rhythmbox-client --play
 	fi
 
-	V_INFO="$(zenity --title="Stopping annoyance started on $V_START_TIME" --width=700 --forms --list-values='Webysther|Carlos|Amemiya|Marcelo|Ari|Pincelso|Juliana|Alisson' --column-values=Who --add-list=Who --add-entry=Who --add-entry=What --text='Annoyance info')"
-	[ -n "$V_VERBOSE" ] && echo "Information: $V_INFO"
+	# Join people together, separated by the pipe character
+	V_PEOPLE="$(echo "SELECT name FROM people ORDER BY counter DESC, added;" | sqlite3 $V_DATABASE | tr "\n" '|' | sed 's/|\+$//')"
+
+	V_LISTBOX="--list-values='$V_PEOPLE' --column-values=Who --add-list=Who"
+	V_INFO="$(eval "zenity --title='Stopping annoyance started on $V_START_TIME' --width=700 --forms $V_LISTBOX --add-entry=Who --add-entry=What --text='Annoyance info'")"
+	[ -n "$V_VERBOSE" ] && echo "Information chosen in zenity window: $V_INFO"
+
+	if [ -z "$V_INFO" ] ; then
+		exit 3
+	fi
+
+	# http://stackoverflow.com/questions/10586153/bash-split-string-into-array
+	IFS='|' read -a V_ARRAY <<< "$V_INFO"
+	V_WHO_LIST="${V_ARRAY[0]}"
+	V_WHO_ENTRY="${V_ARRAY[1]}"
+	V_WHAT="${V_ARRAY[2]}"
+
+	# The person might be in the list, or might be a new one
+	V_WHO=
+	if [ -n "$V_WHO_ENTRY" ] ; then
+		V_WHO="$V_WHO_ENTRY"
+		echo "INSERT INTO people (name, counter) VALUES ('$V_WHO', 0);" | sqlite3 $V_DATABASE
+	else
+		V_WHO="$V_WHO_LIST"
+	fi
+
+	# Find the person and increment the counter
+	V_PERSON_ID=$(echo "SELECT person_id FROM people WHERE name = '$V_WHO';" | sqlite3 $V_DATABASE)
+	echo "UPDATE people SET counter = counter + 1 WHERE person_id = '$V_PERSON_ID';" | sqlite3 $V_DATABASE
 
 	# http://stackoverflow.com/questions/8903239/how-to-calculate-time-difference-in-bash-script
 	[ -n "$V_VERBOSE" ] && echo "  Started on $V_START_TIME"
@@ -60,6 +123,11 @@ end_annoyance() {
 
 	V_DIFF_SECONDS="$(time-diff.sh -s "$V_START_TIME" -e "$V_END_TIME")"
 	[ -n "$V_VERBOSE" ] && echo "  Total annoyance time: $(($V_DIFF_SECONDS / 60)) minutes and $(($V_DIFF_SECONDS % 60)) seconds."
+
+	V_LOG_MESSAGE="start=$V_START_TIME|end=$V_END_TIME|who=$V_INFO"
+	[ -n "$V_VERBOSE" ] && echo $V_LOG_MESSAGE
+
+	echo "INSERT INTO annoyances (person_id, start, end, what) VALUES ($V_PERSON_ID, '$V_START_TIME', '$V_END_TIME', '$V_WHAT');" | sqlite3 $V_DATABASE
 }
 
 V_START_TIME="$(cat $V_CURRENT 2>/dev/null)"

@@ -113,7 +113,7 @@ for V_ROOT in $V_ALL_ROOTS ; do
 	fi
 
 	if [ ! -d "$V_MOVIES_DIR/$V_ROOT" ] && [ -n "$V_DRY_RUN" ] ; then
-		V_ALL_MOVIES=$(echo "select strpath from movieview;" | sqlite3 $HOME/.xbmc/userdata/Database/MyVideos60.db | sort | uniq)
+		V_ALL_MOVIES=$(echo "SELECT strpath FROM movieview;" | sqlite3 $V_XBMC_MOVIE_DB | sort | uniq)
 	else
 		V_ALL_MOVIES=$(find "$V_MOVIES_DIR/$V_ROOT" -mindepth 1 -maxdepth 1 -type d | sort)
 	fi
@@ -131,7 +131,7 @@ for V_ROOT in $V_ALL_ROOTS ; do
 			fi
 		else
 			V_ESCAPED_MOVIE_NAME=$(echo "$V_MOVIE_BASENAME" | tr "'" '%')
-			V_INFO=$(echo "select c05, c11, c14, c09 from movieview where strpath like '%${V_ESCAPED_MOVIE_NAME}/';" | sqlite3 $V_XBMC_MOVIE_DB)
+			V_INFO=$(echo "SELECT c05, c11, c14, c09 FROM movieview WHERE strpath LIKE '%${V_ESCAPED_MOVIE_NAME}/';" | sqlite3 $V_XBMC_MOVIE_DB)
 
 			# http://stackoverflow.com/a/5257398
 			V_ARRAY_INFO=(${V_INFO//;/ })
