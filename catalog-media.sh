@@ -1,8 +1,9 @@
 #!/bin/bash
-CATALOG_DIR=$HOME/Dropbox/linux
+V_CATALOG_DIR=$HOME/Dropbox/linux
 cd /media
-for MEDIUM in $(find /media -maxdepth 1 -name red* -or -name '*samsung*' | cut -b 8-) ; do
-	echo "Cataloging $MEDIUM"
-	ls -clAhRF --author /media/$MEDIUM/ > $CATALOG_DIR/catalog-media-$MEDIUM.txt
+for V_MEDIUM in $(find /media -maxdepth 2 -name red* -or -name '*samsung*' 2>/dev/null) ; do
+	V_FILE=$V_CATALOG_DIR/catalog-media-$(basename $V_MEDIUM).txt
+	echo "Cataloging $V_MEDIUM into $V_FILE"
+	ls -clAhRF --author $V_MEDIUM/ > $V_FILE
 done
-ls -lt $CATALOG_DIR/catalog-media*
+ls -lt $V_CATALOG_DIR/catalog-media*

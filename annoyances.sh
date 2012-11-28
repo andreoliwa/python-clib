@@ -4,20 +4,20 @@ usage() {
 Log every time someone annoys and/or interrupts me.
 
 OPTIONS
--c  Create the SQLite database (recreate if it already exists)
--o  Open the SQLite database
+-C  Create the SQLite database (recreate if it already exists)
+-D  Open the SQLite database
 -v  Verbose mode
 -h  Help"
 	exit $1
 }
 
-V_VERBOSE=
 V_CREATE_DATABASE=
 V_OPEN_DATABASE=
-while getopts "covh" V_ARG ; do
+V_VERBOSE=
+while getopts "CDvh" V_ARG ; do
 	case $V_ARG in
-	c)	V_CREATE_DATABASE=1 ;;
-	o)	V_OPEN_DATABASE=1 ;;
+	C)	V_CREATE_DATABASE=1 ;;
+	D)	V_OPEN_DATABASE=1 ;;
 	v)	V_VERBOSE=1 ;;
 	h)	usage 1 ;;
 	?)	usage 2 ;;
@@ -136,4 +136,3 @@ if [ -n "$V_START_TIME" ] ; then
 else
 	start_annoyance
 fi
-#/home/wagner/.gtimelog/annoyance.log

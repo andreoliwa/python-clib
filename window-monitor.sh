@@ -4,20 +4,23 @@ usage() {
 Monitors system windows.
 
 -n  Dry-run (doesn't write the log file)
--t  Tail log
--e  Edit log
+-C  Create the SQLite database (recreate if it already exists)
+-D  Open the SQLite database
+-v  Verbose mode
 -h  Help"
 	exit $1
 }
 
 V_DRY_RUN=
-V_TAIL=
-V_EDIT=
-while getopts "nteh" OPTION ; do
+V_CREATE_DATABASE=
+V_OPEN_DATABASE=
+V_VERBOSE=
+while getopts "nCDvh" OPTION ; do
 	case $OPTION in
 	n)	V_DRY_RUN=1 ;;
-	t)	V_TAIL=1 ;;
-	e)	V_EDIT=1 ;;
+	C)	V_CREATE_DATABASE=1 ;;
+	D)	V_OPEN_DATABASE=1 ;;
+	v)	V_VERBOSE=1 ;;
 	h)	usage 1	;;
 	?)	usage 1	;;
 	esac
@@ -25,7 +28,6 @@ done
 
 V_VLC='vlc.Vlc'
 V_APPS="$V_VLC feh.feh google-chrome"
-#V_APPS="sublime_text.sublime-text-2 google-chrome.Google-chrome"
 
 declare -A V_LAST_TITLE
 declare -A V_LAST_DATE
@@ -37,18 +39,30 @@ for V_APP in $V_APPS ; do
 	V_LAST_DATE["$V_APP"]=
 done
 
-V_LOGFILE=$HOME/.gtimelog/$(basename $0).log
-if [ -n "$V_EDIT" ] ; then
-	subl $V_LOGFILE
-	exit 0
-fi
-if [ -n "$V_TAIL" ] ; then
-	echo $V_LOGFILE
-	tail -F $V_LOGFILE
+V_DATABASE=$HOME/.gtimelog/window-monitor.db
+
+if [ -n "$V_CREATE_DATABASE" ] ; then
+	[ -n "$V_VERBOSE" ] && echo "Creating the SQLite database in $V_DATABASE"
+	[ -f "$V_DATABASE" ] && rm $V_DATABASE
+
+	echo "DROP TABLE IF EXISTS windows;
+CREATE TABLE windows (window_id INTEGER PRIMARY KEY AUTOINCREMENT, start TIMESTAMP, end TIMESTAMP, class VARCHAR(100), title VARCHAR(1000));
+" | sqlite3 $V_DATABASE
+
+	# http://stackoverflow.com/questions/75675/how-do-i-dump-the-data-of-some-sqlite3-tables
+	sqlite3 $V_DATABASE .dump
 	exit 0
 fi
 
-[ -z "$V_DRY_RUN" ] && echo >> $V_LOGFILE
+if [ ! -f "$V_DATABASE" ] ; then
+	echo -e "The SQLite database $V_DATABASE doesn't exist. Please create it with the option -C.\n"
+	usage 2
+fi
+
+if [ -n "$V_OPEN_DATABASE" ] ; then
+	sqlite3 $V_DATABASE
+	exit 0
+fi
 
 echo 'Starting the window monitor...'
 while true ; do
@@ -77,7 +91,8 @@ while true ; do
 			if [ $V_DIFF -ge 2 ] && [ -n "${V_LAST_DATE["$V_APP"]}" ] ; then
 				V_MESSAGE=${V_LAST_DATE["$V_APP"]}"\t$V_NOW\t$V_APP\t"${V_LAST_TITLE["$V_APP"]}
 				echo -e $V_MESSAGE
-				[ -z "$V_DRY_RUN" ] && echo -e $V_MESSAGE >> $V_LOGFILE
+				[ -z "$V_DRY_RUN" ] && echo "INSERT INTO windows (start, end, class, title)
+VALUES ('${V_LAST_DATE["$V_APP"]}', '$V_NOW', '$V_APP', \"${V_LAST_TITLE["$V_APP"]}\");" | sqlite3 $V_DATABASE
 			fi
 
 			V_LAST_TITLE["$V_APP"]=$V_TITLE
