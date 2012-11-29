@@ -1,10 +1,10 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Monitors system windows.
+Monitor system windows.
 
--n  Dry-run (doesn't write the log file)
--C  Create the SQLite database (recreate if it already exists)
+-n  Dry-run (doesn't write the database file)
+-C  Create the SQLite database (if it doesn't exist)
 -D  Open the SQLite database
 -v  Verbose mode
 -h  Help"
@@ -22,7 +22,7 @@ while getopts "nCDvh" OPTION ; do
 	D)	V_OPEN_DATABASE=1 ;;
 	v)	V_VERBOSE=1 ;;
 	h)	usage 1	;;
-	?)	usage 1	;;
+	?)	usage 2	;;
 	esac
 done
 
@@ -43,7 +43,7 @@ V_DATABASE=$HOME/.gtimelog/window-monitor.db
 
 if [ -n "$V_CREATE_DATABASE" ] ; then
 	[ -n "$V_VERBOSE" ] && echo "Creating the SQLite database in $V_DATABASE"
-	[ -f "$V_DATABASE" ] && rm $V_DATABASE
+	[ -f "$V_DATABASE" ] && echo -e "The SQLite database $V_DATABASE already exists. Please remove it manually first.\n" && usage 3
 
 	echo "DROP TABLE IF EXISTS windows;
 CREATE TABLE windows (window_id INTEGER PRIMARY KEY AUTOINCREMENT, start TIMESTAMP, end TIMESTAMP, class VARCHAR(100), title VARCHAR(1000));

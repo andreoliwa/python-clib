@@ -4,7 +4,7 @@ usage() {
 Log every time someone annoys and/or interrupts me.
 
 OPTIONS
--C  Create the SQLite database (recreate if it already exists)
+-C  Create the SQLite database (if it doesn't exist)
 -D  Open the SQLite database
 -v  Verbose mode
 -h  Help"
@@ -33,7 +33,7 @@ V_DATABASE=$V_ANNOYANCES_DIR/annoyances.db
 
 if [ -n "$V_CREATE_DATABASE" ] ; then
 	[ -n "$V_VERBOSE" ] && echo "Creating the SQLite database in $V_DATABASE"
-	[ -f "$V_DATABASE" ] && rm $V_DATABASE
+	[ -f "$V_DATABASE" ] && echo -e "The SQLite database $V_DATABASE already exists. Please remove it manually first.\n" && usage 3
 
 	# http://stackoverflow.com/questions/200309/sqlite-database-default-time-value-now
 	echo "DROP TABLE IF EXISTS people;
