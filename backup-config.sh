@@ -51,11 +51,7 @@ save_if_needed apt-key-exportall.txt "keys" "apt-key exportall"
 V_IGNORE_LIST='.teamviewer;google-chrome;.pulse;share;.adobe;.kde;autostart'
 V_IMPLODE_IGNORE_LIST="-wholename */${V_IGNORE_LIST//;/\/* -or -wholename *\/}/*"
 save_if_needed symbolic-links.txt "symbolic links" "find ~ -type l -not \( $V_IMPLODE_IGNORE_LIST \) -exec ls -l --color=auto '{}' \;"
-
-if [ -d "/net" ] ; then
-	save_if_needed net-directory.txt "/net/ directory structure" "find /net/ -mindepth 2 -maxdepth 2 -type d | sort -u"
-fi
-
+[ -d "/net" ] && save_if_needed net-directory.txt "/net/ directory structure" "find /net/ -mindepth 2 -maxdepth 2 -type d | sort -u"
 save_if_needed pip-freeze.txt "pip modules" "pip freeze --local"
 save_if_needed user-crontab.txt "user crontab" "crontab -l"
 save_if_needed gtimelog.tar "gtimelog files" "tar -czf $V_CONFIG_DIR/gtimelog.tar $HOME/.gtimelog/*"
@@ -66,7 +62,7 @@ save_if_needed etc.tar "some configuration files" "tar -czf $V_CONFIG_DIR/etc.ta
 
 save_if_needed etc-all.tar "all configuration files from /etc" "sudo tar -czf $V_CONFIG_DIR/etc-all.tar -C / etc"
 
-# Pidgin log compression shoul be on the crontab someday
+# Pidgin log compression should be in the crontab someday
 #pidgin-tar-logs.sh
 
 echo "Done."

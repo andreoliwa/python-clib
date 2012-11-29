@@ -32,6 +32,9 @@ export G_WORK_VPN_PASSWORD=
 # Root source directory at work. E.g.: ~/src, ~/local-src, ~/work...
 export G_WORK_SRC_DIR=
 
+# URL for the timeclock application used to record every person's working time
+export G_WORK_TIMECLOCK_URL=
+
 # The root URL of your work SVN server, without the backslash at the end.
 # E.g.: http://svn.ops.corp.mycompany.com/svn
 export G_SVN_URL=

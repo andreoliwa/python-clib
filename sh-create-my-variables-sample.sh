@@ -1,5 +1,5 @@
 #!/bin/bash
-V_SAMPLE_FILE=my-variables.sample
+V_SAMPLE_FILE=$(dirname $0)/my-variables.sample
 V_MY_VARIABLES_FILE=~/bin/my-variables
 
 usage() {
