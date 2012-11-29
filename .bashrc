@@ -163,4 +163,7 @@ if [ -z "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
 	if [ -f /etc/bash_completion ] && ! shopt -oq posix ; then
 		. /etc/bash_completion
 	fi
+
+	# http://askubuntu.com/questions/85612/how-to-call-zenity-from-cron-script
+	xhost local:$(whoami) > /dev/null
 fi

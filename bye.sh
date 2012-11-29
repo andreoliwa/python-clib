@@ -46,6 +46,6 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	dropbox start
 	[ -n "$(type -p deluge-gtk)" ] && deluge-gtk &
 
-	google-chrome http://ponto.cpndin.com.br/ &
+	google-chrome $G_WORK_TIMECLOCK_URL &
 	zenity --warning --text="For safety reasons, please put the headphones inside the drawer."
 fi
