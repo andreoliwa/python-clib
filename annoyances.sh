@@ -3,6 +3,20 @@ usage() {
 	echo "Usage: $(basename $0) [options]
 Log every time someone annoys and/or interrupts me.
 
+Installation and use:
+
+1) Run this script to create the SQLite database:
+$ $0 -C
+
+2) Configure your keyboard shortcut on Ubuntu:
+System Settings / Keyboard / Shortcuts / Custom Shortcuts
+Choose a key combination and fill in the full path of the script:
+$0
+
+3) Press the shortcut once to record your starting time.
+
+4) Press the shortcut again to fill in the information about who interrupted you.
+
 OPTIONS
 -C  Create the SQLite database (if it doesn't exist)
 -D  Open the SQLite database
@@ -89,8 +103,8 @@ end_annoyance() {
 	# Join people together, separated by the pipe character
 	V_PEOPLE="$(echo "SELECT name FROM people ORDER BY counter DESC, added;" | sqlite3 $V_DATABASE | tr "\n" '|' | sed 's/|\+$//')"
 
-	V_LISTBOX="--list-values='$V_PEOPLE' --column-values=Who --add-list=Who"
-	V_INFO="$(eval "zenity --title='Stopping annoyance started on $V_START_TIME' --width=700 --forms $V_LISTBOX --add-entry=Who --add-entry=What --text='Annoyance info'")"
+	V_LISTBOX="--list-values='$V_PEOPLE' --column-values=Who --add-list='Who interrupted me?'"
+	V_INFO="$(eval "zenity --title='Stopping annoyance started on $V_START_TIME' --width=900 --forms $V_LISTBOX --add-entry='Add someone who is not on the list above:' --add-entry='What happened?' --text='Fill information about the interruption'")"
 	[ -n "$V_VERBOSE" ] && echo "Information chosen in zenity window: $V_INFO"
 
 	if [ -z "$V_INFO" ] ; then
