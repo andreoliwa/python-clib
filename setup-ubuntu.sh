@@ -170,7 +170,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_DEV='sublime-text-dev vim vim-gui-common exuberant-ctags meld'
 	V_GIT='git git-core git-doc git-svn git-gui gitk'
 	V_PYTHON='python-pip python-dev python-matplotlib'
-	V_BROWSER='google-chrome-stable lynx-cur'
+	V_BROWSER='chromium-browser google-chrome-stable lynx-cur'
 	V_VIRTUALBOX='virtualbox virtualbox-guest-x11 virtualbox-guest-utils virtualbox-qt'
 	V_JAVA='openjdk-6-jre icedtea6-plugin'
 	V_AUDIO='rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 ruby vorbisgain eyed3 python-eyed3 rubyripper gcstar'
@@ -183,7 +183,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_GIMP='gimp gimp-data gimp-plugin-registry gimp-data-extras'
 	V_HANDBRAKE='handbrake-cli handbrake-gtk'
 	V_PHP='php5-cli php-pear php5-xsl apache2-utils graphviz graphviz-doc phpmyadmin'
-	V_PIDGIN='indicator-messages pidgin pidgin-awayonlock pidgin-data pidgin-extprefs pidgin-guifications pidgin-hotkeys pidgin-lastfm pidgin-libnotify pidgin-otr pidgin-plugin-pack pidgin-ppa pidgin-privacy-please pidgin-themes'
+	V_PIDGIN='indicator-messages pidgin pidgin-awayonlock pidgin-data pidgin-extprefs pidgin-guifications pidgin-hotkeys pidgin-lastfm pidgin-libnotify pidgin-otr pidgin-plugin-pack pidgin-ppa pidgin-privacy-please pidgin-themes pidgin-dev pidgin-dbg'
 	V_MYSQL='mysql-client mysql-common mysql-server mysql-workbench libmysqlclient-dev libmysqlclient18 sqlite3'
 	V_SUBVERSION='subversion'
 	V_USENET='sabnzbdplus sabnzbdplus-theme-mobile'
@@ -286,22 +286,22 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 		firefox $V_RESCUE_TIME_URL
 	fi
 
-	V_COUCHPOTATO_DIR=/opt/couchpotato
-	if [ ! -d "$V_COUCHPOTATO_DIR" ] ; then
-		echo 'Instalando Couch Potato'
-		# https://github.com/RuudBurger/CouchPotato/blob/master/README.md
-		sudo mkdir $V_COUCHPOTATO_DIR
-		chmod -R 777 $V_COUCHPOTATO_DIR
-		git clone https://github.com/RuudBurger/CouchPotato.git $V_COUCHPOTATO_DIR
-		cd $V_COUCHPOTATO_DIR
-		sudo cp initd.ubuntu /etc/init.d/couchpotato
-		V_ETC_DEFAULT_COUCHPOTATO=/etc/default/couchpotato
-		sudo cp default.ubuntu $V_ETC_DEFAULT_COUCHPOTATO
-		sudo sed -i 's#^\(APP_PATH=\).*#\1/opt/couchpotato#' $V_ETC_DEFAULT_COUCHPOTATO
-		sudo sed -i 's#^\(RUN_AS=\).*#\1wagner#' $V_ETC_DEFAULT_COUCHPOTATO
-		sudo chmod a+x /etc/init.d/couchpotato
-		sudo update-rc.d couchpotato defaults
-	fi
+	#V_COUCHPOTATO_DIR=/opt/couchpotato
+	#if [ ! -d "$V_COUCHPOTATO_DIR" ] ; then
+	#	echo 'Instalando Couch Potato'
+	#	# https://github.com/RuudBurger/CouchPotato/blob/master/README.md
+	#	sudo mkdir $V_COUCHPOTATO_DIR
+	#	chmod -R 777 $V_COUCHPOTATO_DIR
+	#	git clone https://github.com/RuudBurger/CouchPotato.git $V_COUCHPOTATO_DIR
+	#	cd $V_COUCHPOTATO_DIR
+	#	sudo cp initd.ubuntu /etc/init.d/couchpotato
+	#	V_ETC_DEFAULT_COUCHPOTATO=/etc/default/couchpotato
+	#	sudo cp default.ubuntu $V_ETC_DEFAULT_COUCHPOTATO
+	#	sudo sed -i 's#^\(APP_PATH=\).*#\1/opt/couchpotato#' $V_ETC_DEFAULT_COUCHPOTATO
+	#	sudo sed -i 's#^\(RUN_AS=\).*#\1wagner#' $V_ETC_DEFAULT_COUCHPOTATO
+	#	sudo chmod a+x /etc/init.d/couchpotato
+	#	sudo update-rc.d couchpotato defaults
+	#fi
 
 	# http://www.webupd8.org/2012/09/subliminal-command-line-tool-to.html
 	V_SUBLIMINAL="$(type -p subliminal)"

@@ -40,6 +40,8 @@ save_if_needed() {
 	fi
 }
 
+save_if_needed etc-all.tar "all configuration files from /etc" "sudo tar -czf $V_CONFIG_DIR/etc-all.tar -C / etc"
+
 echo "Saving some config files (bash, git, beets) in $V_CONFIG_DIR"
 cp -ruvL ~/.bash* ~/.beetsconfig ~/.git* $V_CONFIG_DIR
 
@@ -59,8 +61,6 @@ save_if_needed gtimelog.tar "gtimelog files" "tar -czf $V_CONFIG_DIR/gtimelog.ta
 V_FILES_TO_BACKUP="/etc/hosts /etc/crontab /etc/resolv.conf /etc/environment /etc/fstab /etc/lynx-cur/lynx.cfg /etc/apt/sources.list /etc/apt/sources.list.d/ /etc/samba/smb.conf /boot/grub/grub.cfg /etc/grub.d/40_custom /etc/default/couchpotato /etc/apache2/sites-available/*"
 [ -f etc/crypttab ] && V_FILES_TO_BACKUP="$V_FILES_TO_BACKUP etc/crypttab"
 save_if_needed etc.tar "some configuration files" "tar -czf $V_CONFIG_DIR/etc.tar -C / $V_FILES_TO_BACKUP"
-
-save_if_needed etc-all.tar "all configuration files from /etc" "sudo tar -czf $V_CONFIG_DIR/etc-all.tar -C / etc"
 
 # Pidgin log compression should be in the crontab someday
 #pidgin-tar-logs.sh

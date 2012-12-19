@@ -1,24 +1,32 @@
 #!/bin/bash
 usage() {
-	echo "Usage: $(basename $0) [options] <parte do nome do filme>
-Procura um filme usando parte do nome (wildcards sao permitidos).
+	echo "Usage: $(basename $0) [options] <part of the movie's name>
+Search a movie using parte of its name (wildcards are allowed).
 
+-e  Search everywhere, not only the all movies directory
 -h  Help"
+	exit $1
 }
 
-while getopts "h" OPTION ; do
+V_SEARCH_EVERYWHERE=
+while getopts "eh" OPTION ; do
 	case $OPTION in
-	h)
-		usage
-		exit 1
-		;;
-	?)
-		usage
-		exit 1
-		;;
+		e)	V_SEARCH_EVERYWHERE=1 ;;
+		h)	usage 1 ;;
+		?)	usage 1 ;;
 	esac
 done
 
+V_ALL=All/
+V_MAX_DEPTH=1
+if [ -n "$V_SEARCH_EVERYWHERE" ] ; then
+	V_ALL=
+	V_MAX_DEPTH=2
+
+	# Removes the first argument from the command line
+	shift
+fi
+
 V_ARGS="$*"
 V_QUERY="$(echo $V_ARGS | tr ' ' '*')"
-find $G_MOVIES_HDD/Movies/All/ -mindepth 1 -maxdepth 1 -type d -iname "*${V_QUERY}*"
+find $G_MOVIES_HDD/Movies/$V_ALL -mindepth 1 -maxdepth $V_MAX_DEPTH -type d -iname "*${V_QUERY}*"

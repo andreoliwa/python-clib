@@ -40,6 +40,7 @@ for V_APP in $V_APPS ; do
 done
 
 V_DATABASE=$HOME/.gtimelog/window-monitor.db
+echo "Database file: $V_DATABASE"
 
 if [ -n "$V_CREATE_DATABASE" ] ; then
 	[ -n "$V_VERBOSE" ] && echo "Creating the SQLite database in $V_DATABASE"
