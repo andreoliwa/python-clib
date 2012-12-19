@@ -52,7 +52,7 @@ if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	sleep 5
 	wmctrl-move-windows.sh
 
-	google-chrome $G_WORK_TIMECLOCK_URL &
+	xdg-open $G_WORK_TIMECLOCK_URL &
 fi
 
 V_HOME_OFFICE="$(git-home-office.sh -d)"

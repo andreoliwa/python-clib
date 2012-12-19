@@ -27,7 +27,7 @@ while getopts "nCDvh" OPTION ; do
 done
 
 V_VLC='vlc.Vlc'
-V_APPS="$V_VLC feh.feh google-chrome"
+V_APPS="$V_VLC feh.feh google-chrome chromium-browser"
 
 declare -A V_LAST_TITLE
 declare -A V_LAST_DATE

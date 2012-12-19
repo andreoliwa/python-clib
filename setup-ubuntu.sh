@@ -277,12 +277,12 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 
 	V_RESCUE_TIME="$(type -p rescuetime)"
 	if [ -z "$V_RESCUE_TIME" ] ; then
-		google-chrome https://www.rescuetime.com/setup/installer?os=amd64deb
+		xdg-open https://www.rescuetime.com/setup/installer?os=amd64deb
 		zenity --info --text='Faça login na página do Rescue Time antes de continuar'
 		sudo dpkg -i $G_DOWNLOAD_DIR/rescuetime_current_amd64.deb
-		zenity --info --text='Instale os plugins do RescueTime no Chrome e Firefox'
+		zenity --info --text='Install RescueTime plugins in all browsers'
 		V_RESCUE_TIME_URL=https://www.rescuetime.com/setup/download
-		google-chrome $V_RESCUE_TIME_URL
+		xdg-open $V_RESCUE_TIME_URL
 		firefox $V_RESCUE_TIME_URL
 	fi
 

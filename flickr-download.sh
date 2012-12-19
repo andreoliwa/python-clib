@@ -14,7 +14,7 @@ for V_URL in $(cat) ; do
 
 	if [ -z "$V_ORIGINAL_FILE_URL" ] ; then
 		echo "  Foto nao encontrada, abrindo a URL original: $V_URL"
-		google-chrome "$V_URL"
+		xdg-open "$V_URL"
 	fi
 
 	V_EXTENSION="${V_ORIGINAL_FILE_URL##*.}"

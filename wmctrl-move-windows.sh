@@ -4,6 +4,7 @@
 wmctrl -r 'Buddy List' -t 0 # Moves Pidgin to first desktop, if its window is open
 wmctrl-set-position.sh sublime_text.sublime-text-2 0 0,0
 wmctrl-set-position.sh gnome-terminal.Gnome-terminal 0 1400,100
+wmctrl-set-position.sh chromium-browser.Chromium-browser 0 0,0
 wmctrl-set-position.sh google-chrome.Google-chrome 0 0,0
 
 # Second desktop (1)
