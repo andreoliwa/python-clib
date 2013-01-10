@@ -67,7 +67,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_DEJA_DUP" ] ; then
 	if [ -d $V_BACKUP_EXTERNAL_DIR ] ; then
 		echo "Syncing /var/backups/$HOSTNAME/ to $V_BACKUP_EXTERNAL_DIR/"
 		if [ -d $V_BACKUP_EXTERNAL_DIR ] ; then
-			rsync -havuzO $V_DRY_RUN --progress --modify-window=2 /var/backups/$HOSTNAME/ $V_BACKUP_EXTERNAL_DIR/
+			rsync -htrOvz $V_DRY_RUN --progress --modify-window=2 /var/backups/$HOSTNAME/ $V_BACKUP_EXTERNAL_DIR/
 		fi
 		echo "Done."
 	fi
@@ -77,7 +77,8 @@ fi
 if [ -n "$V_ALL" ] || [ -n "$V_VIDEOS" ] ; then
 	if [ -d $V_BACKUP_EXTERNAL_DIR ] ; then
 		echo "Linux videos backup (Stanford and others)"
-		rsync -havuzO $V_DRY_RUN --delete --progress --modify-window=2 ~/Videos/ $V_BACKUP_EXTERNAL_DIR/Videos/
+		mkdir -p $V_BACKUP_EXTERNAL_DIR/Videos/
+		rsync -htrOvz $V_DRY_RUN --delete --progress --modify-window=2 ~/Videos/ $V_BACKUP_EXTERNAL_DIR/Videos/
 	fi
 fi
 
@@ -136,6 +137,14 @@ if [ -n "$V_ALL" ] || [ -n "$V_WINDOWS" ] ; then
 		sync_dir "Users/Wagner/Videos"
 	fi
 fi
+
+#for V_DESTINATION_DIR in $V_BACKUP_DIRS ; do
+#	echo "Linux Dropbox"
+#	echo "rm -rvf -p $V_BACKUP_EXTERNAL_DIR/home/Dropbox/"
+#	V_EXCLUDE='--exclude=lost+found/ --exclude=.dropbox.cache  --exclude=lost+found/ --exclude=.cache'
+#	rsync -htrOvz $V_DRY_RUN --progress --modify-window=2 $V_EXCLUDE ~/Dropbox/ $V_DESTINATION_DIR/Users/Wagner/Dropbox/  # --delete
+#	echo "$V_DESTINATION_DIR/Users/Wagner/Dropbox/"
+#done
 
 if [ -n "$V_JAQUE" ] ; then
 	V_SOURCE_DIR='/media/OS'

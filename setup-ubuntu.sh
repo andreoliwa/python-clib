@@ -166,7 +166,7 @@ nltk.download()'
 if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	# Common
 	echo 'Instalando pacotes comuns'
-	V_SYSTEM='bash-completion nautilus-open-terminal nautilus-dropbox synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba'
+	V_SYSTEM='bash-completion nautilus-open-terminal nautilus-dropbox synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba iftop bum'
 	V_DEV='sublime-text-dev vim vim-gui-common exuberant-ctags meld'
 	V_GIT='git git-core git-doc git-svn git-gui gitk'
 	V_PYTHON='python-pip python-dev python-matplotlib'

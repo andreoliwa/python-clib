@@ -15,8 +15,8 @@ for V_GRACE in pidgin rhythmbox ; do
 	pkill $V_GRACE
 done
 
-# Show download folder if not empty
-[ $(find $G_DOWNLOAD_DIR -type f | wc -l) -ne 0 ] && nautilus $G_DOWNLOAD_DIR
+# Show download folder if not empty (ignoring hidden files and dirs)
+[ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && nautilus $G_DOWNLOAD_DIR
 
 # Search for 'Trash' directories I might have left in the servers
 [ -d /net/ ] &&	V_FIND=$(find /net/ -maxdepth 3 -type d -name '.Trash-*') && [ -n "$V_FIND" ] && echo "$V_FIND" | xargs nautilus
