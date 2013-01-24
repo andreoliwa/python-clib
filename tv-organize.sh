@@ -99,7 +99,7 @@ for V_ROOT in $V_ALL_ROOTS ; do
 
 	# Create series links
 	if [ -n "$V_MAKE_LINKS" ] ; then
-		V_ALL_SERIES=$(diff -qr $V_SERIES_DIR/All/ $V_SERIES_DIR/$V_ROOT/ | grep -v -e "^Only in $V_SERIES_DIR/All" | grep '^Only in' | sed 's#\(/.\+\): #\1/#' | cut -b 9-)
+		V_ALL_SERIES=$(diff -qr $V_SERIES_DIR/All/ $V_SERIES_DIR/$V_ROOT/ 2>/dev/null | grep -v -e "^Only in $V_SERIES_DIR/All" | grep '^Only in' | sed 's#\(/.\+\): #\1/#' | cut -b 9-)
 		V_ALL_DIRS=
 		for V_SERIES_DIR_FILE in $V_ALL_SERIES ; do
 			[ -f "$V_SERIES_DIR_FILE" ] && V_ALL_DIRS="${V_ALL_DIRS}$(dirname "$V_SERIES_DIR_FILE")

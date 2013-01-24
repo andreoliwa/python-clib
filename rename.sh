@@ -8,31 +8,34 @@ OPTIONS
 -n   Dry run
 -s   rename-files-using-the-slug-notation
 -c   RenameFilesUsingTheCamelCaseNotation
+-e   Add string at the end of the filename (suffix before the extension)
 -h   Help"
 	exit $1
 }
 
 V_CASE_OPTION=
 V_DRY_RUN=
-while getopts "ncsh" OPTION ; do
+V_SUFFIX=
+while getopts "nsce:h" OPTION ; do
 	case $OPTION in
 	n)	V_DRY_RUN=1 ;;
-	c)	V_CASE_OPTION='-c' ;;
 	s)	V_CASE_OPTION='-s' ;;
+	c)	V_CASE_OPTION='-c' ;;
+	e)	V_SUFFIX=$OPTARG ;;
 	h)	usage 1 ;;
 	?)	usage 2 ;;
 	esac
 done
 
-if [ -z "$V_CASE_OPTION" ] ; then
-	echo "Please chose slug or camel case."
+if [ -z "$V_CASE_OPTION" -a -z "$V_SUFFIX" ] ; then
+	echo "Please choose slug, camel case, or a suffix."
 	usage 3
 fi
 
 V_ALL_FILES=
 while (( "$#" )) ; do
 	# If it's not an option, assume it's a file
-	if [ "${1:0:1}" != '-' ] ; then
+	if [ "${1:0:1}" != '-' -a "$1" != "$V_SUFFIX" ] ; then
 		if [ -z "$V_ALL_FILES" ] ; then
 			V_ALL_FILES="$1"
 		else
@@ -61,8 +64,13 @@ for V_FULL_PATH in $V_ALL_FILES ; do
 		V_EXTENSION=".${V_EXTENSION}"
 	fi
 
-	# Normalizes only the basename without extension
-	V_NEW_BASENAME_WITHOUT_EXTENSION="$(normalize.sh ${V_CASE_OPTION} ${V_BASENAME_WITHOUT_EXTENSION} | sed -e 's/^-\+//' -e 's/-\+$//')"
+	if [ -n "$V_CASE_OPTION" ] ; then
+		# Normalizes only the basename without extension
+		V_NEW_BASENAME_WITHOUT_EXTENSION="$(normalize.sh ${V_CASE_OPTION} ${V_BASENAME_WITHOUT_EXTENSION} | sed -e 's/^-\+//' -e 's/-\+$//')"
+	else
+		# Add the suffix before the extension
+		V_NEW_BASENAME_WITHOUT_EXTENSION="${V_BASENAME_WITHOUT_EXTENSION}${V_SUFFIX}"
+	fi
 
 	# Lowercase extension
 	V_NEW_EXTENSION="$(echo "$V_EXTENSION" | tr '[:upper:]' '[:lower:]')"
@@ -73,7 +81,7 @@ for V_FULL_PATH in $V_ALL_FILES ; do
 		if [ -z "$V_DRY_RUN" ] ; then
 			mv -v "$V_FULL_PATH" "$V_NEW_FULL_PATH"
 		else
-			echo "(dry-run) $V_FULL_PATH -> $V_NEW_FULL_PATH"
+			echo "(DRY-RUN) $V_FULL_PATH -> $V_NEW_FULL_PATH"
 		fi
 	fi
 done

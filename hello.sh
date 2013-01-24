@@ -2,7 +2,7 @@
 
 . ~/.bashrc
 
-[ -z "$(pidof rescuetime)" ] && rescuetime &
+[ -z "$(pidof rescuetime)" -a "$(type -p rescuetime)" ] && rescuetime &
 
 echo "Hostname=$HOSTNAME"
 echo "Work computer=$G_WORK_COMPUTER"

@@ -187,9 +187,9 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_MYSQL='mysql-client mysql-common mysql-server mysql-workbench libmysqlclient-dev libmysqlclient18 sqlite3'
 	V_SUBVERSION='subversion'
 	V_USENET='sabnzbdplus sabnzbdplus-theme-mobile'
-	V_RESCUE_TIME='xprintidle gtk2-engines-pixbuf'
+	V_RESCUETIME='xprintidle gtk2-engines-pixbuf'
 	V_CI='php5-curl php-pear php5-dev jenkins postfix'
-	V_ALL="$V_SYSTEM $V_DEV $V_GIT $V_PYTHON $V_BROWSER $V_VIRTUALBOX $V_JAVA $V_AUDIO $V_UNITY $V_TWEAK $V_ARCHIVE $V_UTIL $V_WORKSPACES $V_GIMP $V_HANDBRAKE $V_PHP $V_PIDGIN $V_MYSQL $V_SUBVERSION $V_USENET $V_RESCUE_TIME $V_CI"
+	V_ALL="$V_SYSTEM $V_DEV $V_GIT $V_PYTHON $V_BROWSER $V_VIRTUALBOX $V_JAVA $V_AUDIO $V_UNITY $V_TWEAK $V_ARCHIVE $V_UTIL $V_WORKSPACES $V_GIMP $V_HANDBRAKE $V_PHP $V_PIDGIN $V_MYSQL $V_SUBVERSION $V_USENET $V_RESCUETIME $V_CI"
 	sleep 1 && sudo apt-get --yes install $V_ALL
 	if [ $? -gt 0 ] ; then
 		echo -e "${COLOR_LIGHT_RED}No package was installed nor upgraded, because there was an error in some of the packages. Fix them before continuing."
@@ -275,16 +275,16 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 
 	setup_python
 
-	V_RESCUE_TIME="$(type -p rescuetime)"
-	if [ -z "$V_RESCUE_TIME" ] ; then
-		xdg-open https://www.rescuetime.com/setup/installer?os=amd64deb
-		zenity --info --text='Faça login na página do Rescue Time antes de continuar'
-		sudo dpkg -i $G_DOWNLOAD_DIR/rescuetime_current_amd64.deb
-		zenity --info --text='Install RescueTime plugins in all browsers'
-		V_RESCUE_TIME_URL=https://www.rescuetime.com/setup/download
-		xdg-open $V_RESCUE_TIME_URL
-		firefox $V_RESCUE_TIME_URL
-	fi
+	#V_RESCUETIME="$(type -p rescuetime)"
+	#if [ -z "$V_RESCUETIME" ] ; then
+	#	xdg-open https://www.rescuetime.com/setup/installer?os=amd64deb
+	#	zenity --info --text='Faça login na página do Rescue Time antes de continuar'
+	#	sudo dpkg -i $G_DOWNLOAD_DIR/rescuetime_current_amd64.deb
+	#	zenity --info --text='Install RescueTime plugins in all browsers'
+	#	V_RESCUETIME_URL=https://www.rescuetime.com/setup/download
+	#	xdg-open $V_RESCUETIME_URL
+	#	firefox $V_RESCUETIME_URL
+	#fi
 
 	#V_COUCHPOTATO_DIR=/opt/couchpotato
 	#if [ ! -d "$V_COUCHPOTATO_DIR" ] ; then

@@ -49,6 +49,6 @@ if [ -n "$V_CAMEL_CASE" ]; then
 		V_NEW_WORD=$(echo $V_WORD | tr '[:upper:]' '[:lower:]' | awk 'BEGIN{OFS=FS=""}{$1=toupper($1);print}')
 		V_NEW_TEXT="$V_NEW_TEXT $V_NEW_WORD"
 	done
-	echo "${V_NEW_TEXT:1}"
+	echo "${V_NEW_TEXT:1}" | tr --squeeze-repeats ' '
 	IFS=$V_OLD_IFS
 fi

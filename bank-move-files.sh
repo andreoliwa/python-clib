@@ -1,5 +1,7 @@
 #!/bin/bash
-for V_OFX_FILE in $(find $G_DOWNLOAD_DIR/*.ofx 2> /dev/null) ; do
+cd $G_DOWNLOAD_DIR
+
+for V_OFX_FILE in $(find *.ofx 2> /dev/null) ; do
 	echo
 	echo "File: $V_OFX_FILE"
 
