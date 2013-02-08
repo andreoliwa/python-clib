@@ -75,7 +75,7 @@ while true ; do
 		V_TITLE=$(echo "$V_CURRENT_WINDOWS" | grep -e "^$V_APP" | sed "s/^${V_APP} ${HOSTNAME}\|N\/A //g")
 		if [ "$V_APP" = "$V_VLC" ] ; then
 			if [ "$V_TITLE" != ' VLC media player' ] ; then
-				V_TITLE=$(lsof -F -c vlc | grep /media/ | sed "s#.\+${G_BACKUP_HDD}/system/##")
+				V_TITLE=$(lsof -F -c vlc | grep /media/ | sed "s#.\+/system/##")
 			fi
 		fi
 

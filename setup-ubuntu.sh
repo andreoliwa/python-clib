@@ -123,6 +123,9 @@ fi
 
 if [ -n "$V_ALL" ] || [ -n "$V_UPDATE" ] ; then
 	sudo apt-get update
+
+	# Close the "Software Update" window after the update
+	pkill -9 update-manager
 fi
 
 if [ -n "$V_ALL" ] || [ -n "$V_UPGRADE" ] ; then
@@ -188,7 +191,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_SUBVERSION='subversion'
 	V_USENET='sabnzbdplus sabnzbdplus-theme-mobile'
 	V_RESCUETIME='xprintidle gtk2-engines-pixbuf'
-	V_CI='php5-curl php-pear php5-dev jenkins postfix'
+	V_CI='php5-curl php5-dev jenkins postfix'
 	V_ALL="$V_SYSTEM $V_DEV $V_GIT $V_PYTHON $V_BROWSER $V_VIRTUALBOX $V_JAVA $V_AUDIO $V_UNITY $V_TWEAK $V_ARCHIVE $V_UTIL $V_WORKSPACES $V_GIMP $V_HANDBRAKE $V_PHP $V_PIDGIN $V_MYSQL $V_SUBVERSION $V_USENET $V_RESCUETIME $V_CI"
 	sleep 1 && sudo apt-get --yes install $V_ALL
 	if [ $? -gt 0 ] ; then
