@@ -53,6 +53,10 @@ if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	wmctrl-move-windows.sh
 
 	xdg-open $G_WORK_TIMECLOCK_URL &
+
+	dropbox-shutdown.sh -v
+else
+	dropbox start
 fi
 
 V_HOME_OFFICE="$(git-home-office.sh -d)"
@@ -62,6 +66,7 @@ There are pending remote work hours to send:
 $(git-home-office.sh -td)" &
 fi
 
+echo 'Sleeping 30 seconds...'
 sleep 30
 
 indicator-workspaces-restart.sh

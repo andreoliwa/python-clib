@@ -48,4 +48,6 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 
 	xdg-open $G_WORK_TIMECLOCK_URL &
 	zenity --warning --text="For safety reasons, please put the headphones inside the drawer."
+else
+	dropbox-shutdown.sh -v
 fi
