@@ -205,7 +205,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	# E: Unable to correct problems, you have held broken packages.
 	V_TWEAK='ubuntu-tweak myunity y-ppa-manager unsettings'
 	V_ARCHIVE='unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack lha arj cabextract file-roller'
-	V_UTIL='keepassx gtimelog cortina backintime-gnome gtg'
+	V_UTIL='keepassx gtimelog cortina backintime-gnome gtg thunderbird'
 	V_WORKSPACES='indicator-workspaces python-wnck'
 	V_GIMP='gimp gimp-data gimp-plugin-registry gimp-data-extras'
 	V_HANDBRAKE='handbrake-cli handbrake-gtk'
@@ -255,10 +255,8 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	fi
 	V_CODECS='non-free-codecs libxine1-ffmpeg gxine mencoder totem-mozilla icedax mpg321'
 	V_PROGRAMMING='ruby1.9.1 bzr'
-	V_MEDIA='vlc-nox k3b'
+	V_MEDIA='vlc-nox k3b libaudiofile1 libmad0 normalize-audio'
 	V_DESKTOP='xubuntu-desktop lubuntu-desktop'
-	# mpg123libjpeg-progs
-	# libaudiofile1 libmad0 normalize-audio
 	sleep 1 && sudo apt-get --yes $V_ACTION $V_CODECS $V_PROGRAMMING $V_MEDIA $V_DESKTOP
 	show_error 'installing or removing some of the packages for home only'
 
