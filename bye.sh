@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Always start Dropbox before going away
+dropbox start
+
 if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	backup-full.sh -f
 fi
@@ -43,11 +46,11 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	done
 
 	# Start resource-consuming applications before going home
-	dropbox start
 	[ -n "$(type -p deluge-gtk)" ] && deluge-gtk &
 
 	xdg-open $G_WORK_TIMECLOCK_URL &
 	zenity --warning --text="For safety reasons, please put the headphones inside the drawer."
 else
+	# At home, wait until everything is synced before shutting Dropbox down
 	dropbox-shutdown.sh -v
 fi

@@ -24,7 +24,7 @@ done
 [ -n "$V_VERBOSE" ] && echo "Waiting for Dropbox to be idle..."
 
 V_STATUS=
-while [ "$V_STATUS" != 'Idle' ] ; do
+while [ "$V_STATUS" != 'Idle' -a "$V_STATUS" != "Dropbox isn't running!" ] ; do
 	sleep 1
 	V_STATUS="$(dropbox status)"
 	[ -n "$V_VERBOSE" ] && echo $V_STATUS
