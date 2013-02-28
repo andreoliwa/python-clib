@@ -39,10 +39,10 @@ fi
 
 # Show files in download dirs
 V_FIND=$(find $HOME -type d -not -empty -and \( -name 2both -or -name $V_DOC_DIR -or -wholename '*deluge*downloads' \))
-[ -n "$V_FIND" ] && echo "$V_FIND" | xargs $G_FILE_MANAGER
+[ -n "$V_FIND" ] && echo "$V_FIND" | xargs xdg-open
 
 # Show download folder if not empty (ignoring hidden files and dirs)
-[ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && $G_FILE_MANAGER $G_DOWNLOAD_DIR
+[ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && xdg-open $G_DOWNLOAD_DIR
 
 if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	# Returns to the first workspace
@@ -66,7 +66,11 @@ There are pending remote work hours to send:
 $(git-home-office.sh -td)" &
 fi
 
-echo 'Sleeping 30 seconds...'
-sleep 30
+V_SECONDS=10
+echo "Sleeping $V_SECONDS seconds..."
+sleep $V_SECONDS
 
-indicator-workspaces-restart.sh
+# Show the workspaces indicator when we're not in a XFCE session
+if [ -z "$(pidof xfce4-session)" ] ; then
+	indicator-workspaces-restart.sh
+fi

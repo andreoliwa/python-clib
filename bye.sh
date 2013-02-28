@@ -22,10 +22,10 @@ for V_GRACE in pidgin rhythmbox ; do
 done
 
 # Show download folder if not empty (ignoring hidden files and dirs)
-[ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && $G_FILE_MANAGER $G_DOWNLOAD_DIR
+[ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && xdg-open $G_DOWNLOAD_DIR
 
 # Search for 'Trash' directories I might have left in the servers
-[ -d /net/ ] &&	V_FIND=$(find /net/ -maxdepth 3 -type d -name '.Trash-*') && [ -n "$V_FIND" ] && echo "$V_FIND" | xargs $G_FILE_MANAGER
+[ -d /net/ ] &&	V_FIND=$(find /net/ -maxdepth 3 -type d -name '.Trash-*') && [ -n "$V_FIND" ] && echo "$V_FIND" | xargs xdg-open
 
 backup-config.sh
 

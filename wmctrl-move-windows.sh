@@ -19,7 +19,7 @@ wmctrl-set-position.sh 1 1400,0 thunderbird
 # Fourth desktop (3)
 wmctrl-set-position.sh 3 0,0 update-manager.Update-manager
 wmctrl-set-position.sh 3 1400,0 rhythmbox.Rhythmbox
-for V_WINDOW_ID in $(wmctrl -lx | grep -i $G_FILE_MANAGER | cut -d ' ' -f 1) ; do
+for V_WINDOW_ID in $(wmctrl -lx | grep -i -e nautilus -e thunar | cut -d ' ' -f 1) ; do
 	# Move all file manager windows using their IDs
 	wmctrl -i -r $V_WINDOW_ID -t 3
 done

@@ -28,6 +28,6 @@ done
 
 V_PDF_FILES=$(ls *.pdf 2> /dev/null)
 if [ -n "$V_PDF_FILES" ] ; then
-	$G_FILE_MANAGER $G_DOWNLOAD_DIR
-	$G_FILE_MANAGER $G_BANK_STATEMENTS_DIR
+	xdg-open $G_DOWNLOAD_DIR
+	xdg-open $G_BANK_STATEMENTS_DIR
 fi
