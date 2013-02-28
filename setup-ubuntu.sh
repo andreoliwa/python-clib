@@ -272,7 +272,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_UBUNTU_ONE='ubuntuone-client ubuntuone-client-gnome ubuntuone-control-panel ubuntuone-couch ubuntuone-installer'
 	V_GWIBBER='gwibber gwibber-service gwibber-service-facebook gwibber-service-identica gwibber-service-twitter libgwibber-gtk2 libgwibber2'
 	V_EMPATHY='empathy empathy-common nautilus-sendto-empathy'
-	V_MEDIA='tagtool wallch'
+	V_MEDIA='tagtool wallch subdownloader'
 	V_UNITY='classicmenu-indicator recoll'
 	V_UTIL='keepass2'
 	V_MONGO='mongodb-clients'
@@ -280,12 +280,16 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	sleep 1 && sudo apt-get --yes purge $V_GNOME $V_UBUNTU_ONE $V_GWIBBER $V_EMPATHY $V_MEDIA $V_UNITY $V_UTIL $V_MONGO $V_TORRENT
 	show_error 'purging some of the packages'
 
+	#------------------------------------------------------------------------------------------------------------------------
+	# PURGING
+	#------------------------------------------------------------------------------------------------------------------------
 	show_header "Purging 'unable to locate' packages, one at a time, and ignoring eventual errors"
 	V_UNABLE_TO_LOCATE='ejecter unity-lens-pidgin recoll-lens unity-lens-utilities unity-scope-calculator google-chrome-stable'
 	for V_PURGE_ONE_PACKAGE in $V_UNABLE_TO_LOCATE ; do
 		sudo apt-get --yes purge $V_PURGE_ONE_PACKAGE
 	done
 
+	show_header "Autoremoving unused packages"
 	sleep 1 && sudo apt-get --yes autoremove
 	show_error 'autoremoving some of the packages'
 
