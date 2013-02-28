@@ -4,4 +4,4 @@ V_START_DIR="$1"
 
 echo "Checking NTFS filenames in directory $V_START_DIR"
 echo "Directories endind with spaces or points:"
-find $V_START_DIR -type d -regex '.+[ \.]$' -exec nautilus '{}' \;
+find $V_START_DIR -type d -regex '.+[ \.]$' -exec $G_FILE_MANAGER '{}' \;

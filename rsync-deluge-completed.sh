@@ -4,15 +4,15 @@ usage() {
 Copy completed Deluge downloads to an external HDD, using rsync.
 
 OPTIONS
--o  Open directory in Nautilus after rsync is over
+-o  Open directory in $G_FILE_MANAGER after rsync is over
 -h  Help"
 	exit $1
 }
 
-V_OPEN_IN_NAUTILUS=
+V_OPEN_IN_FILE_MANAGER=
 while getopts "oh" V_ARG ; do
 	case $V_ARG in
-		o)	V_OPEN_IN_NAUTILUS=1 ;;
+		o)	V_OPEN_IN_FILE_MANAGER=1 ;;
 		h)	usage 1 ;;
 		?)	usage 2 ;;
 	esac
@@ -37,9 +37,9 @@ rsync -havuz --progress --modify-window=2 $V_DELUGE $V_HD/
 echo "Checking again..."
 rsync -havuz --progress --modify-window=2 $V_DELUGE $V_HD/
 
-if [ -n "$V_OPEN_IN_NAUTILUS" ] ; then
-	echo "Opening $V_HD in nautilus"
-	nautilus $V_HD
+if [ -n "$V_OPEN_IN_FILE_MANAGER" ] ; then
+	echo "Opening $V_HD in $G_FILE_MANAGER"
+	$G_FILE_MANAGER $V_HD
 else
 	echo -e "\nShowing Deluge files in $V_DELUGE"
 	ls -l --color=auto $V_DELUGE

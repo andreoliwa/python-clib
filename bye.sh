@@ -1,7 +1,10 @@
 #!/bin/bash
 
 # Always start Dropbox before going away
-dropbox start
+V_PID_DROPBOX="$(pidof dropbox)"
+if [ -z "$V_PID_DROPBOX" ] ; then
+	dropbox start
+fi
 
 if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	backup-full.sh -f
@@ -19,10 +22,10 @@ for V_GRACE in pidgin rhythmbox ; do
 done
 
 # Show download folder if not empty (ignoring hidden files and dirs)
-[ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && nautilus $G_DOWNLOAD_DIR
+[ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && $G_FILE_MANAGER $G_DOWNLOAD_DIR
 
 # Search for 'Trash' directories I might have left in the servers
-[ -d /net/ ] &&	V_FIND=$(find /net/ -maxdepth 3 -type d -name '.Trash-*') && [ -n "$V_FIND" ] && echo "$V_FIND" | xargs nautilus
+[ -d /net/ ] &&	V_FIND=$(find /net/ -maxdepth 3 -type d -name '.Trash-*') && [ -n "$V_FIND" ] && echo "$V_FIND" | xargs $G_FILE_MANAGER
 
 backup-config.sh
 
@@ -51,6 +54,12 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	xdg-open $G_WORK_TIMECLOCK_URL &
 	zenity --warning --text="For safety reasons, please put the headphones inside the drawer."
 else
+	if [ -z "$V_PID_DROPBOX" ] ; then
+		# If Dropbox wasn't started, then wait some time for it to load properly
+		echo 'Waiting for Dropbox to start...'
+		sleep 5
+	fi
+
 	# At home, wait until everything is synced before shutting Dropbox down
 	dropbox-shutdown.sh -v
 fi

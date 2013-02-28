@@ -39,10 +39,10 @@ fi
 
 # Show files in download dirs
 V_FIND=$(find $HOME -type d -not -empty -and \( -name 2both -or -name $V_DOC_DIR -or -wholename '*deluge*downloads' \))
-[ -n "$V_FIND" ] && echo "$V_FIND" | xargs nautilus
+[ -n "$V_FIND" ] && echo "$V_FIND" | xargs $G_FILE_MANAGER
 
 # Show download folder if not empty (ignoring hidden files and dirs)
-[ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && nautilus $G_DOWNLOAD_DIR
+[ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && $G_FILE_MANAGER $G_DOWNLOAD_DIR
 
 if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	# Returns to the first workspace

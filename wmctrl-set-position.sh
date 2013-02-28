@@ -1,10 +1,11 @@
 #!/bin/bash
-TITLE=$1
-DESKTOP=$2
-COORD=$3
-SIZE=1000,800
+V_DESKTOP=$1
+V_COORD=$2
+V_TITLE=$3
+V_EXTRA=$4
+V_SIZE=1000,800
 
-wmctrl -x -r $TITLE -t $DESKTOP
-wmctrl -x -r $TITLE -b remove,maximized_vert,maximized_horz
-wmctrl -x -r $TITLE -e 0,$COORD,$SIZE
-wmctrl -x -r $TITLE -b add,maximized_vert,maximized_horz
+wmctrl -x $V_EXTRA -r $V_TITLE -t $V_DESKTOP
+wmctrl -x $V_EXTRA -r $V_TITLE -b remove,maximized_vert,maximized_horz
+wmctrl -x $V_EXTRA -r $V_TITLE -e 0,$V_COORD,$V_SIZE
+wmctrl -x $V_EXTRA -r $V_TITLE -b add,maximized_vert,maximized_horz

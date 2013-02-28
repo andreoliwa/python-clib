@@ -1,17 +1,17 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Automated Ubuntu setup for home and work computers.
+Automated Ubuntu/Lubuntu/Xubuntu setup for home and work computers.
 
-Antes de executar este script pela primeira vez:
-- Instale o Ubuntu em um PC ou VM;
-- Na VM, instale tambem o VBox Guest Additions (para poder compartilhar diretorios) e ative dispositivos USB.
+Before executng this script for the first time:
+- Install your flavor of Ubuntu in a PC or VM;
+- Inside the VM, install also VBox Guest Additions (so you can share the host computer's directories) and activate USB devices.
 
-  -a  Executa todas as opcoes abaixo.
-  -r  Atualiza repositorios PPA.
-  -u  Executa upgrade e dist-upgrade.
-  -i  Instala/desinstala pacotes.
-  -h  Help"
+-a  Execute all options below.
+-r  Update PPA repositories.
+-u  Execute upgrade and dist-upgrade.
+-i  Install/remove packages.
+-h  Help"
 	exit $1
 }
 
@@ -181,9 +181,12 @@ nltk.download()'
 }
 
 if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
-	# Common
+	#------------------------------------------------------------------------------------------------------------------------
+	# COMMON
+	#------------------------------------------------------------------------------------------------------------------------
 	show_header 'Installing common packages'
 	V_SYSTEM='bash-completion nautilus-open-terminal nautilus-dropbox synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba iftop bum'
+	V_DESKTOP='xubuntu-desktop lubuntu-desktop indicator-weather indicator-workspaces python-wnck cortina gnome-do'
 	V_DEV='sublime-text-dev vim vim-gui-common exuberant-ctags meld'
 	V_GIT='git git-core git-doc git-svn git-gui gitk'
 	V_PYTHON='python-pip python-dev python-matplotlib'
@@ -191,7 +194,6 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_VIRTUALBOX='virtualbox virtualbox-guest-x11 virtualbox-guest-utils virtualbox-qt'
 	V_JAVA='openjdk-6-jre icedtea6-plugin'
 	V_AUDIO='rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 ruby vorbisgain eyed3 python-eyed3 rubyripper gcstar'
-	V_UNITY='indicator-weather'
 	# lo-menubar
 	# Libre Office menu bar
 	# Some packages could not be installed. This may mean that you have
@@ -205,8 +207,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	# E: Unable to correct problems, you have held broken packages.
 	V_TWEAK='ubuntu-tweak myunity y-ppa-manager unsettings'
 	V_ARCHIVE='unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack lha arj cabextract file-roller'
-	V_UTIL='keepassx gtimelog cortina backintime-gnome gtg thunderbird'
-	V_WORKSPACES='indicator-workspaces python-wnck'
+	V_UTIL='keepassx gtimelog backintime-gnome gtg thunderbird'
 	V_GIMP='gimp gimp-data gimp-plugin-registry gimp-data-extras'
 	V_HANDBRAKE='handbrake-cli handbrake-gtk'
 	V_PHP='php5-cli php-pear php5-xsl apache2-utils graphviz graphviz-doc phpmyadmin'
@@ -216,7 +217,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_USENET='sabnzbdplus sabnzbdplus-theme-mobile'
 	V_RESCUETIME='xprintidle gtk2-engines-pixbuf'
 	V_CI='php5-curl php5-dev jenkins postfix'
-	V_ALL="$V_SYSTEM $V_DEV $V_GIT $V_PYTHON $V_BROWSER $V_VIRTUALBOX $V_JAVA $V_AUDIO $V_UNITY $V_TWEAK $V_ARCHIVE $V_UTIL $V_WORKSPACES $V_GIMP $V_HANDBRAKE $V_PHP $V_PIDGIN $V_MYSQL $V_SUBVERSION $V_USENET $V_RESCUETIME $V_CI"
+	V_ALL="$V_SYSTEM $V_DESKTOP $V_DEV $V_GIT $V_PYTHON $V_BROWSER $V_VIRTUALBOX $V_JAVA $V_AUDIO $V_TWEAK $V_ARCHIVE $V_UTIL $V_GIMP $V_HANDBRAKE $V_PHP $V_PIDGIN $V_MYSQL $V_SUBVERSION $V_USENET $V_RESCUETIME $V_CI"
 	sleep 1 && sudo apt-get --yes install $V_ALL
 	show_error 'installing or upgrading some of the packages'
 
@@ -229,7 +230,9 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 		sudo pip install -U beets
 	fi
 
-	# Work
+	#------------------------------------------------------------------------------------------------------------------------
+	# WORK
+	#------------------------------------------------------------------------------------------------------------------------
 	if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 		show_header 'Installing packages for working only'
 		V_ACTION=install
@@ -245,7 +248,9 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	sleep 1 && sudo apt-get --yes $V_ACTION $V_SYSTEM $V_SHARE $V_TORRENT $V_FTP $V_INDICATOR
 	show_error 'installing or removing some of the packages for working only'
 
-	# Home
+	#------------------------------------------------------------------------------------------------------------------------
+	# HOME
+	#------------------------------------------------------------------------------------------------------------------------
 	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
 		show_header 'Installing packages for home only'
 		V_ACTION=install
@@ -256,21 +261,23 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_CODECS='non-free-codecs libxine1-ffmpeg gxine mencoder totem-mozilla icedax mpg321'
 	V_PROGRAMMING='ruby1.9.1 bzr'
 	V_MEDIA='vlc-nox k3b libaudiofile1 libmad0 normalize-audio'
-	V_DESKTOP='xubuntu-desktop lubuntu-desktop'
-	sleep 1 && sudo apt-get --yes $V_ACTION $V_CODECS $V_PROGRAMMING $V_MEDIA $V_DESKTOP
+	sleep 1 && sudo apt-get --yes $V_ACTION $V_CODECS $V_PROGRAMMING $V_MEDIA
 	show_error 'installing or removing some of the packages for home only'
 
-	# Pacotes a remover
+	#------------------------------------------------------------------------------------------------------------------------
+	# REMOVE
+	#------------------------------------------------------------------------------------------------------------------------
 	show_header 'Purging unused packages (not used at home neither at work) '
 	V_GNOME='gnome-panel gnome-shell gnome-session-fallback gnome-tweak-tool docker kdebase-workspace-bin'
 	V_UBUNTU_ONE='ubuntuone-client ubuntuone-client-gnome ubuntuone-control-panel ubuntuone-couch ubuntuone-installer'
 	V_GWIBBER='gwibber gwibber-service gwibber-service-facebook gwibber-service-identica gwibber-service-twitter libgwibber-gtk2 libgwibber2'
 	V_EMPATHY='empathy empathy-common nautilus-sendto-empathy'
-	V_MEDIA='tagtool'
+	V_MEDIA='tagtool wallch'
 	V_UNITY='classicmenu-indicator recoll'
 	V_UTIL='keepass2'
 	V_MONGO='mongodb-clients'
-	sleep 1 && sudo apt-get --yes purge $V_GNOME $V_UBUNTU_ONE $V_GWIBBER $V_EMPATHY $V_MEDIA $V_UNITY $V_UTIL $V_MONGO
+	V_TORRENT='transmission'
+	sleep 1 && sudo apt-get --yes purge $V_GNOME $V_UBUNTU_ONE $V_GWIBBER $V_EMPATHY $V_MEDIA $V_UNITY $V_UTIL $V_MONGO $V_TORRENT
 	show_error 'purging some of the packages'
 
 	show_header "Purging 'unable to locate' packages, one at a time, and ignoring eventual errors"
