@@ -74,6 +74,7 @@ ppa:webupd8team/jupiter
 ppa:webupd8team/sublime-text-2
 ppa:webupd8team/y-ppa-manager
 ppa:yannubuntu/boot-repair
+deb http://download.virtualbox.org/virtualbox/debian precise contrib
 deb http://ppa.launchpad.net/geod/ppa-geod/ubuntu natty main
 deb http://ppa.launchpad.net/midnightflash/ppa/ubuntu natty main
 deb http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu oneiric main
@@ -113,6 +114,10 @@ deb http://pkg.jenkins-ci.org/debian binary/
 		wget http://archive.getdeb.net/install_deb/$V_GETDEB_FILE
 		sudo dpkg -i $V_GETDEB_FILE
 	fi
+
+	# Oracle Virtual Box
+	# https://www.virtualbox.org/wiki/Linux_Downloads
+	wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add -
 
 	# http://pkg.jenkins-ci.org/debian/
 	show_header 'Adding Jenkins key'
@@ -191,7 +196,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_GIT='git git-core git-doc git-svn git-gui gitk'
 	V_PYTHON='python-pip python-dev python-matplotlib'
 	V_BROWSER='chromium-browser lynx-cur'
-	V_VIRTUALBOX='virtualbox virtualbox-guest-x11 virtualbox-guest-utils virtualbox-qt'
+	V_VIRTUALBOX='virtualbox-4.2 dkms virtualbox-guest-x11 virtualbox-guest-utils'
 	V_JAVA='openjdk-6-jre icedtea6-plugin'
 	V_AUDIO='rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 ruby vorbisgain eyed3 python-eyed3 rubyripper gcstar'
 	# lo-menubar
