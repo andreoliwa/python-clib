@@ -191,7 +191,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	#------------------------------------------------------------------------------------------------------------------------
 	show_header 'Installing common packages'
 	V_SYSTEM='bash-completion nautilus-open-terminal nautilus-dropbox synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba iftop bum'
-	V_DESKTOP='xubuntu-desktop lubuntu-desktop indicator-weather indicator-workspaces python-wnck cortina gnome-do'
+	V_DESKTOP='xubuntu-desktop lubuntu-desktop indicator-weather indicator-workspaces python-wnck cortina gnome-do indicator-multiload'
 	V_DEV='sublime-text-dev vim vim-gui-common exuberant-ctags meld'
 	V_GIT='git git-core git-doc git-svn git-gui gitk'
 	V_PYTHON='python-pip python-dev python-matplotlib'
