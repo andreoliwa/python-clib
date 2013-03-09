@@ -28,7 +28,7 @@ install_some_basic_programs() {
 
 	sudo apt-get install -y sqlite3 libsqlite3-dev libssl-dev openssl zlib1g zlib1g-dev zlibc libxslt-dev libxml2-dev git default-jre g++ build-essential
 	sudo apt-get install -y texinfo compizconfig-settings-manager chromium-browser libreadline6-dev
-	sudo apt-get install -y ruby rubygems
+	sudo apt-get install -y ruby rails rubygems
 }
 
 install_ruby() {

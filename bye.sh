@@ -28,16 +28,7 @@ done
 [ -d /net/ ] &&	V_FIND=$(find /net/ -maxdepth 3 -type d -name '.Trash-*') && [ -n "$V_FIND" ] && echo "$V_FIND" | xargs xdg-open
 
 backup-config.sh
-
-for V_MEDIA in $(find /media/ -maxdepth 2 -type d -name '*samsung*' 2> /dev/null) ; do
-	echo "Unmounting $V_MEDIA"
-	sudo umount $V_MEDIA
-
-	V_LABEL=$(basename $V_MEDIA)
-	V_DEVICE=$(sudo blkid -L $V_LABEL)
-	echo "Safely removing $V_LABEL (${V_DEVICE%?})"
-	udisks --detach ${V_DEVICE%?}
-done
+safe-remove.sh -d samsung
 
 if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	# Copies the "Standards Documentation" to the QA directory

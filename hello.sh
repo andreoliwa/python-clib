@@ -4,6 +4,8 @@
 
 [ -z "$(pidof rescuetime)" -a "$(type -p rescuetime)" ] && rescuetime &
 
+[ -z "$(pidof gnome-do)" -a "$(type -p gnome-do)" ] && gnome-do &
+
 echo "Hostname=$HOSTNAME"
 echo "Work computer=$G_WORK_COMPUTER"
 echo "Home computer=$G_HOME_COMPUTER"
