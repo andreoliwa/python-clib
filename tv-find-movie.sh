@@ -9,8 +9,8 @@ Search a movie using parte of its name (wildcards are allowed).
 }
 
 V_SEARCH_EVERYWHERE=
-while getopts "eh" OPTION ; do
-	case $OPTION in
+while getopts "eh" V_ARG ; do
+	case $V_ARG in
 		e)	V_SEARCH_EVERYWHERE=1 ;;
 		h)	usage 1 ;;
 		?)	usage 1 ;;

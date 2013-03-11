@@ -3,13 +3,15 @@ usage() {
 	echo "Usage: $(basename $0) [-h]
 Parse do log de janela ativa.
 
-  -h  Help"
+OPTIONS
+-h  Help"
+	exit $1
 }
 
 V_LOGFILE=$HOME/.gtimelog/active-window.log
 
-while getopts "h" OPTION ; do
-	case $OPTION in
+while getopts "h" V_ARG ; do
+	case $V_ARG in
 		h)
 			usage
 			exit 1

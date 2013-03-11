@@ -4,7 +4,7 @@ usage() {
 Shut Dropbox down only when it's idle.
 
 OPTIONS
--v  Verbose mode
+-v  Verbose
 -n  Dry-run
 -h  Help"
 	exit $1

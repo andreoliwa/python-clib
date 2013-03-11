@@ -3,7 +3,7 @@ usage() {
 	echo "Usage: $(basename $0) [options]
 Descrição do script.
 
-OPÇÕES
+OPTIONS
 -h  Help"
 	exit $1
 }

@@ -7,8 +7,8 @@ Show files from a Git commit.
 	exit $1
 }
 
-while getopts "h" OPTION ; do
-	case $OPTION in
+while getopts "h" V_ARG ; do
+	case $V_ARG in
 	h)
 		usage
 		exit 1

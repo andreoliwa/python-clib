@@ -11,8 +11,8 @@ Change the case of text.
 
 V_CAMEL_CASE=
 V_SLUG=
-while getopts "csh" OPTION ; do
-	case $OPTION in
+while getopts "csh" V_ARG ; do
+	case $V_ARG in
 	c)	V_CAMEL_CASE=1 ;;
 	s)	V_SLUG=1 ;;
 	h)	usage 1 ;;

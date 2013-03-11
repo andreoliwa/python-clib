@@ -21,8 +21,8 @@ fi
 V_PROCESSLIST=
 V_ACTIVE=
 V_SECONDS=2
-while getopts "epas:h" OPTION ; do
-	case $OPTION in
+while getopts "epas:h" V_ARG ; do
+	case $V_ARG in
 	e)
 		subl $V_FILE &
 		exit

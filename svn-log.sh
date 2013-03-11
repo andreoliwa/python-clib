@@ -10,8 +10,8 @@ Mostra revisoes recentes do SVN (por repositorio e usuario).
 -u  Login (completo ou parcial) de um usuario SVN (default: todos os usuarios).
 -d  Numero de dias atras, para pesquisar nos logs (default: ultimas 24 horas a partir de agora).
 -r  Numero de revisao inicial; se informado, a data acima e ignorada.
--v  Verbose mode
--h  Help."
+-v  Verbose
+-h  Help"
 	exit $1
 }
 
@@ -23,8 +23,8 @@ V_USER=' ' # O default precisa ser um espaco, por causa de um grep la embaixo
 V_START_DATE=
 V_REVISION=
 V_VERBOSE=
-while getopts "hn1ws:u:d:r:v" OPTION ; do
-	case $OPTION in
+while getopts "hn1ws:u:d:r:v" V_ARG ; do
+	case $V_ARG in
 		n)	V_NUMBER_ONLY=1 ;;
 		1)	V_ONE_LINE=1 ;;
 		w)	V_URL=1 ;;

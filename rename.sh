@@ -16,8 +16,8 @@ OPTIONS
 V_CASE_OPTION=
 V_DRY_RUN=
 V_SUFFIX=
-while getopts "nsce:h" OPTION ; do
-	case $OPTION in
+while getopts "nsce:h" V_ARG ; do
+	case $V_ARG in
 	n)	V_DRY_RUN=1 ;;
 	s)	V_CASE_OPTION='-s' ;;
 	c)	V_CASE_OPTION='-c' ;;

@@ -22,8 +22,8 @@ V_SAVE_NFO=
 V_MAKE_LINKS=
 V_CREATE_RUNTIME_DIR=
 V_CREATE_GENRE_DIR=
-while getopts "nvkilrgh" OPTION ; do
-	case $OPTION in
+while getopts "nvkilrgh" V_ARG ; do
+	case $V_ARG in
 		n)	V_DRY_RUN=1 ;;
 		v)	V_VERBOSE='-v' ;;
 		k)	V_KILL=1 ;;

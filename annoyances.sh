@@ -20,7 +20,7 @@ $0
 OPTIONS
 -C  Create the SQLite database (if it doesn't exist)
 -D  Open the SQLite database
--v  Verbose mode
+-v  Verbose
 -h  Help"
 	exit $1
 }

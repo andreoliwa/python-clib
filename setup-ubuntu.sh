@@ -21,19 +21,18 @@ V_UPGRADE=
 V_INSTALL_PACKAGES=
 V_ALL=
 V_SOMETHING_CHOSEN=
-while getopts "ruifah" OPTION
-do
-	case $OPTION in
-		r)	V_PPA=1
-			V_SOMETHING_CHOSEN=1 ;;
-		u)	V_UPGRADE=1
-			V_SOMETHING_CHOSEN=1 ;;
-		i)	V_INSTALL_PACKAGES=1
-			V_SOMETHING_CHOSEN=1 ;;
-		a)	V_ALL=1
-			V_SOMETHING_CHOSEN=1 ;;
-		h)	usage 1 ;;
-		?)	usage 1 ;;
+while getopts "ruifah" V_ARG ; do
+	case $V_ARG in
+	r)	V_PPA=1
+		V_SOMETHING_CHOSEN=1 ;;
+	u)	V_UPGRADE=1
+		V_SOMETHING_CHOSEN=1 ;;
+	i)	V_INSTALL_PACKAGES=1
+		V_SOMETHING_CHOSEN=1 ;;
+	a)	V_ALL=1
+		V_SOMETHING_CHOSEN=1 ;;
+	h)	usage 1 ;;
+	?)	usage 1 ;;
 	esac
 done
 
@@ -198,7 +197,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_BROWSER='chromium-browser lynx-cur'
 	V_VIRTUALBOX='virtualbox-4.2 dkms virtualbox-guest-x11 virtualbox-guest-utils'
 	V_JAVA='openjdk-6-jre icedtea6-plugin'
-	V_AUDIO='rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 ruby vorbisgain eyed3 python-eyed3 rubyripper gcstar'
+	V_AUDIO='rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 vorbisgain eyed3 python-eyed3 rubyripper gcstar'
 	# lo-menubar
 	# Libre Office menu bar
 	# Some packages could not be installed. This may mean that you have
@@ -264,7 +263,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 		V_ACTION=purge
 	fi
 	V_CODECS='non-free-codecs libxine1-ffmpeg gxine mencoder totem-mozilla icedax mpg321'
-	V_PROGRAMMING='ruby1.9.1 bzr'
+	V_PROGRAMMING='bzr'
 	V_MEDIA='vlc-nox k3b libaudiofile1 libmad0 normalize-audio'
 	sleep 1 && sudo apt-get --yes $V_ACTION $V_CODECS $V_PROGRAMMING $V_MEDIA
 	show_error 'installing or removing some of the packages for home only'

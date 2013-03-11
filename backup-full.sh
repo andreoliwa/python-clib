@@ -27,8 +27,8 @@ V_WINDOWS=
 V_SOMETHING_CHOSEN=
 V_JAQUE=
 V_PIX=
-while getopts "nancdfvwjph" OPTION ; do
-	case $OPTION in
+while getopts "nancdfvwjph" V_ARG ; do
+	case $V_ARG in
 	n)	V_DRY_RUN=-n ;;
 	a)	V_SOMETHING_CHOSEN=1 ; V_ALL=1 ;;
 	c)	V_SOMETHING_CHOSEN=1 ; V_CONFIG=1 ;;

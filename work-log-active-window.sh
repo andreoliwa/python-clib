@@ -6,26 +6,21 @@ Execute sempre em background (&).
 
 -t  Executa tail -f no log
 -h  Help"
+	exit $1
 }
 
 V_LOGFILE=$HOME/.gtimelog/active-window.log
 
-while getopts "ht" OPTION ; do
-	case $OPTION in
-		t)
-			V_COMMAND="tail -f $V_LOGFILE"
-			echo $V_COMMAND
-			$V_COMMAND
-			exit
-			;;
-		h)
-			usage
-			exit 1
-			;;
-		?)
-			usage
-			exit
-			;;
+while getopts "ht" V_ARG ; do
+	case $V_ARG in
+	t)
+		V_COMMAND="tail -f $V_LOGFILE"
+		echo $V_COMMAND
+		$V_COMMAND
+		exit
+		;;
+	h)	usage 1 ;;
+	?)	usage 2 ;;
 	esac
 done
 

@@ -19,8 +19,8 @@ V_GREP=
 V_REPORT=
 V_DRY_RUN=
 V_SHOW_LAST_REPORT=
-while getopts "tdg:rnlh" OPTION ; do
-	case $OPTION in
+while getopts "tdg:rnlh" V_ARG ; do
+	case $V_ARG in
 		t)	V_TOTAL=1 ;;
 		d)	V_DETAIL=1 ;;
 		g)	V_GREP="$V_GREP --grep=$OPTARG" ;;

@@ -3,29 +3,21 @@ usage() {
 	echo "Usage: $(basename $0) -d <data> [-sh]
 Retorna o nome do dia da semana, em portugues.
 
+OPTIONS
 -d  Data desejada
 -s  Nome curto
 -h  Help"
+	exit $1
 }
 
 V_SHORT=
 V_DATE=
-while getopts "d:sh" OPTION ; do
-	case $OPTION in
-		d)
-			V_DATE=$OPTARG
-			;;
-		s)
-			V_SHORT=1
-			;;
-		h)
-			usage
-			exit 1
-			;;
-		?)
-			usage
-			exit
-			;;
+while getopts "d:sh" V_ARG ; do
+	case $V_ARG in
+	d)	V_DATE=$OPTARG ;;
+	s)	V_SHORT=1 ;;
+	h)	usage 1 ;;
+	?)	usage 2 ;;
 	esac
 done
 

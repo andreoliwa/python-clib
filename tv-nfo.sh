@@ -5,14 +5,14 @@ Cria um arquivo movie.nfo no diretorio recebido via stdin (resultado da busca co
 Exemplo:
 tv-find-movie.sh filme | $(basename $0) -i 12345
 
-  -i   URL ou id do filme no IMDB
+-i  URL ou id do filme no IMDB
 -h  Help"
 	exit $1
 }
 
 V_ID=
-while getopts "hi:" OPTION ; do
-	case $OPTION in
+while getopts "hi:" V_ARG ; do
+	case $V_ARG in
 	i)
 		V_ID=$OPTARG
 		;;

@@ -4,7 +4,8 @@
 
 [ -z "$(pidof rescuetime)" -a "$(type -p rescuetime)" ] && rescuetime &
 
-[ -z "$(pidof gnome-do)" -a "$(type -p gnome-do)" ] && gnome-do &
+# Can't use "pidof gnome-do" because gnome-do is not the name of the executaable, so it doesn't have a PID
+[ -z "$(ps aux | grep -v grep | grep gnome-do)" -a "$(type -p gnome-do)" ] && gnome-do &
 
 echo "Hostname=$HOSTNAME"
 echo "Work computer=$G_WORK_COMPUTER"

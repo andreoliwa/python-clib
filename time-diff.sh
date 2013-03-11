@@ -13,8 +13,8 @@ When no starting and ending times are supplied, read data from STDIN.
 
 V_START_TIME=
 V_END_TIME=
-while getopts "s:e:h" OPTION ; do
-	case $OPTION in
+while getopts "s:e:h" V_ARG ; do
+	case $V_ARG in
 	s)	V_START_TIME=$OPTARG ;;
 	e)	V_END_TIME=$OPTARG ;;
 	h)	usage 1 ;;

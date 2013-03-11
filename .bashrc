@@ -166,4 +166,7 @@ if [ -z "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
 
 	# http://askubuntu.com/questions/85612/how-to-call-zenity-from-cron-script
 	xhost local:$(whoami) > /dev/null
+else
+	### Added by the Heroku Toolbelt
+	export PATH="$PATH:/usr/local/heroku/bin"
 fi

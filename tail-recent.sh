@@ -4,7 +4,7 @@ usage() {
 Searches directories looking for recently modified files, and tails them.
 
 OPTIONS
--h   Help"
+-h  Help"
 	exit $1
 }
 

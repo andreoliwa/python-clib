@@ -4,11 +4,13 @@ usage() {
 Soma horarios recebidos via stdin.
 Aceita horarios no formatos hh:mm:ss e hh:mm.
 
+OPTIONS
 -h  Help"
+	exit $1
 }
 
-while getopts "h" OPTION ; do
-	case $OPTION in
+while getopts "h" V_ARG ; do
+	case $V_ARG in
 	h)
 		usage
 		exit 1
@@ -19,7 +21,6 @@ while getopts "h" OPTION ; do
 		;;
 	esac
 done
-
 
 # http://unstableme.blogspot.com.br/2009/12/awk-sum-two-times-of-hh-mm-ss-format.html
 # http://stackoverflow.com/questions/3096259/bash-command-to-sum-a-column-of-numbers

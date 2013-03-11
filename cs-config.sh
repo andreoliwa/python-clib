@@ -9,8 +9,8 @@ Show PHP Code Sniffer configuration.
 }
 
 V_CONFIG=
-while getopts "ch" OPTION ; do
-	case $OPTION in
+while getopts "ch" V_ARG ; do
+	case $V_ARG in
 	c)
 		V_CONFIG=1
 		;;

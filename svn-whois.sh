@@ -3,15 +3,15 @@ usage() {
 	echo "Usage: $(basename $0) [opções]
 Mostra usuários e seus ambientes.
 
-OPÇÔES
--u   Usuário (parte do login) ou número do ambiente
+OPTIONS
+-u  Usuário (parte do login) ou número do ambiente
 -h  Help"
 	exit $1
 }
 
 V_USER='='
-while getopts "n:u:h" OPTION ; do
-	case $OPTION in
+while getopts "n:u:h" V_ARG ; do
+	case $V_ARG in
 	u)
 		V_USER=$OPTARG
 		;;

@@ -6,7 +6,7 @@ Monitor system windows.
 -n  Dry-run (doesn't write the database file)
 -C  Create the SQLite database (if it doesn't exist)
 -D  Open the SQLite database
--v  Verbose mode
+-v  Verbose
 -h  Help"
 	exit $1
 }
@@ -15,8 +15,8 @@ V_DRY_RUN=
 V_CREATE_DATABASE=
 V_OPEN_DATABASE=
 V_VERBOSE=
-while getopts "nCDvh" OPTION ; do
-	case $OPTION in
+while getopts "nCDvh" V_ARG ; do
+	case $V_ARG in
 	n)	V_DRY_RUN=1 ;;
 	C)	V_CREATE_DATABASE=1 ;;
 	D)	V_OPEN_DATABASE=1 ;;

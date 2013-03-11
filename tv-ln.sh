@@ -3,10 +3,10 @@ usage() {
 	echo "Usage: $(basename $0) [options]
 Cria hardlinks para um diretorio de filmes.
 
-  -s   Diretorio origem
-  -t   Diretorio alvo
-  -r   Nova raiz (Wagner, Jaque, Both)
-  -m   Caminho do filme ou legenda (resultado de um find)
+-s  Diretorio origem
+-t  Diretorio alvo
+-r  Nova raiz (Wagner, Jaque, Both)
+-m  Caminho do filme ou legenda (resultado de um find)
 -h  Help"
 	exit $1
 }
@@ -15,8 +15,8 @@ V_SOURCE_DIR=
 V_TARGET_DIR=
 V_NEW_ROOT_PLACE=
 V_MOVIE_FILE=
-while getopts "s:t:r:m:h" OPTION ; do
-	case $OPTION in
+while getopts "s:t:r:m:h" V_ARG ; do
+	case $V_ARG in
 	s)
 		V_SOURCE_DIR=$OPTARG
 		;;

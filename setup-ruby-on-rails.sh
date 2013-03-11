@@ -2,6 +2,7 @@
 usage() {
 	echo "Usage: $(basename $0) [options]
 Automated Ruby on Rails setup.
+See also http://rubyonrails.org/download
 
 Original comments from Berkeley's SaaS Course setup script:
 # this script configures a VirtualBox VM to work with following book versions:
@@ -10,25 +11,49 @@ Original comments from Berkeley's SaaS Course setup script:
 # you'll need to provide root password ('password') once at startup
 # please note this script is fragile, as public download urls may change
 
+-v  Verbose
 -h  Help"
 	exit $1
 }
 
-while getopts "h" OPTION
-do
-	case $OPTION in
-		h)	usage 1 ;;
-		?)	usage 1 ;;
+V_VERBOSE=
+while getopts "vh" V_ARG ; do
+	case $V_ARG in
+	v)	V_VERBOSE=1 ;;
+	h)	usage 1 ;;
+	?)	usage 1 ;;
 	esac
 done
 
-install_some_basic_programs() {
-	#sudo apt-get update
-	# sudo apt-get upgrade -y
+V_UN_PREFIX=
 
+header() {
+	echo '------------------------------------------------------------------'
+	echo $*
+	echo '------------------------------------------------------------------'
+}
+
+install_gem() {
+	V_GEM=$1
+	[ -n "$V_VERBOSE" ] && V_GEM_VERBOSE=--verbose
+
+	header $V_GEM $V_GEM_VERBOSE
+	sudo gem ${V_UN_PREFIX}install $V_GEM $V_GEM_VERBOSE
+}
+
+install_essentials() {
+	#sudo apt-get update
+	#sudo apt-get upgrade -y
+
+	header 'Essential packages'
 	sudo apt-get install -y sqlite3 libsqlite3-dev libssl-dev openssl zlib1g zlib1g-dev zlibc libxslt-dev libxml2-dev git default-jre g++ build-essential
-	sudo apt-get install -y texinfo compizconfig-settings-manager chromium-browser libreadline6-dev
-	sudo apt-get install -y ruby rails rubygems
+	sudo apt-get install -y texinfo chromium-browser libreadline6-dev
+
+	header 'Ruby and gems'
+	sudo apt-get install -y ruby1.9.3 rubygems1.8 rake
+
+	header 'Rails'
+	install_gem rails # -v 3.1.0
 }
 
 install_ruby() {
@@ -54,34 +79,43 @@ install_rubygems() {
 }
 
 install_a_bunch_of_gems() {
-	cd
-	sudo gem install rails --verbose # -v 3.1.0
-	sudo gem install rspec-rails --verbose # -v 2.6.1
-	sudo gem install cucumber --verbose # -v 1.0.6
-	sudo gem install nokogiri --verbose # -v 1.5.0
-	sudo gem install capybara --verbose # -v 1.1.1
-	sudo gem install rcov --verbose # -v 0.9.10
-	sudo gem install haml --verbose # -v 3.1.3
-	sudo gem install sqlite3 --verbose # -v 1.3.4
-	sudo gem install uglifier --verbose # -v 1.0.3
-	sudo gem install heroku --verbose # -v 2.8.0
-	sudo gem install execjs --verbose
-	sudo gem install therubyracer --verbose
-	sudo gem install flog --verbose
-	sudo gem install flay --verbose
-	sudo gem install reek --verbose
-	sudo gem install rails_best_practices --verbose
-	# sudo gem install churn --verbose
-	# sudo gem install chronic --verbose # -v 0.3.0
-	# sudo gem install metric_fu --verbose
-	sudo gem install bundler --verbose
-	sudo gem install haml --verbose
-	sudo gem install simplecov --verbose
-	sudo gem install factory_girl --verbose
-	sudo gem install ruby-tmdb --verbose
-	sudo gem install taps --verbose
-	sudo gem install thinking-sphinx --verbose
-	sudo gem install ruby-debug19 --verbose
+	install_gem rspec-rails # -v 2.6.1
+	install_gem cucumber # -v 1.0.6
+	install_gem nokogiri # -v 1.5.0
+	install_gem capybara # -v 1.1.1
+
+	# **** Ruby 1.9 is not supported. Please switch to simplecov ****
+	# install_gem rcov # -v 0.9.10
+	install_gem simplecov
+
+	install_gem sqlite3 # -v 1.3.4
+	install_gem uglifier # -v 1.0.3
+
+	# The heroku gem has been deprecated and replaced with the Heroku Toolbelt. Download and install from: https://toolbelt.heroku.com
+	# install_gem heroku # -v 2.8.0
+	wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
+
+	# http://stackoverflow.com/questions/9202324/execjs-could-not-find-a-javascript-runtime-but-execjs-and-therubyracer-are-in
+	install_gem execjs
+	install_gem therubyracer
+
+	install_gem flog
+	install_gem flay
+	install_gem reek
+	install_gem rails_best_practices
+	# install_gem churn
+	# install_gem chronic # -v 0.3.0
+	# install_gem metric_fu
+	install_gem bundler
+
+	#install_gem haml # -v 3.1.3
+	install_gem haml
+
+	install_gem factory_girl
+	install_gem ruby-tmdb
+	install_gem taps
+	install_gem thinking-sphinx
+	install_gem ruby-debug19
 }
 
 install_additional_rails_related_applications() {
@@ -234,7 +268,6 @@ rails_hack_to_add_therubyracer() {
 #gconftool -s --type bool /apps/update-notifier/auto_launch false
 #gconftool -s --type bool /apps/update-notifier/no_show_notifications true
 
-install_some_basic_programs
-install_additional_rails_related_applications
+#install_essentials
+#install_additional_rails_related_applications
 install_a_bunch_of_gems
-exit

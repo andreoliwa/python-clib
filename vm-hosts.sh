@@ -15,10 +15,10 @@ V_COPY_HOSTS=
 V_EDIT_EXTRA=
 while getopts "ceh" V_ARG ; do
 	case $V_ARG in
-		c)	V_COPY_HOSTS=1 ;;
-		e)	V_EDIT_EXTRA=1 ;;
-		h)	usage 1 ;;
-		?)	usage 2 ;;
+	c)	V_COPY_HOSTS=1 ;;
+	e)	V_EDIT_EXTRA=1 ;;
+	h)	usage 1 ;;
+	?)	usage 2 ;;
 	esac
 done
 

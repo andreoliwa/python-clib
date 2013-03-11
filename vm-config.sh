@@ -23,8 +23,8 @@ V_USERNAME=
 V_ALL_HOSTS=
 V_LIST_SERVERS=
 V_CONFIG_ALL=
-while getopts "u:s:lah" OPTION ; do
-	case $OPTION in
+while getopts "u:s:lah" V_ARG ; do
+	case $V_ARG in
 		u)	V_USERNAME=$OPTARG ;;
 		s)	V_ALL_HOSTS="${V_ALL_HOSTS} ${OPTARG}" ;;
 		l)	V_LIST_SERVERS=1 ;;
