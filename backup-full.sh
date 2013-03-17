@@ -109,7 +109,7 @@ function sync_dir() {
 	for V_DESTINATION_DIR in $V_BACKUP_DIRS ; do
 		echo
 		echo "Backing up $V_SOURCE_DIR/$1 directory in $V_DESTINATION_DIR/$1"
-		V_SYNC="rsync $V_DRY_RUN -trOlhDuzv --del --modify-window=2 --progress --exclude=lost+found/ --exclude=.dropbox.cache"
+		V_SYNC="rsync $V_DRY_RUN -trOlhDuzv --del --modify-window=2 --progress --exclude=lost+found/ --exclude=.dropbox.cache --exclude=.Trash-*"
 		echo $V_SYNC \"$V_SOURCE_DIR/$1/\" \"$V_DESTINATION_DIR/$1/\"
 		mkdir -p "$V_DESTINATION_DIR/$1/"
 		$V_SYNC "$V_SOURCE_DIR/$1/" "$V_DESTINATION_DIR/$1/"
