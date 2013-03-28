@@ -88,7 +88,7 @@ for V_SCRIPT_NAME in $V_ALL_SCRIPTS ; do
 		else
 			echo "${V_DRY_RUN}Creating shell script $V_FULL_PATH"
 			if [ -z "$V_DRY_RUN" ] ; then
-	 			echo $V_DEFAULT_TEXT > $V_FULL_PATH
+	 			echo "$V_DEFAULT_TEXT" > $V_FULL_PATH
 				chmod +x $V_FULL_PATH
 				open_script_file $V_FULL_PATH
 			fi

@@ -28,7 +28,7 @@ fi
 V_MODIFIED_FILES="$(git no)"
 if [ -n "$V_MODIFIED_FILES" ] ; then
 	# http://stackoverflow.com/questions/3692152/suppressing-diffs-for-deleted-files-in-git
-	V_CODE_SNIFFER_RESULTS=$(git no --diff-filter=ACMRTUXB | xargs code-sniffer.sh -a -q | grep -v -e 'Mostrando erros para todas as linhas do arquivo' -e '^Time:')
+	V_CODE_SNIFFER_RESULTS=$(git no --diff-filter=ACMRTUXB | xargs code-sniffer.sh -a -q $* | grep -v -e 'Mostrando erros para todas as linhas do arquivo' -e '^Time:')
 	if [ -n "$V_CODE_SNIFFER_RESULTS" ] ; then
 		echo -en $COLOR_LIGHT_RED
 		echo '/*------------------------------------------------------------------'
