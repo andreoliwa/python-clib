@@ -13,7 +13,7 @@ export G_WORK_UNIX_USERNAME=
 export G_WORK_SVN_USERNAME=
 
 # Directory where you want to put your new scripts.
-# Usually it is the same Git dir for te bash-utils project
+# Usually it is the same Git dir for the bash-utils project
 # E.g.: ~/src/bash-utils
 export G_NEW_SCRIPTS_DIR=
 
@@ -38,6 +38,10 @@ export G_WORK_TIMECLOCK_URL=
 # The root URL of your work SVN server, without the backslash at the end.
 # E.g.: http://svn.ops.corp.mycompany.com/svn
 export G_SVN_URL=
+
+# The root URL of your WSVN, without the backslash at the end.
+# E.g.: http://svn.ops.corp.mycompany.com/wsvn
+export G_WSVN_URL=
 
 # The document URL which contains all SVN developer numbers.
 # This is used by the svn-whois.sh script.

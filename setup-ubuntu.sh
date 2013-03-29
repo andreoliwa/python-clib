@@ -3,7 +3,7 @@ usage() {
 	echo "Usage: $(basename $0) [options]
 Automated Ubuntu/Lubuntu/Xubuntu setup for home and work computers.
 
-Before executng this script for the first time:
+Before executing this script for the first time:
 - Install your flavor of Ubuntu in a PC or VM;
 - Inside the VM, install also VBox Guest Additions (so you can share the host computer's directories) and activate USB devices.
 
@@ -211,7 +211,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	# E: Unable to correct problems, you have held broken packages.
 	V_TWEAK='ubuntu-tweak myunity y-ppa-manager unsettings'
 	V_ARCHIVE='unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack lha arj cabextract file-roller'
-	V_UTIL='keepassx gtimelog backintime-gnome gtg thunderbird'
+	V_UTIL='keepassx gtimelog backintime-gnome gtg thunderbird tmux'
 	V_GIMP='gimp gimp-data gimp-plugin-registry gimp-data-extras'
 	V_HANDBRAKE='handbrake-cli handbrake-gtk'
 	V_PHP='php5-cli php-pear php5-xsl apache2-utils graphviz graphviz-doc phpmyadmin'
