@@ -52,5 +52,5 @@ else
 	fi
 
 	# At home, wait until everything is synced before shutting Dropbox down
-	dropbox-shutdown.sh -v
+	dropbox-shutdown.sh
 fi

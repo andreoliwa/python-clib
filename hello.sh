@@ -57,7 +57,7 @@ if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 
 	xdg-open $G_WORK_TIMECLOCK_URL &
 
-	dropbox-shutdown.sh -v
+	dropbox-shutdown.sh
 else
 	dropbox start
 fi
