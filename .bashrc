@@ -138,6 +138,9 @@ alias top='top -d 1 -c'
 alias grep='grep --color=auto'
 alias psgrep='ps aux | grep -v grep | grep -e '^USER' -e '
 alias pwd='pwd;pwd -P'
+alias g='git'
+alias s='setup-ubuntu.sh -u'
+alias t='tmux-open.sh -s'
 
 export HISTCONTROL=ignoreboth:ignoCOLOR_redups:erasedups
 export HISTSIZE=50000

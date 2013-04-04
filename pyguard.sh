@@ -17,8 +17,12 @@ while getopts "h" V_ARG ; do
 done
 
 V_DIRECTORY="$PWD"
+V_PROJECT="$(basename $V_DIRECTORY)"
 V_PYGUARD_LOG=/tmp/pyguard.log
 echo "Watched directory: $V_DIRECTORY"
+
+export PYTHONPATH="$PYTHONPATH:$V_DIRECTORY"
+echo "Python module path: $PYTHONPATH"
 
 while true ; do
 	V_CHANGE="$(inotifywait --quiet --event close_write,moved_to,create --recursive $V_DIRECTORY)"
@@ -54,7 +58,7 @@ while true ; do
 
 			# Expire time doesn't work
 			# http://askubuntu.com/questions/110969/notify-send-ignores-timeout
-			notify-send --expire-time=500 --urgency=low --icon=$V_ICON 'PyTest results' "${V_LAST_LINES}"
+			notify-send --expire-time=500 --urgency=low --icon=$V_ICON "PyTest results ($V_PROJECT)" "${V_LAST_LINES}"
 		fi
 	fi
 done

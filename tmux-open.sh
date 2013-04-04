@@ -1,9 +1,12 @@
 #!/bin/bash
-usage() {
-	echo "Usage: $(basename $0) [options]
-Open a session by its name.
+V_RC_FILE="$(dirname $0)/.tmux-openrc"
 
-OPTIONS
+usage() {
+	echo -e "Usage: $(basename $0) [options]
+Open a session by its name.\n"
+	echo "Available session names ($V_RC_FILE):"
+	cat $V_RC_FILE | grep -o '^tmux_session_[a-zA-Z0-9]\+' | sed 's/tmux_session_//'
+	echo -e "\nOPTIONS
 -s  Session name
 -k  Kill session
 -r  Restart session
@@ -11,7 +14,6 @@ OPTIONS
 	exit $1
 }
 
-V_RC_FILE="$(dirname $0)/.tmux-openrc"
 source $V_RC_FILE
 
 V_SESSION=
@@ -29,20 +31,15 @@ done
 
 if [ -z "$V_SESSION" ] ; then
 	echo -e "Please supply a session name!"
-	echo "These are the available session names (in $V_RC_FILE):"
-	cat $V_RC_FILE | grep -o '^tmux_session_[a-zA-Z0-9]\+' | sed 's/tmux_session_//'
-	echo
-
 	usage 3
 fi
 
-V_FUNCTION="tmux_session_$V_SESSION"
-tmux has-session -t $V_FUNCTION
+tmux has-session -t "$V_SESSION"
 
 if [ $? -eq 0 ] ; then
 	if [ -n "$V_KILL" -o -n "$V_RESTART" ] ; then
 		echo "Killing session $V_SESSION"
-		tmux kill-session -t $V_FUNCTION
+		tmux kill-session -t $V_SESSION
 		sleep 2
 		if [ -z "$V_RESTART" ] ; then
 			exit
@@ -51,7 +48,7 @@ if [ $? -eq 0 ] ; then
 		echo "Restarting session $V_SESSION"
 	else
 		echo "Session $V_SESSION already exists, attaching to the terminal"
-		tmux attach-session -d -t $V_FUNCTION
+		tmux attach-session -d -t $V_SESSION
 		exit
 	fi
 else
@@ -64,10 +61,11 @@ else
 fi
 
 # Create session and attach it to a terminal window
-$V_FUNCTION $V_SESSION
+V_FUNCTION="tmux_session_$V_SESSION"
+$V_FUNCTION "$V_SESSION"
 
 # Set window title
-tmux set -t $V_FUNCTION set-titles on
-tmux set -t $V_FUNCTION set-titles-string $V_SESSION
+tmux set -t $V_SESSION set-titles on
+tmux set -t $V_SESSION set-titles-string $V_SESSION
 
-tmux attach-session -d -t $V_FUNCTION
+tmux attach-session -d -t $V_SESSION
