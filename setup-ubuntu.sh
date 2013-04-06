@@ -1,35 +1,45 @@
 #!/bin/bash
 usage() {
 	echo "Usage: $(basename $0) [options]
-Automated Ubuntu/Lubuntu/Xubuntu setup for home and work computers.
+Automated Ubuntu/Xubuntu setup for home and work computers.
 
 Before executing this script for the first time:
 - Install your flavor of Ubuntu in a PC or VM;
 - Inside the VM, install also VBox Guest Additions (so you can share the host computer's directories) and activate USB devices.
 
+How to restore packages:
+$ sudo apt-get update
+$ sudo apt-get dist-upgrade
+$ dpkg --set-selections < dpkg-get-selections.txt
+$ sudo dselect
+
 -a  Execute all options below.
 -r  Update PPA repositories.
 -u  Execute upgrade and dist-upgrade.
 -i  Install/remove packages.
+-l  Setup symbolic links
 -h  Help"
 	exit $1
 }
 
+V_ALL=
 V_PPA=
 V_UPDATE=
 V_UPGRADE=
 V_INSTALL_PACKAGES=
-V_ALL=
+V_SYMBOLIC_LINKS=
 V_SOMETHING_CHOSEN=
-while getopts "ruifah" V_ARG ; do
+while getopts "aruilh" V_ARG ; do
 	case $V_ARG in
+	a)	V_ALL=1
+		V_SOMETHING_CHOSEN=1 ;;
 	r)	V_PPA=1
 		V_SOMETHING_CHOSEN=1 ;;
 	u)	V_UPGRADE=1
 		V_SOMETHING_CHOSEN=1 ;;
 	i)	V_INSTALL_PACKAGES=1
 		V_SOMETHING_CHOSEN=1 ;;
-	a)	V_ALL=1
+	l)	V_SYMBOLIC_LINKS=1
 		V_SOMETHING_CHOSEN=1 ;;
 	h)	usage 1 ;;
 	?)	usage 1 ;;
@@ -39,6 +49,8 @@ done
 if [ -z $V_SOMETHING_CHOSEN ] ; then
 	usage 2
 fi
+
+V_BASH_UTILS_DIR=$(dirname $0)
 
 show_header() {
 	echo '========================================================================================================================'
@@ -190,7 +202,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	#------------------------------------------------------------------------------------------------------------------------
 	show_header 'Installing common packages'
 	V_SYSTEM='bash-completion nautilus-open-terminal nautilus-dropbox synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba iftop bum'
-	V_DESKTOP='xubuntu-desktop lubuntu-desktop indicator-weather indicator-workspaces python-wnck cortina gnome-do indicator-multiload'
+	V_DESKTOP='xubuntu-desktop indicator-weather indicator-workspaces python-wnck cortina gnome-do indicator-multiload imwheel'
 	V_DEV='sublime-text-dev vim vim-gui-common exuberant-ctags meld'
 	V_GIT='git git-core git-doc git-svn git-gui gitk'
 	V_PYTHON='python-pip python-dev python-matplotlib'
@@ -395,16 +407,40 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	fi
 fi
 
-####################
-# Primeira instalacao
-####################
+create_link() {
+	V_LINK_NAME=$1
+	V_TARGET=$2
+	ln -s $V_TARGET $V_LINK_NAME 2>/dev/null
+	ls -la --color=auto $V_LINK_NAME
+}
 
-# Links simbolicos que dependem do DropBox
-#ln -s $HOME/Dropbox/Apps/Sublime\ Text\ 2/Data/ $HOME/.config/sublime-text-2
-#ln -s $HOME/Dropbox/Apps/PidginPortable/Data/settings/.purple/ $HOME/
+if [ -n "$V_ALL" ] || [ -n "$V_SYMBOLIC_LINKS" ] ; then
+	#------------------------------------------------------------------------------------------------------------------------
+	# SYMBOLYC LINKS
+	#------------------------------------------------------------------------------------------------------------------------
+	show_header 'Creating common symbolic links'
+	create_link $HOME/.bashrc $V_BASH_UTILS_DIR/.bashrc
+	create_link $HOME/.beetsconfig $G_DROPBOX_DIR/linux/.beetsconfig
+	create_link $HOME/.config/flexget/config.yml $G_DROPBOX_DIR/linux/flexget-config-imdb.yml
+	create_link $HOME/.config/gcstar $G_DROPBOX_DIR/linux/config-gcstar/
+	create_link $HOME/.config/sublime-text-2 $G_DROPBOX_DIR/Apps/Sublime\ Text\ 2/Data/
+	create_link $HOME/.flexget $G_DROPBOX_DIR/linux/.flexget/
+	create_link $HOME/.imwheelrc $V_BASH_UTILS_DIR/.imwheelrc
+	create_link $HOME/.purple $G_DROPBOX_DIR/Apps/PidginPortable/Data/settings/.purple
+	create_link $HOME/.ssh/config $G_DROPBOX_DIR/linux/ssh-config
+	create_link $HOME/.tmux.conf $V_BASH_UTILS_DIR/.tmux.conf
+	create_link $HOME/.vimrc $V_BASH_UTILS_DIR/.vimrc
+	create_link $HOME/bin $G_DROPBOX_DIR/linux/bin/
 
-# ***** Restore packages *****
-# sudo apt-get update
-# sudo apt-get dist-upgrade
-# dpkg --set-selections < dpkg-get-selections.txt
-# sudo dselect
+	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
+		show_header 'Creating home symbolic links'
+		create_link $HOME/.gitconfig $G_DROPBOX_DIR/linux/.gitconfig
+		create_link $HOME/Pictures/wallpapers $G_DROPBOX_DIR/Photos/wallpapers
+		create_link $HOME/Pictures/dropbox $G_DROPBOX_DIR/Photos/
+		create_link $HOME/Pictures/pix /pix
+		create_link $HOME/Music/hd $G_EXTERNAL_HDD/.audio/music/
+		create_link $HOME/.xbmc $G_MOVIES_HDD/.xbmc/
+		create_link $HOME/src/local $G_EXTERNAL_HDD/.backup/linux/Arkham-Ubuntu-12.04.2-LTS/src
+		create_link $HOME/music-external-hdd $G_EXTERNAL_HDD/.audio/music/
+	fi
+fi

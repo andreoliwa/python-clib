@@ -17,7 +17,7 @@ if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	gtimelog-lock-unlock.sh
 	pidgin &
 	sublime-text-2 &
-	gnome-terminal --tab -e '/home/wagner/Dropbox/src/bash-utils/tmux-open.sh -s git' --tab -e '/home/wagner/Dropbox/src/bash-utils/tmux-open.sh -s mysql' &
+	gnome-terminal --tab -t git -e '/home/wagner/Dropbox/src/bash-utils/tmux-open.sh -s git' --tab --tab &
 
 	# Second workspace
 	wmctrl -s 1
