@@ -91,7 +91,7 @@ while true ; do
 
 			if [ $V_DIFF -ge 2 ] && [ -n "${V_LAST_DATE["$V_APP"]}" ] ; then
 				V_MESSAGE=${V_LAST_DATE["$V_APP"]}"\t$V_NOW\t$V_APP\t"${V_LAST_TITLE["$V_APP"]}
-				echo -e $V_MESSAGE
+				echo -e "${COLOR_LIGHT_CYAN}${V_MESSAGE}${COLOR_NONE}"
 				[ -z "$V_DRY_RUN" ] && echo "INSERT INTO windows (start, end, class, title)
 VALUES ('${V_LAST_DATE["$V_APP"]}', '$V_NOW', '$V_APP', \"${V_LAST_TITLE["$V_APP"]}\");" | sqlite3 $V_DATABASE
 			fi
