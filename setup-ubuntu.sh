@@ -149,6 +149,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_UPGRADE" ] ; then
 fi
 
 if [ -n "$V_ALL" ] || [ -n "$V_UPDATE" ] ; then
+	show_header 'Updating repositories'
 	sudo apt-get update
 
 	# Close the "Software Update" window after the update
@@ -156,9 +157,11 @@ if [ -n "$V_ALL" ] || [ -n "$V_UPDATE" ] ; then
 fi
 
 if [ -n "$V_ALL" ] || [ -n "$V_UPGRADE" ] ; then
+	show_header 'Upgrading regular packages'
 	sudo apt-get --yes upgrade
 	show_error 'upgrading some of the packages'
 
+	show_header 'Upgrading distribution packages'
 	sudo apt-get --yes dist-upgrade
 	show_error 'upgrading some of the distribution packages'
 fi
@@ -207,7 +210,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_GIT='git git-core git-doc git-svn git-gui gitk'
 	V_PYTHON='python-pip python-dev python-matplotlib'
 	V_BROWSER='chromium-browser lynx-cur'
-	V_VIRTUALBOX='virtualbox-4.2 dkms virtualbox-guest-x11 virtualbox-guest-utils'
+	V_VIRTUALBOX='dkms virtualbox-guest-x11 virtualbox-guest-utils' # virtualbox-4.2
 	V_JAVA='openjdk-6-jre icedtea6-plugin'
 	V_AUDIO='rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 vorbisgain eyed3 python-eyed3 rubyripper gcstar'
 	# lo-menubar
@@ -233,8 +236,8 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_USENET='sabnzbdplus sabnzbdplus-theme-mobile'
 	V_RESCUETIME='xprintidle gtk2-engines-pixbuf'
 	V_CI='php5-curl php5-dev jenkins postfix'
-	V_ALL="$V_SYSTEM $V_DESKTOP $V_DEV $V_GIT $V_PYTHON $V_BROWSER $V_VIRTUALBOX $V_JAVA $V_AUDIO $V_TWEAK $V_ARCHIVE $V_UTIL $V_GIMP $V_HANDBRAKE $V_PHP $V_PIDGIN $V_MYSQL $V_SUBVERSION $V_USENET $V_RESCUETIME $V_CI"
-	sleep 1 && sudo apt-get --yes install $V_ALL
+	V_ALL_PACKAGES="$V_SYSTEM $V_DESKTOP $V_DEV $V_GIT $V_PYTHON $V_BROWSER $V_VIRTUALBOX $V_JAVA $V_AUDIO $V_TWEAK $V_ARCHIVE $V_UTIL $V_GIMP $V_HANDBRAKE $V_PHP $V_PIDGIN $V_MYSQL $V_SUBVERSION $V_USENET $V_RESCUETIME $V_CI"
+	sleep 1 && sudo apt-get --yes install $V_ALL_PACKAGES
 	show_error 'installing or upgrading some of the packages'
 
 	V_DIR='/usr/local/bin'
@@ -408,39 +411,45 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 fi
 
 create_link() {
-	V_LINK_NAME=$1
-	V_TARGET=$2
-	ln -s $V_TARGET $V_LINK_NAME 2>/dev/null
-	ls -la --color=auto $V_LINK_NAME
+	V_LINK_NAME="$1"
+	V_TARGET="$2"
+
+	# Create the link if it doesn't exist
+	[ ! -e "$V_LINK_NAME" ] && ln -s "$V_TARGET" "$V_LINK_NAME"
+	ls -lad --color=auto "$V_LINK_NAME"
 }
 
-if [ -n "$V_ALL" ] || [ -n "$V_SYMBOLIC_LINKS" ] ; then
+if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
 	#------------------------------------------------------------------------------------------------------------------------
 	# SYMBOLYC LINKS
 	#------------------------------------------------------------------------------------------------------------------------
-	show_header 'Creating common symbolic links'
+	show_header 'Creating common symbolic links for files'
 	create_link $HOME/.bashrc $V_BASH_UTILS_DIR/.bashrc
 	create_link $HOME/.beetsconfig $G_DROPBOX_DIR/linux/.beetsconfig
-	create_link $HOME/.config/flexget/config.yml $G_DROPBOX_DIR/linux/flexget-config-imdb.yml
-	create_link $HOME/.config/gcstar $G_DROPBOX_DIR/linux/config-gcstar/
-	create_link $HOME/.config/sublime-text-2 $G_DROPBOX_DIR/Apps/Sublime\ Text\ 2/Data/
-	create_link $HOME/.flexget $G_DROPBOX_DIR/linux/.flexget/
 	create_link $HOME/.imwheelrc $V_BASH_UTILS_DIR/.imwheelrc
 	create_link $HOME/.purple $G_DROPBOX_DIR/Apps/PidginPortable/Data/settings/.purple
 	create_link $HOME/.ssh/config $G_DROPBOX_DIR/linux/ssh-config
 	create_link $HOME/.tmux.conf $V_BASH_UTILS_DIR/.tmux.conf
 	create_link $HOME/.vimrc $V_BASH_UTILS_DIR/.vimrc
+
+	show_header 'Creating common symbolic links for directories'
+	create_link $HOME/.config/gcstar $G_DROPBOX_DIR/linux/config-gcstar/
+	create_link $HOME/.config/sublime-text-2 "$G_DROPBOX_DIR/Apps/Sublime\ Text\ 2/Data/"
 	create_link $HOME/bin $G_DROPBOX_DIR/linux/bin/
+	create_link $HOME/music-external-hdd $G_EXTERNAL_HDD/.audio/music/
 
 	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
-		show_header 'Creating home symbolic links'
+		show_header 'Creating home symbolic links for files'
+		create_link $HOME/.config/flexget/config.yml $G_DROPBOX_DIR/linux/flexget-config-imdb.yml
 		create_link $HOME/.gitconfig $G_DROPBOX_DIR/linux/.gitconfig
-		create_link $HOME/Pictures/wallpapers $G_DROPBOX_DIR/Photos/wallpapers
-		create_link $HOME/Pictures/dropbox $G_DROPBOX_DIR/Photos/
-		create_link $HOME/Pictures/pix /pix
-		create_link $HOME/Music/hd $G_EXTERNAL_HDD/.audio/music/
+
+		show_header 'Creating home symbolic links for directories'
+		create_link $HOME/.flexget $G_DROPBOX_DIR/linux/.flexget/
 		create_link $HOME/.xbmc $G_MOVIES_HDD/.xbmc/
-		create_link $HOME/src/local $G_EXTERNAL_HDD/.backup/linux/Arkham-Ubuntu-12.04.2-LTS/src
-		create_link $HOME/music-external-hdd $G_EXTERNAL_HDD/.audio/music/
+		create_link $HOME/Music/hd $G_EXTERNAL_HDD/.audio/music/
+		create_link $HOME/Pictures/dropbox $G_DROPBOX_DIR/Photos/
+		create_link $HOME/Pictures/pix /pix/
+		create_link $HOME/Pictures/wallpapers $G_DROPBOX_DIR/Photos/wallpapers/
+		create_link $HOME/src/local $G_EXTERNAL_HDD/.backup/linux/Arkham-Ubuntu-12.04.2-LTS/src/
 	fi
 fi

@@ -2,14 +2,16 @@
 
 . ~/.bashrc
 
-[ -z "$(pidof rescuetime)" -a "$(type -p rescuetime)" ] && rescuetime &
+echo "Hostname=$HOSTNAME"
+echo "Work computer=$G_WORK_COMPUTER"
+echo "Home computer=$G_HOME_COMPUTER"
 
 # Can't use "pidof gnome-do" because gnome-do is not the name of the executaable, so it doesn't have a PID
 [ -z "$(ps aux | grep -v grep | grep gnome-do)" -a "$(type -p gnome-do)" ] && gnome-do &
 
-echo "Hostname=$HOSTNAME"
-echo "Work computer=$G_WORK_COMPUTER"
-echo "Home computer=$G_HOME_COMPUTER"
+[ -z "$(pidof imwheel)" -a "$(type -p imwheel)" ] && imwheel
+
+[ -z "$(pidof rescuetime)" -a "$(type -p rescuetime)" ] && rescuetime &
 
 if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	# First workspace
