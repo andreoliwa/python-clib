@@ -18,5 +18,5 @@ while getopts "kh" V_ARG ; do
 	esac
 done
 
-V_CMD="find $HOME/Dropbox/ -iname '*conflicted copy*' $V_KILL"
+V_CMD="find $G_DROPBOX_DIR/ -iname '*conflicted copy*' $V_KILL"
 eval $V_CMD

@@ -12,12 +12,15 @@ export G_WORK_UNIX_USERNAME=
 # Your SVN username at work
 export G_WORK_SVN_USERNAME=
 
+# Your Dropbox dir
+export G_DROPBOX_DIR=
+
 # Directory where you want to put your new scripts.
 # Usually it is the same Git dir for the bash-utils project
-# E.g.: ~/src/bash-utils
+# E.g.: $HOME/src/bash-utils
 export G_NEW_SCRIPTS_DIR=
 
-# Download dir, usually ~/Downloads
+# Download dir, usually $HOME/Downloads
 export G_DOWNLOAD_DIR=
 
 # Your work VPN server. E.g.: vpn.mycompany.com
@@ -29,7 +32,7 @@ export G_WORK_VPN_USER=
 # Your work VPN password
 export G_WORK_VPN_PASSWORD=
 
-# Root source directory at work. E.g.: ~/src, ~/local-src, ~/work...
+# Root source directory at work. E.g.: $HOME/src, $HOME/local-src, $HOME/work...
 export G_WORK_SRC_DIR=
 
 # URL for the timeclock application used to record every person's working time

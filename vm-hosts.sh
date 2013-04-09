@@ -24,7 +24,7 @@ done
 
 V_VM206=/tmp/hosts-vm206
 V_NEW=/tmp/hosts-new
-V_EXTRA_FILE=$HOME/Dropbox/linux/hosts-extra
+V_EXTRA_FILE=$G_DROPBOX_DIR/linux/hosts-extra
 
 if [ -n "$V_EDIT_EXTRA" ] ; then
 	echo "Editando o arquivo de hosts extras $V_EXTRA_FILE"

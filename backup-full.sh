@@ -142,7 +142,7 @@ fi
 #	echo "Linux Dropbox"
 #	echo "rm -rvf -p $V_BACKUP_EXTERNAL_DIR/home/Dropbox/"
 #	V_EXCLUDE='--exclude=lost+found/ --exclude=.dropbox.cache  --exclude=lost+found/ --exclude=.cache'
-#	rsync -htrOvz $V_DRY_RUN --progress --modify-window=2 $V_EXCLUDE ~/Dropbox/ $V_DESTINATION_DIR/Users/Wagner/Dropbox/  # --delete
+#	rsync -htrOvz $V_DRY_RUN --progress --modify-window=2 $V_EXCLUDE $G_DROPBOX_DIR/ $V_DESTINATION_DIR/Users/Wagner/Dropbox/  # --delete
 #	echo "$V_DESTINATION_DIR/Users/Wagner/Dropbox/"
 #done
 

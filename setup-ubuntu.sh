@@ -414,8 +414,8 @@ create_link() {
 	V_LINK_NAME="$1"
 	V_TARGET="$2"
 
-	# Create the link if it doesn't exist
-	[ ! -e "$V_LINK_NAME" ] && ln -s "$V_TARGET" "$V_LINK_NAME"
+	# Create if the target exists and the link doesn't
+	[ -e "$V_TARGET" ] && [ ! -e "$V_LINK_NAME" ] && ln -s "$V_TARGET" "$V_LINK_NAME"
 	ls -lad --color=auto "$V_LINK_NAME"
 }
 
@@ -444,7 +444,6 @@ if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
 		create_link $HOME/.gitconfig $G_DROPBOX_DIR/linux/.gitconfig
 
 		show_header 'Creating home symbolic links for directories'
-		create_link $HOME/.flexget $G_DROPBOX_DIR/linux/.flexget/
 		create_link $HOME/.xbmc $G_MOVIES_HDD/.xbmc/
 		create_link $HOME/Music/hd $G_EXTERNAL_HDD/.audio/music/
 		create_link $HOME/Pictures/dropbox $G_DROPBOX_DIR/Photos/

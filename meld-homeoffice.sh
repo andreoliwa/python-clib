@@ -26,7 +26,7 @@ while getopts "obgdh" V_ARG ; do
 	esac
 done
 
-V_BOILERPLATE_OO_DIR=$HOME/Dropbox/src/boilerplate-oo
+V_BOILERPLATE_OO_DIR=$G_DROPBOX_DIR/src/boilerplate-oo
 
 V_OLD_IFS=$IFS
 IFS='
@@ -35,18 +35,18 @@ IFS='
 V_COMPARE=
 if [ -n "$V_REPO_HOME_OFFICE" ] ; then
 	V_COMPARE="$V_COMPARE
-$HOME/Dropbox/src/home-office/dev_bin/devqa
-$HOME/Dropbox/src/home-office/dev_htdocs/common/classes/
-$HOME/Dropbox/src/home-office/dev_htdocs/mxzypkt.corp.folha.com.br/_unittests
+$G_DROPBOX_DIR/src/home-office/dev_bin/devqa
+$G_DROPBOX_DIR/src/home-office/dev_htdocs/common/classes/
+$G_DROPBOX_DIR/src/home-office/dev_htdocs/mxzypkt.corp.folha.com.br/_unittests
 "
 fi
 
 if [ -n "$V_REPO_BOILERPLATE" ] ; then
 	V_COMPARE="$V_COMPARE
-$HOME/Dropbox/src/boilerplate-oo/dev_htdocs/boilerplate.corp.folha.com.br/webapp/admin
-$HOME/Dropbox/src/boilerplate-oo/dev_htdocs/common/classes/
-$HOME/Dropbox/src/boilerplate-oo/dev_htdocs/common/classes/boilerplate
-$HOME/Dropbox/src/boilerplate-oo/dev_htdocs/common/includes/boilerplate
+$G_DROPBOX_DIR/src/boilerplate-oo/dev_htdocs/boilerplate.corp.folha.com.br/webapp/admin
+$G_DROPBOX_DIR/src/boilerplate-oo/dev_htdocs/common/classes/
+$G_DROPBOX_DIR/src/boilerplate-oo/dev_htdocs/common/classes/boilerplate
+$G_DROPBOX_DIR/src/boilerplate-oo/dev_htdocs/common/includes/boilerplate
 "
 fi
 

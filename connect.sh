@@ -12,7 +12,7 @@ OPTIONS
 	exit $1
 }
 
-V_FILE=$HOME/Dropbox/Docs/connections.txt
+V_FILE=$G_DROPBOX_DIR/Docs/connections.txt
 if [ ! -f "$V_FILE" ] ; then
 	echo "Arquivo com as conexoes nao foi encontrado: $V_FILE"
 	exit

@@ -20,7 +20,7 @@ while getopts "h" V_ARG ; do
 	esac
 done
 
-V_HOME_OFFICE_DIR="$HOME/Dropbox/src/home-office/dev_bin/devqa"
+V_HOME_OFFICE_DIR="$G_DROPBOX_DIR/src/home-office/dev_bin/devqa"
 V_CODE_SNIFFER_DIR="$HOME/src/local/dev_bin/devqa"
 V_FILES="$V_CODE_SNIFFER_DIR/*.sh $V_CODE_SNIFFER_DIR/pre-commit $V_HOME_OFFICE_DIR/*.sh $V_HOME_OFFICE_DIR/pre-commit"
 chmod a+x $V_FILES
@@ -31,4 +31,4 @@ echo 'Testando...'
 code-sniffer.sh
 
 echo 'Permissões do cliente ssh...'
-chmod -v 600 $HOME/.ssh/* $HOME/Dropbox/linux/ssh*
+chmod -v 600 $HOME/.ssh/* $G_DROPBOX_DIR/linux/ssh*

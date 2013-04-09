@@ -43,17 +43,17 @@ if [ -n "$V_CONFIG" ] ; then
 	sudo ln -s $HOME/src/local/dev_bin/codesniffer/FolhaPEAR/
 
 	echo 'Configurando pre-commit hook'
-	cd $HOME/Dropbox/svn-repo/hooks
+	cd $G_DROPBOX_DIR/svn-repo/hooks
 	rm -v pre-commit
 	ln -s $HOME/src/local/dev_bin/codesniffer/pre-commit
 	chmod a+x pre-commit
 
 	echo 'Configurando diretorio de logs usado no pre-commit hook'
-	sudo ln -s $HOME/Dropbox/dev_logs/ /srv
+	sudo ln -s $G_DROPBOX_DIR/dev_logs/ /srv
 fi
 
 exec_ls /usr/share/php/PHP/CodeSniffer/Standards/
-exec_ls $HOME/Dropbox/svn-repo/hooks
+exec_ls $G_DROPBOX_DIR/svn-repo/hooks
 exec_ls /srv/dev_logs
 exec_command "type -p code-sniffer.sh"
 exec_ls "$(type -p code-sniffer.sh)"

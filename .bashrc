@@ -23,9 +23,7 @@ function cd() {
 }
 
 # My personal environment variables
-if [ -f ~/bin/my-variables ] ; then
-	. ~/bin/my-variables
-fi
+[ -f ~/bin/my-variables ] && . ~/bin/my-variables
 
 if [ -n "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
 	# The colors seem to be different to CentOS
@@ -155,7 +153,7 @@ if [ -z "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
 
 	# Set PATH so it includes user's private bin if it exists
 	if [ -d "$HOME/bin" ] ; then
-		export PATH="$HOME/bin:/home/wagner/Dropbox/src/bash-utils:$PATH:/home/wagner/src/local/dev_bin/devqa"
+		export PATH="$HOME/bin:$G_DROPBOX_DIR/src/bash-utils:$PATH:/home/wagner/src/local/dev_bin/devqa"
 	fi
 
 	# Autocomplete for sudo?

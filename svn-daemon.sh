@@ -20,7 +20,7 @@ done
 
 if [ -z "$(pidof svnserve)" ] ; then
 	echo 'Iniciando svnserve'
-	svnserve -d -r $HOME/Dropbox/svn-repo/
+	svnserve -d -r $G_DROPBOX_DIR/svn-repo/
 else
 	echo 'AVISO: svnserve já foi iniciado'
 fi

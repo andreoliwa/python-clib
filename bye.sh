@@ -33,7 +33,7 @@ safe-remove.sh -d samsung
 if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	# Copies the "Standards Documentation" to the QA directory
 	V_PDF_SOURCE_DIR=/net/srvfol1/groups/desenvolvimento
-	V_PDF_DEST_DIR=~/Dropbox/src/home-office/dev_bin/devqa/_archive
+	V_PDF_DEST_DIR=$G_DROPBOX_DIR/src/home-office/dev_bin/devqa/_archive
 	for V_PDF in $V_PDF_SOURCE_DIR/*.pdf ; do
 		V_BASENAME=$(basename "$V_PDF")
 		cp -uv "$V_PDF" "$V_PDF_DEST_DIR"/$(normalize.sh -s $V_BASENAME)

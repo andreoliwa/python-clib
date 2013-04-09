@@ -16,7 +16,7 @@ while getopts "h" V_ARG ; do
 done
 
 V_LINUX_VERSION=$(lsb_release -d -s | sed 's/ /-/g')
-V_CONFIG_DIR=~/Dropbox/linux/$HOSTNAME-$V_LINUX_VERSION
+V_CONFIG_DIR=$G_DROPBOX_DIR/linux/$HOSTNAME-$V_LINUX_VERSION
 mkdir -p $V_CONFIG_DIR
 
 save_if_needed() {

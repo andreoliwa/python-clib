@@ -42,7 +42,7 @@ if [ -n "$V_SHOW_LAST_REPORT" ] ; then
 	exit
 fi
 
-cd ~/Dropbox/src/home-office/
+cd $G_DROPBOX_DIR/src/home-office/
 
 if [ -n "$V_REPORT" ] ; then
 	V_REPORT_FILE="$G_DOWNLOAD_DIR/wagner-home-office-$(date --rfc-3339=date).txt"
