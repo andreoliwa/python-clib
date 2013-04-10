@@ -19,10 +19,13 @@ done
 V_DIRECTORY="$PWD"
 V_PROJECT="$(basename $V_DIRECTORY)"
 V_PYGUARD_LOG=/tmp/pyguard.log
-echo "Watched directory: $V_DIRECTORY"
+echo "Watched directory (and subdirs): $V_DIRECTORY"
 
-export PYTHONPATH="$PYTHONPATH:$V_DIRECTORY"
-echo "Python module path: $PYTHONPATH"
+# Add to the Python path all dirs that contains Python files
+V_ALL_DIRS=$(find $PWD -type f -name *.py -exec dirname {} \; | sort -u | grep -v /tests | tr "\\n" ":") #
+[ -n "$PYTHONPATH" ] && V_ALL_DIRS=":${V_ALL_DIRS}"
+export PYTHONPATH="${PYTHONPATH}${V_ALL_DIRS%?}"
+echo "Python module path (PYTHONPATH variable): $PYTHONPATH"
 
 while true ; do
 	V_CHANGE="$(inotifywait --quiet --event close_write,moved_to,create --recursive $V_DIRECTORY)"

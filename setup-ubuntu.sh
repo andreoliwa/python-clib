@@ -450,5 +450,9 @@ if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
 		create_link $HOME/Pictures/pix /pix/
 		create_link $HOME/Pictures/wallpapers $G_DROPBOX_DIR/Photos/wallpapers/
 		create_link $HOME/src/local $G_EXTERNAL_HDD/.backup/linux/Arkham-Ubuntu-12.04.2-LTS/src/
+	else
+		show_header 'Creating work symbolic links for directories'
+		create_link $HOME/Music/in $G_EXTERNAL_HDD/.audio/music/in
+		create_link $HOME/Music/unknown $G_EXTERNAL_HDD/.audio/music/unknown
 	fi
 fi

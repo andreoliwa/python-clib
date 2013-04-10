@@ -68,5 +68,5 @@ tmux_session_seek() {
 }
 
 tmux_session_tag() {
-	_tmux_session_python $1 "$G_DROPBOX_DIR/src/python/tagevrifin/"
+	_tmux_session_python $1 "$G_DROPBOX_DIR/src/python/evrytag/"
 }

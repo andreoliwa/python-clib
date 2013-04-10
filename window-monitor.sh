@@ -89,7 +89,7 @@ while true ; do
 				V_DIFF=$(echo $V_SEC2 - $V_SEC1 | bc)
 			fi
 
-			if [ $V_DIFF -ge 2 ] && [ -n "${V_LAST_DATE["$V_APP"]}" ] ; then
+			if [ $V_DIFF -ge 5 ] && [ -n "${V_LAST_DATE["$V_APP"]}" ] ; then
 				V_MESSAGE=${V_LAST_DATE["$V_APP"]}"\t$V_NOW\t$V_APP\t"${V_LAST_TITLE["$V_APP"]}
 				echo -e "${COLOR_LIGHT_CYAN}${V_MESSAGE}${COLOR_NONE}"
 				[ -z "$V_DRY_RUN" ] && echo "INSERT INTO windows (start, end, class, title)
