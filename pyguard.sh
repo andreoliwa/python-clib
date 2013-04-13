@@ -16,6 +16,11 @@ while getopts "h" V_ARG ; do
 	esac
 done
 
+if [ -z "$(type -p inotifywait)" ] ; then
+	echo "inotifywait is not installed. Aborting."
+	usage 3
+fi
+
 V_DIRECTORY="$PWD"
 V_PROJECT="$(basename $V_DIRECTORY)"
 V_PYGUARD_LOG=/tmp/pyguard.log
