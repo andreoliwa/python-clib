@@ -2,7 +2,7 @@
 cd $G_DOWNLOAD_DIR
 
 mv_ofx() {
-	for V_OFX_FILE in $(find *.ofx 2> /dev/null) ; do
+	for V_OFX_FILE in $(ls -1 *.ofx 2> /dev/null) ; do
 		echo
 		echo "File: $V_OFX_FILE"
 
@@ -33,7 +33,7 @@ mv_torrent() {
 }
 
 has_pdf() {
-	if [ -f *.pdf ] ; then
+	if [ -f *.pdf* ] ; then
 		xdg-open $G_DOWNLOAD_DIR
 		xdg-open $G_BANK_STATEMENTS_DIR
 	fi

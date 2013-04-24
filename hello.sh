@@ -9,6 +9,8 @@ echo "Home computer=$G_HOME_COMPUTER"
 # Can't use "pidof gnome-do" because gnome-do is not the name of the executaable, so it doesn't have a PID
 [ -z "$(ps aux | grep -v grep | grep gnome-do)" -a "$(type -p gnome-do)" ] && gnome-do &
 
+[ -z "$(ps aux | grep -v grep | grep indicator-multiload)" -a "$(type -p indicator-multiload)" ] && indicator-multiload --trayicon &
+
 [ -z "$(pidof imwheel)" -a "$(type -p imwheel)" ] && imwheel
 
 [ -z "$(pidof rescuetime)" -a "$(type -p rescuetime)" ] && rescuetime &
