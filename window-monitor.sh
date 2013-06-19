@@ -4,6 +4,7 @@ usage() {
 Monitor system windows.
 
 -n  Dry-run (doesn't write the database file)
+-s  Minimum seconds to consider a file for logging.
 -C  Create the SQLite database (if it doesn't exist)
 -D  Open the SQLite database
 -v  Verbose
@@ -12,12 +13,14 @@ Monitor system windows.
 }
 
 V_DRY_RUN=
+V_MIN_SECONDS=
 V_CREATE_DATABASE=
 V_OPEN_DATABASE=
 V_VERBOSE=
-while getopts "nCDvh" V_ARG ; do
+while getopts "ns:CDvh" V_ARG ; do
 	case $V_ARG in
 	n)	V_DRY_RUN=1 ;;
+	s)	V_MIN_SECONDS=$OPTARG ;;
 	C)	V_CREATE_DATABASE=1 ;;
 	D)	V_OPEN_DATABASE=1 ;;
 	v)	V_VERBOSE=1 ;;
@@ -65,7 +68,9 @@ if [ -n "$V_OPEN_DATABASE" ] ; then
 	exit 0
 fi
 
-echo 'Starting the window monitor...'
+[ -z "$V_MIN_SECONDS" ] && V_MIN_SECONDS=7
+
+echo "Starting the window monitor (minimum seconds: $V_MIN_SECONDS)..."
 while true ; do
 
 	sleep .2
@@ -89,7 +94,7 @@ while true ; do
 				V_DIFF=$(echo $V_SEC2 - $V_SEC1 | bc)
 			fi
 
-			if [ $V_DIFF -ge 5 ] && [ -n "${V_LAST_DATE["$V_APP"]}" ] ; then
+			if [ $V_DIFF -ge $V_MIN_SECONDS ] && [ -n "${V_LAST_DATE["$V_APP"]}" ] ; then
 				V_MESSAGE=${V_LAST_DATE["$V_APP"]}"\t$V_NOW\t$V_APP\t"${V_LAST_TITLE["$V_APP"]}
 				echo -e "${COLOR_LIGHT_CYAN}${V_MESSAGE}${COLOR_NONE}"
 				[ -z "$V_DRY_RUN" ] && echo "INSERT INTO windows (start, end, class, title)

@@ -11,17 +11,23 @@ OPTIONS
 }
 
 V_SINGLE=
-V_DUAL=
 while getopts "12h" V_ARG ; do
 	case $V_ARG in
-	1)	V_SINGLE='a single monitor' ;;
-	2)	V_DUAL='dual monitors' ;;
+	1)	V_SINGLE=1 ;;
+	2)	V_SINGLE= ;;
 	h)	usage 1 ;;
 	?)	usage 2 ;;
 	esac
 done
 
-. ~/bin/my-variables
+source ~/bin/my-variables
+
+if [ -n "$V_SINGLE" ] ; then
+	V_WHAT='a single monitor'
+else
+	V_WHAT='dual monitors'
+fi
+
 
 set_panel_position() {
 	# http://forum.xfce.org/viewtopic.php?id=7466
@@ -30,19 +36,19 @@ set_panel_position() {
 
 if [ -n "$V_SINGLE" ] ; then
 	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
-		echo "Configuring $V_SINGLE at HOME"
+		echo "Configuring $V_WHAT at HOME"
 		xrandr --output LVDS1 --mode 1280x800 --pos 0x0 --rotate normal --output DP1 --off --output VGA1 --off
 		set_panel_position LVDS1
 	else
-		echo "There is no configuration for $V_SINGLE at WORK"
+		echo "There is no configuration for $V_WHAT at WORK"
 	fi
 else
 	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
-		echo "Configuring $V_DUAL at HOME"
+		echo "Configuring $V_WHAT at HOME"
 		xrandr --output LVDS1 --mode 1280x800 --pos 0x0 --rotate normal --output DP1 --off --output VGA1 --mode 1280x1024 --pos 1280x0 --rotate normal --primary
 		set_panel_position VGA1
 	else
-		echo "Configuring $V_DUAL at WORK"
+		echo "Configuring $V_WHAT at WORK"
 		xrandr --output DisplayPort-1 --mode 1280x1024 --pos 1280x0 --rotate normal --output DisplayPort-0 --mode 1280x1024 --pos 0x0 --rotate normal
 	fi
 fi

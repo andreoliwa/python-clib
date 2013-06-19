@@ -1,6 +1,5 @@
 #!/bin/bash
-
-. ~/.bashrc
+source ~/.bashrc
 
 echo "Hostname=$HOSTNAME"
 echo "Work computer=$G_WORK_COMPUTER"
@@ -14,6 +13,8 @@ echo "Home computer=$G_HOME_COMPUTER"
 [ -z "$(pidof imwheel)" -a "$(type -p imwheel)" ] && imwheel
 
 [ -z "$(pidof rescuetime)" -a "$(type -p rescuetime)" ] && rescuetime &
+
+monitors.sh
 
 if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	# First workspace
