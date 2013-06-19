@@ -27,7 +27,7 @@ rmdir-empty.sh $SOURCE_DIR
 
 for PASS in {1..2} ; do
 	echo "rsync $SOURCE_DIR -> $DESTINATION_DIR (pass $PASS)"
-	V_COMMAND="rsync $ARGS -hvuzr --links --delete-during --modify-window=2 --omit-dir-times --progress --exclude=*.wav --exclude=new --exclude=temp_* $SOURCE_DIR $DESTINATION_DIR"
+	V_COMMAND="rsync $ARGS -hvuzr --links --delete-during --modify-window=2 --omit-dir-times --progress --exclude=*.wav --exclude=out/ --exclude=temp_* $SOURCE_DIR $DESTINATION_DIR"
 	echo "$V_COMMAND"
 	$V_COMMAND
 done

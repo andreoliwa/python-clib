@@ -1,17 +1,120 @@
 #!/bin/bash
-V_FILES=*.mp3
-V_TMP_FILE1=/tmp/music-check1.txt
-V_TMP_FILE2=/tmp/music-check2.txt
+usage() {
+	echo "Usage: $(basename $0) [options]
+Check ID3 tags in music files.
 
-[ -f $V_TMP_FILE1 ] && rm $V_TMP_FILE1
-[ -f $V_TMP_FILE2 ] && rm $V_TMP_FILE2
-for V_FILE in $V_FILES ; do
-	id3 -l -R "${PWD}/${V_FILE}" >> $V_TMP_FILE1
-	id3v2 -l "${PWD}/${V_FILE}" >> $V_TMP_FILE2
+OPTIONS
+-q  Quiet (show errors only)
+-u  Check less info for unknown albums
+-g  List of desired genres (separated with commas)
+-h  Help"
+	exit $1
+}
+
+V_QUIET=
+V_UNKNOWN=
+V_SHOW_GENRES=
+V_DESIRED_GENRES=
+while getopts "qug:h" V_ARG ; do
+	case $V_ARG in
+	q)	V_QUIET=1 ;;
+	u)	V_UNKNOWN=1 ;;
+	g)	V_SHOW_GENRES=1 && V_DESIRED_GENRES=$OPTARG ;;
+	h)	usage 1 ;;
+	?)	usage 2 ;;
+	esac
 done
-echo ">>>>> ID3v1"
-cat $V_TMP_FILE1 | sort | uniq | grep --colour=auto -e Artist -e Album -e 'Year:' -e Genre
 
-echo
-echo ">>>>> ID3v2"
-cat $V_TMP_FILE2 | sort | uniq | grep --colour=auto -e TALB -e TCON -e TIT1 -e TPE1 -e TPE2 -e TYER -e 'No ID3' -e Album -e 'Year:' -e Genre
+if [ -n "$V_SHOW_GENRES" ] ; then
+	V_GENRES_TWO_COLUMNS="$(eyeD3 -P genres)"
+	#@todo echo "$V_DESIRED_GENRES"
+
+	V_FLAT="$(echo "$V_GENRES_TWO_COLUMNS" | cut -b 1-40 | sed 's/ \+$//')
+$(echo "$V_GENRES_TWO_COLUMNS" | cut -b 41-)"
+	echo "$V_FLAT"
+	exit
+fi
+
+check_tag() {
+	V_TYPE=$1
+	V_TAG=$2
+	V_REGEX=$3
+	V_OPTION=$4
+
+	V_ERROR=
+
+	if [ "$V_TAG" == 'grouping' ] ; then
+		V_ID3="$(id3v2 -l $V_FILE)"
+	fi
+
+	#V_DATA="$(eyeD3 --rfc822 *.mp3 | grep -e '^Artist:' -e '^Album:' -e '^Genre:' -e '^Year:' | sort -u)"
+	V_DATA="$(echo "$V_ID3" | grep -o -e "$V_REGEX" | sort -u)"
+	V_COUNT=$(echo "$V_DATA" | wc -l)
+
+	if [ $V_COUNT -lt 1 -o -z "$V_DATA" ] ; then
+		V_ERROR="$V_TYPE: Missing $V_TAG (eyeD3 --to-v2.3 $V_OPTION)"
+	fi
+
+	if [ "$V_TYPE" == 'Directory' ] ; then
+		if [ $V_COUNT -gt 1 ] ; then
+			# http://www.thegeekstuff.com/2009/11/unix-sed-tutorial-multi-line-file-operation-with-6-practical-examples/
+			V_ERROR="$V_TYPE: Duplicated $V_TAG (eyeD3 --to-v2.3 $V_OPTION): $(echo "$V_DATA" | sed -e 's/^.\+: //g' | sed '/./=' | sed 'N; s/\n/. /' | tr "\\n" " ")"
+		fi
+	fi
+
+	if [ -n "$V_ERROR" ] ; then
+		V_WRONG="${V_WRONG}
+${V_ERROR}"
+	else
+		V_RIGHT="$V_RIGHT
+${V_DATA}"
+	fi
+}
+
+V_OLD_IFS=$IFS
+IFS='
+'
+for V_DIR in $(find "$PWD" -type d) ; do
+	cd $V_DIR
+	V_COUNT=$(ls -1 *.mp3 2>/dev/null | wc -l)
+	if [ $V_COUNT -eq 0 ] ; then
+		continue
+	fi
+
+	V_RIGHT=
+	V_WRONG=
+
+	V_ID3="$(eyeD3 *.mp3 2>/dev/null)"
+	check_tag 'Directory' 'artist' '^artist: .\+' -a
+	check_tag 'Directory' 'album' '^album: .\+' -A
+	check_tag 'Directory' 'genre' 'genre: .\+' -G
+	check_tag 'Directory' 'recording date' '^recording date: .\+' '--recording-date'
+
+	for V_FILE in $(find "${V_DIR}" -maxdepth 1 -type f -name '*.mp3') ; do
+		V_ID3="$(eyeD3 -v "$V_FILE" 2>/dev/null)"
+		V_BASENAME="$(basename "$V_FILE")"
+
+		check_tag "File $V_BASENAME" 'artist' '^artist: .\+' -a
+		check_tag "File $V_BASENAME" 'album' '^album: .\+' -A
+		check_tag "File $V_BASENAME" 'genre' 'genre: .\+' -G
+		check_tag "File $V_BASENAME" 'original release date' '^original release date: .\+' '--orig-release-date'
+		check_tag "File $V_BASENAME" 'recording date' '^recording date: .\+' '--recording-date'
+		check_tag "File $V_BASENAME" 'title' '^title: .\+' -t
+		check_tag "File $V_BASENAME" 'track' '^track:\s\+[0-9]\+' -n
+
+		[ -z "$V_UNKNOWN" ] && check_tag "File $V_BASENAME" 'grouping' '^TIT1.\+' '--text-frame TIT1:xxx'
+	done
+
+	V_RIGHT="$(echo "${V_RIGHT:1}" | grep -v -e '^track' -e '^title' | sort -u)"
+
+	if [ -n "$V_WRONG" ] ; then
+		echo "---------- ${V_DIR}"
+		echo -e "${COLOR_LIGHT_RED}${V_WRONG:1}${COLOR_NONE}"
+		echo -e "${COLOR_GREEN}${V_RIGHT}${COLOR_NONE}"
+	elif [ -z "$V_QUIET" ] ; then
+		echo "---------- ${V_DIR}"
+		echo -e "${COLOR_GREEN}${V_RIGHT}${COLOR_NONE}"
+	fi
+done
+
+IFS=$V_OLD_IFS
