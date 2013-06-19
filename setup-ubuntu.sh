@@ -8,13 +8,13 @@ Before executing this script for the first time:
 - Inside the VM, install also VBox Guest Additions (so you can share the host computer's directories) and activate USB devices.
 
 How to restore packages:
-$ sudo apt-get update
-$ sudo apt-get dist-upgrade
-$ dpkg --set-selections < dpkg-get-selections.txt
-$ sudo dselect
+sudo apt-get update
+sudo apt-get dist-upgrade
+dpkg --set-selections < dpkg-get-selections.txt
+sudo dselect
 
 -a  Execute all options below.
--r  Update PPA repositories.
+-r  Add and remove PPA repositories.
 -u  Execute upgrade and dist-upgrade.
 -i  Install/remove packages.
 -l  Setup symbolic links
@@ -60,8 +60,12 @@ show_header() {
 
 show_error() {
 	if [ $? -gt 0 ] ; then
-		echo -e "${COLOR_LIGHT_RED}There was an error while ${1}.\nFix them before continuing."
-		exit
+		echo -e "${COLOR_LIGHT_RED}There was an error while ${1}.\nFix them before continuing.${COLOR_NONE}"
+
+		# Abort only on package installation
+		if [ -z "${2}" -o "${2}" == 'install' ] ; then
+			exit
+		fi
 	fi
 }
 
@@ -69,6 +73,21 @@ if [ -n "$V_ALL" ] || [ -n "$V_PPA" ] ; then
 	V_OLD_IFS="$IFS"
 	IFS='
 '
+	V_PPA_REMOVE='
+ppa:aheck/ppa
+ppa:recoll-backports/recoll-1.15-on
+ppa:scopes-packagers/ppa
+ppa:webupd8team/rhythmbox
+ppa:do-testers/ppa
+deb http://pkg.jenkins-ci.org/debian binary/
+deb http://download.virtualbox.org/virtualbox/debian precise contrib
+ppa:indicator-multiload/stable-daily
+'
+	for V_PPA in $V_PPA_REMOVE ; do
+		show_header "Removing repository $V_PPA"
+		sudo add-apt-repository --remove --yes $V_PPA
+	done
+
 	V_PPA_INSTALL='
 ppa:atareao/atareao
 ppa:cs-sniffer/cortina
@@ -76,7 +95,7 @@ ppa:danielrichter2007/grub-customizer
 ppa:diesch/testing
 ppa:gcstar/ppa
 ppa:git-core/ppa
-ppa:indicator-multiload/stable-daily
+ppa:indicator-multiload/daily
 ppa:jcfp/ppa
 ppa:pidgin-developers/ppa
 ppa:tualatrix/ppa
@@ -85,7 +104,7 @@ ppa:webupd8team/jupiter
 ppa:webupd8team/sublime-text-2
 ppa:webupd8team/y-ppa-manager
 ppa:yannubuntu/boot-repair
-deb http://download.virtualbox.org/virtualbox/debian precise contrib
+deb http://ppa.launchpad.net/do-testers/ppa/ubuntu precise main
 deb http://ppa.launchpad.net/geod/ppa-geod/ubuntu natty main
 deb http://ppa.launchpad.net/midnightflash/ppa/ubuntu natty main
 deb http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu oneiric main
@@ -93,18 +112,6 @@ deb http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu oneiric main
 	for V_PPA in $V_PPA_INSTALL ; do
 		show_header "Adding repository $V_PPA"
 		sudo add-apt-repository --yes $V_PPA
-	done
-
-	V_PPA_REMOVE='
-ppa:aheck/ppa
-ppa:recoll-backports/recoll-1.15-on
-ppa:scopes-packagers/ppa
-ppa:webupd8team/rhythmbox
-deb http://pkg.jenkins-ci.org/debian binary/
-'
-	for V_PPA in $V_PPA_REMOVE ; do
-		show_header "Removing repository $V_PPA"
-		sudo add-apt-repository --remove --yes $V_PPA
 	done
 
 	IFS=$V_OLD_IFS
@@ -158,12 +165,14 @@ fi
 
 if [ -n "$V_ALL" ] || [ -n "$V_UPGRADE" ] ; then
 	show_header 'Upgrading regular packages'
-	sudo apt-get --yes upgrade
-	show_error 'upgrading some of the packages'
+	V_ACTION=upgrade
+	sudo apt-get --yes $V_ACTION
+	show_error 'upgrading some of the packages' $V_ACTION
 
 	show_header 'Upgrading distribution packages'
-	sudo apt-get --yes dist-upgrade
-	show_error 'upgrading some of the distribution packages'
+	V_ACTION=dist-upgrade
+	sudo apt-get --yes $V_ACTION
+	show_error 'upgrading some of the distribution packages' $V_ACTION
 fi
 
 setup_python() {
@@ -224,12 +233,12 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	# The following packages have unmet dependencies:
 	#  lo-menubar : Depends: libreoffice-gtk but it is not going to be installed
 	# E: Unable to correct problems, you have held broken packages.
-	V_TWEAK='ubuntu-tweak myunity y-ppa-manager unsettings'
+	V_TWEAK='ubuntu-tweak y-ppa-manager unsettings' # myunity
 	V_ARCHIVE='unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack lha arj cabextract file-roller'
 	V_UTIL='keepassx gtimelog backintime-gnome gtg thunderbird tmux'
 	V_GIMP='gimp gimp-data gimp-plugin-registry gimp-data-extras'
 	V_HANDBRAKE='handbrake-cli handbrake-gtk'
-	V_PHP='php5-cli php-pear php5-xsl apache2-utils graphviz graphviz-doc phpmyadmin'
+	V_PHP='php5-cli php-pear php5-xsl apache2-utils graphviz graphviz-doc phpmyadmin php5-sqlite php-apc'
 	V_PIDGIN='indicator-messages pidgin pidgin-awayonlock pidgin-data pidgin-extprefs pidgin-guifications pidgin-hotkeys pidgin-lastfm pidgin-libnotify pidgin-otr pidgin-plugin-pack pidgin-ppa pidgin-privacy-please pidgin-themes pidgin-dev pidgin-dbg'
 	V_MYSQL='mysql-client mysql-common mysql-server mysql-workbench libmysqlclient-dev libmysqlclient18 sqlite3'
 	V_SUBVERSION='subversion'
@@ -237,8 +246,9 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_RESCUETIME='xprintidle gtk2-engines-pixbuf'
 	V_CI='php5-curl php5-dev jenkins postfix'
 	V_ALL_PACKAGES="$V_SYSTEM $V_DESKTOP $V_DEV $V_GIT $V_PYTHON $V_BROWSER $V_VIRTUALBOX $V_JAVA $V_AUDIO $V_TWEAK $V_ARCHIVE $V_UTIL $V_GIMP $V_HANDBRAKE $V_PHP $V_PIDGIN $V_MYSQL $V_SUBVERSION $V_USENET $V_RESCUETIME $V_CI"
-	sleep 1 && sudo apt-get --yes install $V_ALL_PACKAGES
-	show_error 'installing or upgrading some of the packages'
+	V_ACTION=install
+	sleep 1 && sudo apt-get --yes $V_ACTION $V_ALL_PACKAGES
+	show_error 'installing or upgrading some of the packages' $V_ACTION
 
 	V_DIR='/usr/local/bin'
 	show_header "The nautilus-compare package needs the $V_DIR directory in order to work"
@@ -265,7 +275,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_FTP='filezilla'
 	V_INDICATOR='calendar-indicator'
 	sleep 1 && sudo apt-get --yes $V_ACTION $V_SYSTEM $V_SHARE $V_TORRENT $V_FTP $V_INDICATOR
-	show_error 'installing or removing some of the packages for working only'
+	show_error 'installing or removing some of the packages for working only' $V_ACTION
 
 	#------------------------------------------------------------------------------------------------------------------------
 	# HOME
@@ -277,11 +287,11 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 		show_header 'Removing packages for home only'
 		V_ACTION=purge
 	fi
-	V_CODECS='non-free-codecs libxine1-ffmpeg gxine mencoder totem-mozilla icedax mpg321'
+	V_CODECS='libxine1-ffmpeg gxine mencoder totem-mozilla icedax mpg321'
 	V_PROGRAMMING='bzr'
 	V_MEDIA='vlc-nox k3b libaudiofile1 libmad0 normalize-audio'
 	sleep 1 && sudo apt-get --yes $V_ACTION $V_CODECS $V_PROGRAMMING $V_MEDIA
-	show_error 'installing or removing some of the packages for home only'
+	show_error 'installing or removing some of the packages for home only' $V_ACTION
 
 	#------------------------------------------------------------------------------------------------------------------------
 	# REMOVE
@@ -296,21 +306,23 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_UTIL='keepass2'
 	V_MONGO='mongodb-clients'
 	V_TORRENT='transmission'
-	sleep 1 && sudo apt-get --yes purge $V_GNOME $V_UBUNTU_ONE $V_GWIBBER $V_EMPATHY $V_MEDIA $V_UNITY $V_UTIL $V_MONGO $V_TORRENT
-	show_error 'purging some of the packages'
+	V_ACTION=purge
+	sleep 1 && sudo apt-get --yes $V_ACTION $V_GNOME $V_UBUNTU_ONE $V_GWIBBER $V_EMPATHY $V_MEDIA $V_UNITY $V_UTIL $V_MONGO $V_TORRENT
+	show_error 'purging some of the packages' $V_ACTION
 
 	#------------------------------------------------------------------------------------------------------------------------
 	# PURGING
 	#------------------------------------------------------------------------------------------------------------------------
 	show_header "Purging 'unable to locate' packages, one at a time, and ignoring eventual errors"
-	V_UNABLE_TO_LOCATE='ejecter unity-lens-pidgin recoll-lens unity-lens-utilities unity-scope-calculator google-chrome-stable'
+	V_UNABLE_TO_LOCATE='ejecter unity-lens-pidgin recoll-lens unity-lens-utilities unity-scope-calculator google-chrome-stable non-free-codecs'
 	for V_PURGE_ONE_PACKAGE in $V_UNABLE_TO_LOCATE ; do
 		sudo apt-get --yes purge $V_PURGE_ONE_PACKAGE
 	done
 
 	show_header "Autoremoving unused packages"
-	sleep 1 && sudo apt-get --yes autoremove
-	show_error 'autoremoving some of the packages'
+	V_ACTION=autoremove
+	sleep 1 && sudo apt-get --yes $V_ACTION
+	show_error 'autoremoving some of the packages' $V_ACTION
 
 	# http://www.webupd8.org/2012/04/things-to-tweak-after-installing-ubuntu.html
 	show_header 'Make all autostart items show up in Startup Applications dialog'
@@ -328,7 +340,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	#	sudo mv $V_CREATED_DIR/* .
 	#	sudo rm -rvf $V_CREATED_DIR
 	#	rm $V_ZIP
-	#	# @todo Adicionar no autostart automaticamente se não existir
+	#	# @todo Add to autostart if it doesn't exist
 	#fi
 
 	setup_python
@@ -379,10 +391,6 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 		sudo apt-get --yes --fix-broken install
 	fi
 
-	if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
-		show_header 'Installing Oracle SQL Developer @todo'
-	fi
-
 	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
 		show_header 'Bazaar autocomplete'
 		eval "$(bzr bash-completion)"
@@ -414,6 +422,8 @@ create_link() {
 	V_LINK_NAME="$1"
 	V_TARGET="$2"
 
+	mkdir -p "$(dirname $V_LINK_NAME)"
+
 	# Create if the target exists and the link doesn't
 	[ -e "$V_TARGET" ] && [ ! -e "$V_LINK_NAME" ] && ln -s "$V_TARGET" "$V_LINK_NAME"
 	ls -lad --color=auto "$V_LINK_NAME"
@@ -421,16 +431,18 @@ create_link() {
 
 if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
 	#------------------------------------------------------------------------------------------------------------------------
-	# SYMBOLYC LINKS
+	# SYMBOLIC LINKS
 	#------------------------------------------------------------------------------------------------------------------------
 	show_header 'Creating common symbolic links for files'
 	create_link $HOME/.bashrc $V_BASH_UTILS_DIR/.bashrc
-	create_link $HOME/.beetsconfig $G_DROPBOX_DIR/linux/.beetsconfig
+	[ -f "$HOME/.beetsconfig" ] && rm $HOME/.beetsconfig
+	create_link $HOME/.config/beets/config.yaml $G_DROPBOX_DIR/linux/beets-config.yaml
 	create_link $HOME/.imwheelrc $V_BASH_UTILS_DIR/.imwheelrc
 	create_link $HOME/.purple $G_DROPBOX_DIR/Apps/PidginPortable/Data/settings/.purple
 	create_link $HOME/.ssh/config $G_DROPBOX_DIR/linux/ssh-config
 	create_link $HOME/.tmux.conf $V_BASH_UTILS_DIR/.tmux.conf
 	create_link $HOME/.vimrc $V_BASH_UTILS_DIR/.vimrc
+	create_link $HOME/.inputrc $V_BASH_UTILS_DIR/.inputrc
 
 	show_header 'Creating common symbolic links for directories'
 	create_link $HOME/.config/gcstar $G_DROPBOX_DIR/linux/config-gcstar/

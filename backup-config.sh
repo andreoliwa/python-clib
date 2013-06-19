@@ -53,7 +53,7 @@ save_if_needed apt-key-exportall.txt "keys" "apt-key exportall"
 V_IGNORE_LIST='.teamviewer;google-chrome;chromium;.pulse;share;.adobe;.kde;autostart'
 V_IMPLODE_IGNORE_LIST="-wholename */${V_IGNORE_LIST//;/\/* -or -wholename *\/}/*"
 save_if_needed symbolic-links.txt "symbolic links" "find ~ -type l -not \( $V_IMPLODE_IGNORE_LIST \) -exec ls -l --color=auto '{}' \;"
-[ -d "/net" ] && save_if_needed net-directory.txt "/net/ directory structure" "find /net/ -mindepth 2 -maxdepth 2 -type d | sort -u"
+# [ -d "/net" ] && save_if_needed net-directory.txt "/net/ directory structure" "find /net/ -mindepth 2 -maxdepth 2 -type d | sort -u"
 save_if_needed pip-freeze.txt "pip modules" "pip freeze --local"
 save_if_needed user-crontab.txt "user crontab" "crontab -l"
 save_if_needed gtimelog.tar "gtimelog files" "tar -czf $V_CONFIG_DIR/gtimelog.tar $HOME/.gtimelog/*"

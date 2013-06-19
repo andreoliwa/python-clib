@@ -24,9 +24,6 @@ done
 # Show download folder if not empty (ignoring hidden files and dirs)
 [ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && xdg-open $G_DOWNLOAD_DIR
 
-# Search for 'Trash' directories I might have left in the servers
-[ -d /net/ ] &&	V_FIND=$(find /net/ -maxdepth 3 -type d -name '.Trash-*') && [ -n "$V_FIND" ] && echo "$V_FIND" | xargs xdg-open
-
 backup-config.sh
 safe-remove.sh -d samsung
 
@@ -44,6 +41,9 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 
 	xdg-open $G_WORK_TIMECLOCK_URL &
 	zenity --warning --text="For safety reasons, please put the headphones inside the drawer."
+
+	# Search for 'Trash' directories I might have left in the servers
+	[ -d /net/ ] &&	V_FIND=$(find /net/ -maxdepth 3 -type d -name '.Trash-*') && [ -n "$V_FIND" ] && echo "$V_FIND" | xargs xdg-open
 else
 	if [ -z "$V_PID_DROPBOX" ] ; then
 		# If Dropbox wasn't started, then wait some time for it to load properly

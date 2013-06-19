@@ -38,13 +38,13 @@ tmux_session_gestao() {
 
 tmux_session_git() {
 	tmux new-session -d -s $1 'cd ~/src/local/dev_bin/ ; git bs ; bash -i'
-	tmux split-window -t $1 -h 'cd ~/src/local/dev_htdocs/ ; git bs ; bash -i'
+	tmux split-window -t $1 -v -p 75 'cd ~/src/local/dev_htdocs/ ; git bs ; bash -i'
 }
 
 tmux_session_mysql() {
-	tmux new-session -d -s $1 'mysql -h 10.20.26.29 -u developers -pgAt01at390 -D dev_xavier'
+	tmux new-session -d -s $1 'mysql -h sql_developer -u developers -pgAt01at390 -D dev_xavier'
 	tmux send-keys -t $1:0.0 'C-l'
-	tmux split-window -t $1 -v 'mysql -h 10.20.26.29 -u developers -pgAt01at390 -D test_xavier'
+	tmux split-window -t $1 -v 'mysql -h sql_developer -u developers -pgAt01at390 -D test_xavier'
 	tmux send-keys -t $1:0.1 'C-l'
 	tmux select-pane -t $1:0.0
 }
