@@ -64,6 +64,11 @@ if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 
 	dropbox-shutdown.sh
 else
+	for V_WINDOW_ID in $(wmctrl -lx | grep -i '\-terminal' | tr -s ' ' | cut -d ' ' -f 1) ; do
+		# Move all terminal windows using their IDs
+		wmctrl-set-position.sh 0 1400,100 $V_WINDOW_ID -i
+	done
+
 	dropbox start
 fi
 
@@ -74,11 +79,11 @@ There are pending remote work hours to send:
 $(git-home-office.sh -td)" &
 fi
 
-V_SECONDS=10
-echo "Sleeping $V_SECONDS seconds..."
-sleep $V_SECONDS
-
 # Show the workspaces indicator when we're not in a XFCE session
 if [ -z "$(pidof xfce4-session)" ] ; then
+	V_SECONDS=10
+	echo "Sleeping $V_SECONDS seconds..."
+	sleep $V_SECONDS
+
 	indicator-workspaces-restart.sh
 fi

@@ -12,7 +12,7 @@ fi
 
 # Close gracefully
 # http://how-to.wikia.coim/wiki/How_to_gracefully_kill_(close)_programs_and_processes_via_command_line
-for V_GRACE in pidgin rhythmbox ; do
+for V_GRACE in pidgin skype rhythmbox ; do
 	echo "Killing $V_GRACE"
 	if [ -n "$(pidof $V_GRACE)" ] ; then
 		kill $(pidof $V_GRACE)

@@ -35,7 +35,7 @@ for PASS in {1..2} ; do
 	echo "rsync $G_WORK_SRC_DIR -> $FOLHA_SRC_PUBLISH_DIR (passo $PASS)"
 
 	#V_COMMON_CMD="rsync -rlD --delete --progress --exclude-from=$G_WORK_SRC_DIR/dev_bin/.gitignore --exclude=_archive* --modify-window=2"
-	V_COMMON_CMD="rsync -huzr --delete --progress --exclude-from=$G_WORK_SRC_DIR/dev_bin/.gitignore --exclude=_archive* --modify-window=2 --times --omit-dir-times"
+	V_COMMON_CMD="rsync -huzr --delete --progress --exclude-from=$G_WORK_SRC_DIR/dev_bin/.gitignore --modify-window=2 --times --omit-dir-times"
 
 	V_ALL_DIRS="$V_COMMON_DIRS $(project-folders.sh $V_PROJECTS)"
 	for V_DIR in $V_ALL_DIRS ; do

@@ -213,7 +213,8 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	# COMMON
 	#------------------------------------------------------------------------------------------------------------------------
 	show_header 'Installing common packages'
-	V_SYSTEM='bash-completion nautilus-open-terminal nautilus-dropbox synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba iftop bum'
+	V_SYSTEM='bash-completion nautilus-open-terminal synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba iftop bum'
+	#nautilus-dropbox
 	V_DESKTOP='xubuntu-desktop indicator-weather indicator-workspaces python-wnck cortina gnome-do indicator-multiload imwheel'
 	V_DEV='sublime-text-dev vim vim-gui-common exuberant-ctags meld'
 	V_GIT='git git-core git-doc git-svn git-gui gitk'
@@ -442,7 +443,7 @@ if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
 	create_link $HOME/.ssh/config $G_DROPBOX_DIR/linux/ssh-config
 	create_link $HOME/.tmux.conf $V_BASH_UTILS_DIR/.tmux.conf
 	create_link $HOME/.vimrc $V_BASH_UTILS_DIR/.vimrc
-	create_link $HOME/.inputrc $V_BASH_UTILS_DIR/.inputrc
+	#create_link $HOME/.inputrc $V_BASH_UTILS_DIR/.inputrc
 
 	show_header 'Creating common symbolic links for directories'
 	create_link $HOME/.config/gcstar $G_DROPBOX_DIR/linux/config-gcstar/
@@ -461,7 +462,7 @@ if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
 		create_link $HOME/Pictures/dropbox $G_DROPBOX_DIR/Photos/
 		create_link $HOME/Pictures/pix /pix/
 		create_link $HOME/Pictures/wallpapers $G_DROPBOX_DIR/Photos/wallpapers/
-		create_link $HOME/src/local $G_EXTERNAL_HDD/.backup/linux/Arkham-Ubuntu-12.04.2-LTS/src/
+		create_link $HOME/src/local $G_EXTERNAL_HDD/.backup/linux/$G_WORK_COMPUTER-Ubuntu-12.04.2-LTS/src/
 	else
 		show_header 'Creating work symbolic links for directories'
 		create_link $HOME/Music/in $G_EXTERNAL_HDD/.audio/music/in
