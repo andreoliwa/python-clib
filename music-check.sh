@@ -7,6 +7,7 @@ OPTIONS
 -q  Quiet (show errors only)
 -u  Check less info for unknown albums
 -g  List of desired genres (separated with commas)
+-t  Open a terminal window for each directory with wrong tags
 -h  Help"
 	exit $1
 }
@@ -15,11 +16,13 @@ V_QUIET=
 V_UNKNOWN=
 V_SHOW_GENRES=
 V_DESIRED_GENRES=
-while getopts "qug:h" V_ARG ; do
+V_TERMINAL=
+while getopts "qug:th" V_ARG ; do
 	case $V_ARG in
 	q)	V_QUIET=1 ;;
 	u)	V_UNKNOWN=1 ;;
 	g)	V_SHOW_GENRES=1 && V_DESIRED_GENRES=$OPTARG ;;
+	t)	V_TERMINAL=1 ;;
 	h)	usage 1 ;;
 	?)	usage 2 ;;
 	esac
@@ -43,16 +46,17 @@ check_tag() {
 
 	V_ERROR=
 
-	if [ "$V_TAG" == 'grouping' ] ; then
-		V_ID3="$(id3v2 -l $V_FILE)"
-	fi
-
 	#V_DATA="$(eyeD3 --rfc822 *.mp3 | grep -e '^Artist:' -e '^Album:' -e '^Genre:' -e '^Year:' | sort -u)"
 	V_DATA="$(echo "$V_ID3" | grep -o -e "$V_REGEX" | sort -u)"
 	V_COUNT=$(echo "$V_DATA" | wc -l)
 
 	if [ $V_COUNT -lt 1 -o -z "$V_DATA" ] ; then
-		V_ERROR="$V_TYPE: Missing $V_TAG (eyeD3 --to-v2.3 $V_OPTION)"
+		if [ "$V_TAG" == 'grouping' ] ; then
+			# A missing grouping tag is not an error
+			return
+		else
+			V_ERROR="$V_TYPE: Missing $V_TAG (eyeD3 --to-v2.3 $V_OPTION)"
+		fi
 	fi
 
 	if [ "$V_TYPE" == 'Directory' ] ; then
@@ -102,15 +106,26 @@ for V_DIR in $(find "$PWD" -type d) ; do
 		check_tag "File $V_BASENAME" 'title' '^title: .\+' -t
 		check_tag "File $V_BASENAME" 'track' '^track:\s\+[0-9]\+' -n
 
-		[ -z "$V_UNKNOWN" ] && check_tag "File $V_BASENAME" 'grouping' '^TIT1.\+' '--text-frame TIT1:xxx'
+		if [ -z "$V_UNKNOWN" ] ; then
+			check_tag "File $V_BASENAME" 'bpm' '^BPM: [1-9]$' '--bpm'
+
+			V_ID3="$(id3v2 -l $V_FILE)"
+			check_tag "File $V_BASENAME" 'grouping' '^TIT1.\+' '--text-frame TIT1:xxx'
+		fi
 	done
 
 	V_RIGHT="$(echo "${V_RIGHT:1}" | grep -v -e '^track' -e '^title' | sort -u)"
 
 	if [ -n "$V_WRONG" ] ; then
-		echo "---------- ${V_DIR}"
-		echo -e "${COLOR_LIGHT_RED}${V_WRONG:1}${COLOR_NONE}"
-		echo -e "${COLOR_GREEN}${V_RIGHT}${COLOR_NONE}"
+		if [ -n "$V_TERMINAL" ] ; then
+			# http://stackoverflow.com/questions/4465930/prevent-gnome-terminal-from-exiting-after-execution
+			gnome-terminal --maximize --working-directory="$V_DIR" --command "bash -c '$(basename $0); bash -i'"
+		else
+			# Show errors only if not opening terminal windows
+			echo "---------- ${V_DIR}"
+			echo -e "${COLOR_LIGHT_RED}${V_WRONG:1}${COLOR_NONE}"
+			echo -e "${COLOR_GREEN}${V_RIGHT}${COLOR_NONE}"
+		fi
 	elif [ -z "$V_QUIET" ] ; then
 		echo "---------- ${V_DIR}"
 		echo -e "${COLOR_GREEN}${V_RIGHT}${COLOR_NONE}"
