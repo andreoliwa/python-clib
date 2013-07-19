@@ -170,4 +170,10 @@ if [ -z "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
 
 	### Added by the Heroku Toolbelt
 	export PATH="$PATH:/usr/local/heroku/bin"
+
+	# Setting a fixed browser to be used by Python's webbrowser module under Sublime Text 2
+	# It worked on the command line, after some research:
+	# https://github.com/revolunet/sublimetext-markdown-preview/issues/2#issuecomment-4221079
+	# http://docs.python.org/2/library/webbrowser.html#module-webbrowser
+	export BROWSER=/usr/bin/chromium-browser
 fi

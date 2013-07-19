@@ -74,14 +74,15 @@ if [ -n "$V_ALL" ] || [ -n "$V_PPA" ] ; then
 	IFS='
 '
 	V_PPA_REMOVE='
+deb http://download.virtualbox.org/virtualbox/debian precise contrib
+deb http://pkg.jenkins-ci.org/debian binary/
 ppa:aheck/ppa
+ppa:do-testers/ppa
+ppa:indicator-multiload/stable-daily
 ppa:recoll-backports/recoll-1.15-on
 ppa:scopes-packagers/ppa
 ppa:webupd8team/rhythmbox
-ppa:do-testers/ppa
-deb http://pkg.jenkins-ci.org/debian binary/
-deb http://download.virtualbox.org/virtualbox/debian precise contrib
-ppa:indicator-multiload/stable-daily
+ppa:webupd8team/sublime-text-2
 '
 	for V_PPA in $V_PPA_REMOVE ; do
 		show_header "Removing repository $V_PPA"
@@ -89,6 +90,10 @@ ppa:indicator-multiload/stable-daily
 	done
 
 	V_PPA_INSTALL='
+deb http://ppa.launchpad.net/do-testers/ppa/ubuntu precise main
+deb http://ppa.launchpad.net/geod/ppa-geod/ubuntu natty main
+deb http://ppa.launchpad.net/midnightflash/ppa/ubuntu natty main
+deb http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu oneiric main
 ppa:atareao/atareao
 ppa:cs-sniffer/cortina
 ppa:danielrichter2007/grub-customizer
@@ -101,13 +106,8 @@ ppa:pidgin-developers/ppa
 ppa:tualatrix/ppa
 ppa:webupd8team/java
 ppa:webupd8team/jupiter
-ppa:webupd8team/sublime-text-2
 ppa:webupd8team/y-ppa-manager
 ppa:yannubuntu/boot-repair
-deb http://ppa.launchpad.net/do-testers/ppa/ubuntu precise main
-deb http://ppa.launchpad.net/geod/ppa-geod/ubuntu natty main
-deb http://ppa.launchpad.net/midnightflash/ppa/ubuntu natty main
-deb http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu oneiric main
 '
 	for V_PPA in $V_PPA_INSTALL ; do
 		show_header "Adding repository $V_PPA"
@@ -216,7 +216,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_SYSTEM='bash-completion nautilus-open-terminal synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba iftop bum'
 	#nautilus-dropbox
 	V_DESKTOP='xubuntu-desktop indicator-weather indicator-workspaces python-wnck cortina gnome-do indicator-multiload imwheel'
-	V_DEV='sublime-text-dev vim vim-gui-common exuberant-ctags meld'
+	V_DEV='vim vim-gui-common exuberant-ctags meld'
 	V_GIT='git git-core git-doc git-svn git-gui gitk'
 	V_PYTHON='python-pip python-dev python-matplotlib'
 	V_BROWSER='chromium-browser lynx-cur'
@@ -439,7 +439,6 @@ if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
 	[ -f "$HOME/.beetsconfig" ] && rm $HOME/.beetsconfig
 	create_link $HOME/.config/beets/config.yaml $G_DROPBOX_DIR/linux/beets-config.yaml
 	create_link $HOME/.imwheelrc $V_BASH_UTILS_DIR/.imwheelrc
-	create_link $HOME/.purple $G_DROPBOX_DIR/Apps/PidginPortable/Data/settings/.purple
 	create_link $HOME/.ssh/config $G_DROPBOX_DIR/linux/ssh-config
 	create_link $HOME/.tmux.conf $V_BASH_UTILS_DIR/.tmux.conf
 	create_link $HOME/.vimrc $V_BASH_UTILS_DIR/.vimrc
@@ -448,6 +447,8 @@ if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
 	show_header 'Creating common symbolic links for directories'
 	create_link $HOME/.config/gcstar $G_DROPBOX_DIR/linux/config-gcstar/
 	create_link $HOME/.config/sublime-text-2 "$G_DROPBOX_DIR/Apps/Sublime\ Text\ 2/Data/"
+	create_link $HOME/.config/sublime-text-3 $G_DROPBOX_DIR/Apps/sublime-text-3/
+	create_link $HOME/.purple $G_DROPBOX_DIR/Apps/PidginPortable/Data/settings/.purple
 	create_link $HOME/bin $G_DROPBOX_DIR/linux/bin/
 	create_link $HOME/music-external-hdd $G_EXTERNAL_HDD/.audio/music/
 

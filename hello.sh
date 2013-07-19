@@ -21,8 +21,8 @@ if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	wmctrl -s 0
 	gtimelog-lock-unlock.sh
 	pidgin &
-	sublime-text-2 &
-	gnome-terminal --tab -t git -e "$G_DROPBOX_DIR/src/bash-utils/tmux-open.sh -s git" --tab --tab &
+	subl &
+	gnome-terminal --tab -t git -e "$G_DROPBOX_DIR/src/bash-utils/tmux-open.sh -s git" --tab --tab --tab -e "ssh vm206" --tab &
 
 	# Second workspace
 	wmctrl -s 1
