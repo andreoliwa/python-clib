@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 source ~/.bashrc
 
 echo "Hostname=$HOSTNAME"
@@ -46,8 +46,16 @@ $V_FIND" &
 fi
 
 # Show files in download dirs
+V_OLD_IFS=$IFS
+IFS='
+'
 V_FIND=$(find $HOME -type d -not -empty -and \( -name 2both -or -name $V_DOC_DIR -or -wholename '*deluge*downloads' \))
-[ -n "$V_FIND" ] && echo "$V_FIND" | xargs xdg-open
+if [ -n "$V_FIND" ]; then
+	for V_ONE_DIR in $V_FIND; do
+		xdg-open $V_ONE_DIR
+	done
+fi
+IFS=$V_OLD_IFS
 
 # Show download folder if not empty (ignoring hidden files and dirs)
 [ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && xdg-open $G_DOWNLOAD_DIR
@@ -87,3 +95,7 @@ if [ -z "$(pidof xfce4-session)" ] ; then
 
 	indicator-workspaces-restart.sh
 fi
+
+# I don't know why, but sometimes this script appears multiple times in the process list.
+# So, allow me to kill myself.
+pkill $(basename $0)

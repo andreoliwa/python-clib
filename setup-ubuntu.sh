@@ -222,7 +222,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_BROWSER='chromium-browser lynx-cur'
 	V_VIRTUALBOX='dkms virtualbox-guest-x11 virtualbox-guest-utils' # virtualbox-4.2
 	V_JAVA='openjdk-6-jre icedtea6-plugin'
-	V_AUDIO='rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 vorbisgain eyed3 python-eyed3 rubyripper gcstar'
+	V_AUDIO='rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 vorbisgain eyed3 python-eyed3 rubyripper gcstar soundconverter gstreamer0.10-plugins-ugly'
 	# lo-menubar
 	# Libre Office menu bar
 	# Some packages could not be installed. This may mean that you have
@@ -423,7 +423,7 @@ create_link() {
 	V_LINK_NAME="$1"
 	V_TARGET="$2"
 
-	mkdir -p "$(dirname $V_LINK_NAME)"
+	mkdir -p "$(dirname "$V_LINK_NAME")"
 
 	# Create if the target exists and the link doesn't
 	[ -e "$V_TARGET" ] && [ ! -e "$V_LINK_NAME" ] && ln -s "$V_TARGET" "$V_LINK_NAME"
@@ -447,7 +447,8 @@ if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
 	show_header 'Creating common symbolic links for directories'
 	create_link $HOME/.config/gcstar $G_DROPBOX_DIR/linux/config-gcstar/
 	create_link $HOME/.config/sublime-text-2 "$G_DROPBOX_DIR/Apps/Sublime\ Text\ 2/Data/"
-	create_link $HOME/.config/sublime-text-3 $G_DROPBOX_DIR/Apps/sublime-text-3/
+	create_link "$HOME/.config/sublime-text-3/Installed Packages" $G_DROPBOX_DIR/Apps/sublime-text-3/Installed\ Packages/
+	create_link $HOME/.config/sublime-text-3/Packages $G_DROPBOX_DIR/Apps/sublime-text-3/Packages/
 	create_link $HOME/.purple $G_DROPBOX_DIR/Apps/PidginPortable/Data/settings/.purple
 	create_link $HOME/bin $G_DROPBOX_DIR/linux/bin/
 	create_link $HOME/music-external-hdd $G_EXTERNAL_HDD/.audio/music/
