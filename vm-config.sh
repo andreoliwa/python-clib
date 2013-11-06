@@ -3,6 +3,9 @@ usage() {
 	echo "Usage: $(basename $0) [options]
 Configura uma VM, criando diretório .ssh/ e bin/, copiando .bashrc, etc.
 
+How to use SSH without a password:
+http://www.linuxproblem.org/art_9.html
+
 Ordem de autenticação:
 http://serverfault.com/questions/283722/authentication-order-with-ssh
 
@@ -61,7 +64,7 @@ fi
 V_PUBLIC_KEY=~/.ssh/id_rsa.pub
 if [ ! -f "$V_PUBLIC_KEY" ] ; then
 	echo "A chave pública $V_PUBLIC_KEY não existe neste servidor"
-	echo "Veja o roteiro para usar SSH sem senha, e crie uma chave pública: http://www.linuxproblem.org/art_9.html"
+	echo "Read the text below (how to use SSH without a password), and create a public key: http://www.linuxproblem.org/art_9.html"
 	exit 4
 fi
 

@@ -2,9 +2,7 @@
 V_TEMP_FILE="$2"
 V_LOCAL_FILE="$5"
 
-V_ALL_AT_ONCE=
-
-if [ -n "$V_ALL_AT_ONCE" ] ; then
+if [ -n "$G_SINGLE_MELD_WINDOW" ] ; then
 	# Cria diretório temporário para copias de arquivo
 	V_TEMP_DIR=/tmp/git-meld/
 	mkdir -p $V_TEMP_DIR

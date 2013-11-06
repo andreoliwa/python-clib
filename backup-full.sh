@@ -117,9 +117,12 @@ function sync_dir() {
 }
 
 if [ -n "$V_ALL" ] || [ -n "$V_PIX" ] ; then
-	V_SOURCE_DIR=''
 	echo "Pictures backup"
+	V_SOURCE_DIR=''
 	sync_dir 'pix'
+
+	V_SOURCE_DIR='/home/wagner/Pictures'
+	sync_dir 'shotwell'
 fi
 
 if [ -n "$V_ALL" ] || [ -n "$V_WINDOWS" ] ; then

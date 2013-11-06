@@ -29,8 +29,8 @@ save_if_needed() {
 
 	# Let's create the file if:
 	# - it doesn't exist, or
-	# - it was last modified a while ago (more than 1 hour).
-	if [ ! -f $V_FULL_PATH ] || [ -z "$(find $V_FULL_PATH -type f -mmin -60 2>/dev/null)" ] ; then
+	# - it was last modified a while ago (more than 2 days).
+	if [ ! -f $V_FULL_PATH ] || [ -z "$(find $V_FULL_PATH -type f -mmin -2880 2>/dev/null)" ] ; then
 		echo "Saving $V_MESSAGE in $V_FULL_PATH"
 		if [ "$V_EXTENSION" = 'txt' ] ; then
 			eval $V_CMD &> $V_FULL_PATH

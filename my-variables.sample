@@ -56,9 +56,9 @@ export G_WORK_BANK_ACCOUNT=
 export G_BANK_STATEMENTS_DIR=
 
 # The media subdirectory has changed since the last Ubuntu version (12.04)
-V_MEDIA_SUBDIR=
-if [ "$(lsb_release -rs)" = '12.10' ] ; then
-	V_MEDIA_SUBDIR=/$(whoami)
+V_MEDIA_SUBDIR=/$(whoami)
+if [ "$(lsb_release -rs)" = '12.04' ] ; then
+	V_MEDIA_SUBDIR=
 fi
 
 # External HDD used for common operations, used also as the primary backup
@@ -69,3 +69,9 @@ export G_MOVIES_HDD=
 
 # External HDD used only as a secondary backup
 export G_BACKUP_HDD=
+
+# Cellphone SD card root dir
+export G_CELL_PHONE=
+
+# Shotwell root picture dir
+export G_SHOTWELL_DIR=

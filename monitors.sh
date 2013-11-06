@@ -28,7 +28,6 @@ else
 	V_WHAT='dual monitors'
 fi
 
-
 set_panel_position() {
 	# http://forum.xfce.org/viewtopic.php?id=7466
 	xfconf-query -c xfce4-panel -p /panels/panel-0/output-name -s $1
@@ -45,7 +44,7 @@ if [ -n "$V_SINGLE" ] ; then
 else
 	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
 		echo "Configuring $V_WHAT at HOME"
-		xrandr --output LVDS1 --mode 1280x800 --pos 0x0 --rotate normal --output DP1 --off --output VGA1 --mode 1280x1024 --pos 1280x0 --rotate normal --primary
+		xrandr --output VIRTUAL1 --off --output LVDS1 --mode 1280x800 --pos 1920x0 --rotate normal --output DP1 --off --output VGA1 --mode 1920x1080 --pos 0x0 --rotate normal
 		set_panel_position VGA1
 	else
 		echo "Configuring $V_WHAT at WORK"

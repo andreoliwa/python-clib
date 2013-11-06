@@ -5,7 +5,7 @@ echo "Hostname=$HOSTNAME"
 echo "Work computer=$G_WORK_COMPUTER"
 echo "Home computer=$G_HOME_COMPUTER"
 
-# Can't use "pidof gnome-do" because gnome-do is not the name of the executaable, so it doesn't have a PID
+# Can't use "pidof gnome-do" because "gnome-do" is not the executable's name, so it doesn't have a PID
 [ -z "$(ps aux | grep -v grep | grep gnome-do)" -a "$(type -p gnome-do)" ] && gnome-do &
 
 [ -z "$(ps aux | grep -v grep | grep indicator-multiload)" -a "$(type -p indicator-multiload)" ] && indicator-multiload --trayicon &
@@ -19,10 +19,8 @@ monitors.sh
 if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
 	# First workspace
 	wmctrl -s 0
-	gtimelog-lock-unlock.sh
 	pidgin &
 	subl &
-	gnome-terminal --tab -t git -e "$G_DROPBOX_DIR/src/bash-utils/tmux-open.sh -s git" --tab --tab --tab -e "ssh vm206" --tab &
 
 	# Second workspace
 	wmctrl -s 1
@@ -49,7 +47,7 @@ fi
 V_OLD_IFS=$IFS
 IFS='
 '
-V_FIND=$(find $HOME -type d -not -empty -and \( -name 2both -or -name $V_DOC_DIR -or -wholename '*deluge*downloads' \))
+V_FIND=$(find $HOME -maxdepth 4 -type d -not -empty -and \( -name 2both -or -name $V_DOC_DIR -or -wholename '*deluge*downloads' \))
 if [ -n "$V_FIND" ]; then
 	for V_ONE_DIR in $V_FIND; do
 		xdg-open $V_ONE_DIR
@@ -61,13 +59,6 @@ IFS=$V_OLD_IFS
 [ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && xdg-open $G_DOWNLOAD_DIR
 
 if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
-	# Returns to the first workspace
-	wmctrl -s 0
-
-	# Move windows to corresponding workspaces
-	sleep 5
-	wmctrl-move-windows.sh
-
 	xdg-open $G_WORK_TIMECLOCK_URL &
 
 	dropbox-shutdown.sh
@@ -94,6 +85,12 @@ if [ -z "$(pidof xfce4-session)" ] ; then
 	sleep $V_SECONDS
 
 	indicator-workspaces-restart.sh
+fi
+
+if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
+	gnome-terminal -x ssh vm206 &
+else
+	skype &
 fi
 
 # I don't know why, but sometimes this script appears multiple times in the process list.

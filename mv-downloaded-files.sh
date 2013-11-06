@@ -2,7 +2,7 @@
 cd $G_DOWNLOAD_DIR
 
 mv_ofx() {
-	for V_OFX_FILE in $(ls -1 *.ofx 2> /dev/null) ; do
+	for V_OFX_FILE in $(ls -1 *.ofx 2>/dev/null) ; do
 		echo
 		echo "File: $V_OFX_FILE"
 
@@ -19,7 +19,7 @@ mv_ofx() {
 		V_DATE_TIME=$(stat -c %y $V_OFX_FILE | cut -b 1-19 | tr ' :' '_-')
 		echo "Date/time: $V_DATE_TIME"
 
-		V_NEW_DIR=$G_BANK_STATEMENTS_DIR/$V_ACCOUNT_NAME
+		V_NEW_DIR=$G_BANK_STATEMENTS_DIR/$V_ACCOUNT_NAME/0fx
 		mkdir -p "$V_NEW_DIR"
 		V_NEW_FILE="$V_NEW_DIR/$V_ACCOUNT_NAME-$V_DATE_TIME.ofx"
 		echo "New file: $V_NEW_FILE"
@@ -29,11 +29,11 @@ mv_ofx() {
 }
 
 mv_torrent() {
-	[ -f *.torrent ] && mv -v *.torrent $G_DROPBOX_DIR/torrent/
+	[ "$(ls -1 *.torrent 2>/dev/null | wc -l)" -gt 0 ] && mv -v *.torrent $G_DROPBOX_DIR/torrent/
 }
 
 has_pdf() {
-	if [ -f *.pdf* ] ; then
+	if [ "$(ls -1 *.pdf* 2>/dev/null | wc -l)" -gt 0 ] ; then
 		xdg-open $G_DOWNLOAD_DIR
 		xdg-open $G_BANK_STATEMENTS_DIR
 	fi
@@ -43,4 +43,5 @@ mv_ofx
 mv_torrent
 has_pdf
 
+echo "Contents of $PWD:"
 ls -l

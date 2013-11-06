@@ -23,7 +23,7 @@ while getopts "nb:rf:lh" V_ARG ; do
 	n)	V_DRY_RUN=1 ;;
 	b)	V_BPM=$OPTARG ;;
 	r)	V_REMOVE=1 ;;
-	f)	V_FILES="$V_FILES $OPTARG" ;;
+	f)	V_FILES="$V_FILES '$OPTARG'" ;;
 	l)	V_LIST=1 ;;
 	h)	usage 1 ;;
 	?)	usage 2 ;;
@@ -53,7 +53,8 @@ elif [ -n "$V_REMOVE" ] ; then
 fi
 
 if [ -z "$V_CMD" ] ; then
-	V_BPM=$(zenity --print-column=2 --list --height=400 --column=BPM --column=Description --text='Pick one:' $V_BPM_LIST)
+	# I think something happened to zenity in Ubuntu 13.10. The return value is now repeated. Before: "1" Now: "1|1"
+	V_BPM=$(zenity --print-column=2 --separator=# --list --height=400 --column=Description --column=BPM --text='Pick one:' $V_BPM_LIST | sed 's/#.\+//')
 	if [ -z "$V_BPM" ] ; then
 		usage
 	fi

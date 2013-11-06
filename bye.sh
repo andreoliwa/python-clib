@@ -15,10 +15,11 @@ fi
 for V_GRACE in pidgin skype rhythmbox ; do
 	echo "Killing $V_GRACE"
 	if [ -n "$(pidof $V_GRACE)" ] ; then
-		kill $(pidof $V_GRACE)
-		#-s INT
+		kill -s sigterm $(pidof $V_GRACE)
+		sleep 4
+	else
+		pkill $V_GRACE
 	fi
-	pkill $V_GRACE
 done
 
 # Show download folder if not empty (ignoring hidden files and dirs)

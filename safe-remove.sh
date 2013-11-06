@@ -24,12 +24,16 @@ if [ -z "$V_DEVICE_NAME" ] ; then
 	usage 3
 fi
 
-for V_MEDIA in $(find /media/ -maxdepth 2 -type d -name "*$V_DEVICE_NAME*" 2> /dev/null) ; do
+V_OLD_IFS=$IFS
+IFS='
+'
+for V_MEDIA in $(find /media/ -maxdepth 2 -type d -iname "*$V_DEVICE_NAME*" 2> /dev/null) ; do
 	echo "${V_DRY_RUN}Unmounting $V_MEDIA"
-	[ -z "$V_DRY_RUN" ] && sudo umount $V_MEDIA
+	[ -z "$V_DRY_RUN" ] && sudo umount "$V_MEDIA"
 
-	V_LABEL=$(basename $V_MEDIA)
-	V_DEVICE=$(sudo blkid -L $V_LABEL)
+	V_LABEL=$(basename "$V_MEDIA")
+	V_DEVICE=$(sudo blkid -L "$V_LABEL")
 	echo "${V_DRY_RUN}Safely removing $V_LABEL (${V_DEVICE%?})"
-	[ -z "$V_DRY_RUN" ] && udisks --detach ${V_DEVICE%?}
+	[ -z "$V_DRY_RUN" ] && udisks --detach "${V_DEVICE%?}"
 done
+IFS=$V_OLD_IFS

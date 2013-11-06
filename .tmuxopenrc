@@ -50,18 +50,27 @@ tmux_session_mysql() {
 }
 
 tmux_session_vm206() {
-	tmux new-session -d -s $1 'ssh vm206'
+	_tmux_session_vmdev $1 vm206
+}
+
+tmux_session_vm217() {
+	_tmux_session_vmdev $1 vm217
+}
+
+_tmux_session_vmdev() {
+	V_VM=$2
+	tmux new-session -d -s $1 "ssh $V_VM"
 	tmux setw -t $1 utf8 off
 
 	tmux send-keys -t $1 'C-l' 'clear; devqa-error-log.sh -n 19' Enter
-	tmux split-window -t $1 -v -p 85 'ssh vm206'
-	tmux split-window -t $1:0.0 -h 'ssh vm206'
+	tmux split-window -t $1 -v -p 85 "ssh $V_VM"
+	tmux split-window -t $1:0.0 -h "ssh $V_VM"
 	tmux send-keys -t $1 'C-l' "clear; echo 'Log de erros em test:'; tail -F /var/log/httpd/test_php.log | grep -i xavier" Enter
 	tmux select-pane -t $1:0.1
 }
 
 tmux_session_bash() {
-	subl --add --project $G_DROPBOX_DIR/sublime-projects/bash-utils.sublime-project &
+	subl --project $G_DROPBOX_DIR/sublime-projects/bash-utils.sublime-project &
 	tmux new-session -d -s $1 "cd $G_DROPBOX_DIR/src/bash-utils ; git st ; bash -i"
 }
 

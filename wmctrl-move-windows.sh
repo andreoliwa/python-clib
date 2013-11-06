@@ -15,11 +15,11 @@ wmctrl-set-position.sh 1 1400,100 Navigator.Firefox
 wmctrl-set-position.sh 1 1400,0 thunderbird
 
 # Third desktop (2)
+wmctrl-set-position.sh 2 0,0 update-manager.Update-manager
+# Move all file manager windows using their IDs
+for V_WINDOW_ID in $(wmctrl -lx | grep -i -e nautilus -e thunar | cut -d ' ' -f 1) ; do
+	wmctrl -i -r $V_WINDOW_ID -t 2
+done
 
 # Fourth desktop (3)
-wmctrl-set-position.sh 3 0,0 update-manager.Update-manager
 wmctrl-set-position.sh 3 1400,0 rhythmbox.Rhythmbox
-for V_WINDOW_ID in $(wmctrl -lx | grep -i -e nautilus -e thunar | cut -d ' ' -f 1) ; do
-	# Move all file manager windows using their IDs
-	wmctrl -i -r $V_WINDOW_ID -t 3
-done

@@ -108,7 +108,7 @@ if [ -n "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
 	TITLEBAR='\[\e]0;\h:${PWD}\a\]'
 
 	# Development VM is green; production VMs are red
-	if [[ $HOSTNAME == vm206*folha.com.br ]] ; then
+	if [[ ($HOSTNAME == vm206*folha.com.br) || ($HOSTNAME == vm217*folha.com.br) ]] ; then
 		PS1="${COLOR_LIGHT_GREEN}${TITLEBAR}\u@\h:\W\$${COLOR_NONE} "
 	else
 		PS1="${COLOR_LIGHT_RED}${TITLEBAR}\u@\h:\W\$${COLOR_NONE} "
