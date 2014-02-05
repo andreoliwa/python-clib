@@ -16,6 +16,6 @@ while getopts "h" V_ARG ; do
 done
 
 V_FIND="$*"
-V_CMD="find $G_EXTERNAL_HDD/.audio/music -iwholename '*${V_FIND// /*}*'"
+V_CMD="find $G_EXTERNAL_HDD/audio/music -iwholename '*${V_FIND// /*}*' | sort"
 echo "$V_CMD"
 eval "$V_CMD"
