@@ -153,7 +153,8 @@ if [ -z "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
 
 	# Set PATH so it includes user's private bin if it exists
 	if [ -d "$HOME/bin" ] ; then
-		export PATH="$HOME/bin:$G_DROPBOX_DIR/src/bash-utils:$PATH:/home/wagner/src/local/dev_bin/devqa"
+		# Adding global Composer dir to the PATH, according to http://akrabat.com/php/global-installation-of-php-tools-with-composer/
+		export PATH="$HOME/bin:$G_DROPBOX_DIR/src/clitools:$HOME/.composer/vendor/bin:$PATH:$G_WORK_SRC_DIR/dev_bin/devqa"
 	fi
 
 	# Autocomplete for sudo?
