@@ -29,7 +29,7 @@ while getopts "qug:th" V_ARG ; do
 done
 
 if [ -n "$V_SHOW_GENRES" ] ; then
-	V_GENRES_TWO_COLUMNS="$(eyeD3 -P genres)"
+	V_GENRES_TWO_COLUMNS="$(eyeD3 --no-color-P genres)"
 	#@todo echo "$V_DESIRED_GENRES"
 
 	V_FLAT="$(echo "$V_GENRES_TWO_COLUMNS" | cut -b 1-40 | sed 's/ \+$//')
@@ -46,7 +46,7 @@ check_tag() {
 
 	V_ERROR=
 
-	#V_DATA="$(eyeD3 --rfc822 *.mp3 | grep -e '^Artist:' -e '^Album:' -e '^Genre:' -e '^Year:' | sort -u)"
+	#V_DATA="$(eyeD3 --no-color --rfc822 *.mp3 | grep -e '^Artist:' -e '^Album:' -e '^Genre:' -e '^Year:' | sort -u)"
 	V_DATA="$(echo "$V_ID3" | grep -o -e "$V_REGEX" | sort -u)"
 	V_COUNT=$(echo "$V_DATA" | wc -l)
 
@@ -88,14 +88,14 @@ for V_DIR in $(find "$PWD" -type d) ; do
 	V_RIGHT=
 	V_WRONG=
 
-	V_ID3="$(eyeD3 *.mp3 2>/dev/null)"
+	V_ID3="$(eyeD3 --no-color *.mp3 2>/dev/null)"
 	check_tag 'Directory' 'artist' '^artist: .\+' -a
 	check_tag 'Directory' 'album' '^album: .\+' -A
 	check_tag 'Directory' 'genre' 'genre: .\+' -G
 	check_tag 'Directory' 'recording date' '^recording date: .\+' '--recording-date'
 
 	for V_FILE in $(find "${V_DIR}" -maxdepth 1 -type f -name '*.mp3') ; do
-		V_ID3="$(eyeD3 -v "$V_FILE" 2>/dev/null)"
+		V_ID3="$(eyeD3 --no-color -v "$V_FILE" 2>/dev/null)"
 		V_BASENAME="$(basename "$V_FILE")"
 
 		check_tag "File $V_BASENAME" 'artist' '^artist: .\+' -a
