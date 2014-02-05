@@ -67,9 +67,9 @@ IFS=$V_OLD_IFS
 V_IS_MYSQL=$(echo $V_COMMAND | grep -o mysql)
 if [ -n "$V_PROCESSLIST" ] && [ -n "$V_IS_MYSQL" ] ; then
 	if [ -n "$V_ACTIVE" ] ; then
-		V_COMMAND="watch -n $V_SECONDS -d '$V_COMMAND -e\"SHOW FULL PROCESSLIST\" | grep -v -e Sleep -e \"SHOW FULL PROCESSLIST\" '"
+		V_COMMAND="watch -n $V_SECONDS -d '$V_COMMAND -e\"SHOW FULL PROCESSLIST\" | grep -v -e Sleep -e \"SHOW FULL PROCESSLIST\" | cut -b 1-150'"
 	else
-		V_COMMAND="watch -n $V_SECONDS -d '$V_COMMAND -e\"SHOW FULL PROCESSLIST\"'"
+		V_COMMAND="watch -n $V_SECONDS -d '$V_COMMAND -e\"SHOW FULL PROCESSLIST\" | cut -b 1-150'"
 	fi
 fi
 
