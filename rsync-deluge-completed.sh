@@ -19,7 +19,7 @@ while getopts "oh" V_ARG ; do
 done
 
 V_DELUGE=$HOME/.config/deluge/completed-downloads
-V_HD=$G_EXTERNAL_HDD
+V_HD=$G_EXTERNAL_HDD/backup
 
 if [ ! -d "$V_HD" ] ; then
 	echo "External HD not found: $V_HD"

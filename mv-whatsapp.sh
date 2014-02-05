@@ -31,7 +31,7 @@ if [ ! -d "$V_IMAGES_DIR" ] ; then
 	usage 5
 fi
 
-V_BACKUP_DIR="$G_EXTERNAL_HDD/.backup/whatsapp"
+V_BACKUP_DIR="$G_EXTERNAL_HDD/backup/whatsapp"
 
 mkdir -p $V_BACKUP_DIR/images/
 mv -v "$V_IMAGES_DIR"/* $V_BACKUP_DIR/images/

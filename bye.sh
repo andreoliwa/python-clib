@@ -26,7 +26,9 @@ done
 [ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && xdg-open $G_DOWNLOAD_DIR
 
 backup-config.sh
-safe-remove.sh -d samsung
+
+safe-remove.sh -d black
+safe-remove.sh -d m3
 
 if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	# Copies the "Standards Documentation" to the QA directory
@@ -46,6 +48,8 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	# Search for 'Trash' directories I might have left in the servers
 	[ -d /net/ ] &&	V_FIND=$(find /net/ -maxdepth 3 -type d -name '.Trash-*') && [ -n "$V_FIND" ] && echo "$V_FIND" | xargs xdg-open
 else
+	sudo /usr/local/bin/noip2
+
 	if [ -z "$V_PID_DROPBOX" ] ; then
 		# If Dropbox wasn't started, then wait some time for it to load properly
 		echo 'Waiting for Dropbox to start...'
