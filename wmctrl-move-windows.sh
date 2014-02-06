@@ -1,25 +1,58 @@
 #!/bin/bash
 
-# First Desktop (0)
-wmctrl -r 'Buddy List' -t 0 # Moves Pidgin to first desktop, if its window is open
-wmctrl-set-position.sh 0 0,0 sublime_text.Sublime_text
-wmctrl-set-position.sh 0 0,0 chromium-browser.Chromium-browser
-wmctrl-set-position.sh 0 0,0 google-chrome.Google-chrome
-for V_WINDOW_ID in $(wmctrl -lx | grep -i '\-terminal' | tr -s ' ' | cut -d ' ' -f 1) ; do
-	# Move all terminal windows using their IDs
-	wmctrl-set-position.sh 0 1400,100 $V_WINDOW_ID -i
-done
+# Development
+first_desktop() {
+	V_DESKTOP=0
+	wmctrl-set-position.sh $V_DESKTOP 0,0 sublime
+	wmctrl-set-position.sh $V_DESKTOP 1400,0 chrom
+	for V_WINDOW_ID in $(wmctrl -lx | grep -i '\-terminal' | tr -s ' ' | cut -d ' ' -f 1) ; do
+		# Move all terminal windows using their IDs
+		wmctrl-set-position.sh $V_DESKTOP 1400,100 $V_WINDOW_ID -i
+	done
 
-# Second desktop (1)
-wmctrl-set-position.sh 1 1400,100 Navigator.Firefox
-wmctrl-set-position.sh 1 1400,0 thunderbird
+	# Pidgin: move and close the buddy list
+	wmctrl -r 'Buddy List' -t $V_DESKTOP
+	wmctrl -r 'Buddy List' -e 0,1020,30,250,950
+	wmctrl -c 'Buddy List'
 
-# Third desktop (2)
-wmctrl-set-position.sh 2 0,0 update-manager.Update-manager
-# Move all file manager windows using their IDs
-for V_WINDOW_ID in $(wmctrl -lx | grep -i -e nautilus -e thunar | cut -d ' ' -f 1) ; do
-	wmctrl -i -r $V_WINDOW_ID -t 2
-done
+	# Pidgin: Move chat windows
+	for V_PIDGIN_WINDOW_ID in $(wmctrl -lx | grep -i pidgin | tr -s ' ' | grep -v 'Buddy List' | cut -d ' ' -f 1) ; do
+		wmctrl -i -r $V_PIDGIN_WINDOW_ID -t $V_DESKTOP
+		wmctrl -i -r $V_PIDGIN_WINDOW_ID -e 0,1280,600,700,400
+	done
 
-# Fourth desktop (3)
-wmctrl-set-position.sh 3 1400,0 rhythmbox.Rhythmbox
+	# Close Skype windows
+	for V_SKYPE_WINDOW_ID in $(wmctrl -lx | grep ' skype.Skype ' | tr -s ' ' | cut -d ' ' -f 1) ; do
+		wmctrl -i -c $V_SKYPE_WINDOW_ID
+	done
+}
+
+# Text + E-mail
+second_desktop() {
+	V_DESKTOP=1
+	wmctrl-set-position.sh $V_DESKTOP 1400,100 firefox
+	wmctrl-set-position.sh $V_DESKTOP 1400,0 thunderbird
+}
+
+# Databases
+third_desktop() {
+	V_DESKTOP=2
+	wmctrl-set-position.sh $V_DESKTOP 0,0 update-manager
+	wmctrl-set-position.sh $V_DESKTOP 0,0 mysql-workbench
+}
+
+# Fun
+fourth_desktop() {
+	V_DESKTOP=3
+
+	# Move all file manager windows using their IDs
+	for V_WINDOW_ID in $(wmctrl -lx | grep -i -e nautilus -e thunar | cut -d ' ' -f 1) ; do
+		wmctrl -i -r $V_WINDOW_ID -t $V_DESKTOP
+	done
+	wmctrl-set-position.sh $V_DESKTOP 1400,0 rhythmbox
+}
+
+first_desktop
+second_desktop
+third_desktop
+fourth_desktop
