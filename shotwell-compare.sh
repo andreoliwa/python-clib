@@ -12,7 +12,7 @@ OPTIONS
 V_DIRECTORY=
 while getopts "d:h" V_ARG ; do
 	case $V_ARG in
-	d)	V_DIRECTORY=$OPTARG ;;
+	d)	V_DIRECTORY="$(readlink -f $OPTARG)" ;;
 	h)	usage 1 ;;
 	?)	usage 2 ;;
 	esac
@@ -31,4 +31,15 @@ V_TMP_PIX=/tmp/pix.txt
 find $V_DIRECTORY -type f -exec basename {} \; | sort -u >$V_TMP_PIX
 
 echo "Finding files in the supplied picture directory ($V_DIRECTORY)..."
-meld $V_TMP_SHOTWELL $V_TMP_PIX
+#meld $V_TMP_SHOTWELL $V_TMP_PIX
+
+V_DIFF="$(diff $V_TMP_SHOTWELL $V_TMP_PIX | grep '^>' | sed 's/^> //')"
+if [ -n "$V_DIFF" ] ; then
+	echo -en $COLOR_LIGHT_RED
+	echo "MISSING FILES! These files were not found in the Shotwell directory:"
+	echo -en $COLOR_NONE
+	echo "$V_DIFF"
+else
+	echo -en $COLOR_GREEN
+	echo "Ok. All files are identical; you can remove the pictures from $V_DIRECTORY."
+fi
