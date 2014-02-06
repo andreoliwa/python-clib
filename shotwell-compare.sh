@@ -4,7 +4,7 @@ usage() {
 Compare one photo directory with Shotwell, to check if any file is missing.
 
 OPTIONS
--d  Picture directory to compare with Shotwell
+-d  Picture directory to compare with Shotwell. If this option is not informed, assumes the current dir.
 -h  Help"
 	exit $1
 }
@@ -19,8 +19,7 @@ while getopts "d:h" V_ARG ; do
 done
 
 if [ -z "$V_DIRECTORY" ] ; then
-	echo 'No directory specified'
-	usage 3
+	V_DIRECTORY="$PWD"
 fi
 
 V_TMP_SHOTWELL=/tmp/shotwell.txt
@@ -28,7 +27,7 @@ echo "Finding files in Shotwell directory ($G_SHOTWELL_DIR)..."
 find $G_SHOTWELL_DIR -type f -exec basename {} \; | sort -u >$V_TMP_SHOTWELL
 
 V_TMP_PIX=/tmp/pix.txt
-find $V_DIRECTORY -type f -exec basename {} \; | sort -u >$V_TMP_PIX
+find "$V_DIRECTORY" -type f -exec basename {} \; | sort -u >$V_TMP_PIX
 
 echo "Finding files in the supplied picture directory ($V_DIRECTORY)..."
 #meld $V_TMP_SHOTWELL $V_TMP_PIX
