@@ -40,12 +40,12 @@ if [ -n "$V_CONFIG" ] ; then
 	echo 'Configurando diretorio de padroes do Code Sniffer'
 	cd /usr/share/php/PHP/CodeSniffer/Standards/
 	sudo rm -v FolhaPEAR
-	sudo ln -s $HOME/src/local/dev_bin/codesniffer/FolhaPEAR/
+	sudo ln -s $G_WORK_SRC_DIR/dev_bin/codesniffer/FolhaPEAR/
 
 	echo 'Configurando pre-commit hook'
 	cd $G_DROPBOX_DIR/svn-repo/hooks
 	rm -v pre-commit
-	ln -s $HOME/src/local/dev_bin/codesniffer/pre-commit
+	ln -s $G_WORK_SRC_DIR/dev_bin/codesniffer/pre-commit
 	chmod a+x pre-commit
 
 	echo 'Configurando diretorio de logs usado no pre-commit hook'

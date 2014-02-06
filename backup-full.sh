@@ -55,7 +55,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_CONFIG" ] ; then
 fi
 
 V_LINUX_VERSION=$(lsb_release -d -s | sed 's/ /-/g')
-V_BACKUP_EXTERNAL_DIR="$G_EXTERNAL_HDD/.backup/linux"
+V_BACKUP_EXTERNAL_DIR="$G_EXTERNAL_HDD/backup/linux"
 if [ -d $V_BACKUP_EXTERNAL_DIR ] ; then
 	V_BACKUP_EXTERNAL_DIR=$V_BACKUP_EXTERNAL_DIR/$HOSTNAME-$V_LINUX_VERSION
 	mkdir -p $V_BACKUP_EXTERNAL_DIR
@@ -86,16 +86,16 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 	if [ -n "$V_ALL" ] || [ -n "$V_CODE" ] ; then
 		V_ERROR=
 		[ ! -d "$V_BACKUP_EXTERNAL_DIR" ] && V_ERROR=1 && echo "Directory not found: $V_BACKUP_EXTERNAL_DIR"
-		[ ! -d "$HOME/src/local/" ] && V_ERROR=1 && echo "Directory not found: $HOME/src/local/"
+		[ ! -d "$G_WORK_SRC_DIR/" ] && V_ERROR=1 && echo "Directory not found: $G_WORK_SRC_DIR/"
 		if [ -z "$V_ERROR" ] ; then
-			echo "Source code backup from $HOME/src/local/ to $V_BACKUP_EXTERNAL_DIR/src/"
-			rsync $V_DRY_RUN -trOlhDuzv --del --modify-window=2 --progress $HOME/src/local/ $V_BACKUP_EXTERNAL_DIR/src/
+			echo "Source code backup from $G_WORK_SRC_DIR/ to $V_BACKUP_EXTERNAL_DIR/src/"
+			rsync $V_DRY_RUN -trOlhDuzv --del --modify-window=2 --progress $G_WORK_SRC_DIR/ $V_BACKUP_EXTERNAL_DIR/src/
 			#--exclude=*.pack
 		fi
 	fi
 fi
 
-V_POSSIBLE_BACKUP_DIRS="$G_EXTERNAL_HDD/.backup $G_BACKUP_HDD/.backup"
+V_POSSIBLE_BACKUP_DIRS="$G_EXTERNAL_HDD/backup $G_BACKUP_HDD/.backup"
 V_BACKUP_DIRS=
 for V_DIR in $V_POSSIBLE_BACKUP_DIRS ; do
 	if [ -d "$V_DIR" ] ; then
@@ -118,11 +118,12 @@ function sync_dir() {
 
 if [ -n "$V_ALL" ] || [ -n "$V_PIX" ] ; then
 	echo "Pictures backup"
-	V_SOURCE_DIR=''
-	sync_dir 'pix'
 
 	V_SOURCE_DIR='/home/wagner/Pictures'
+	V_BACKUP_DIRS=/media/wagner/blacks2/.backup
 	sync_dir 'shotwell'
+	sync_dir 'import-into-shotwell'
+	exit
 fi
 
 if [ -n "$V_ALL" ] || [ -n "$V_WINDOWS" ] ; then

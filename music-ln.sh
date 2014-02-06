@@ -14,7 +14,7 @@ V_SOURCE=
 while getopts "leh" V_ARG ; do
 	case $V_ARG in
 	l)	V_SOURCE="/home/music" ;;
-	e)	V_SOURCE="$G_EXTERNAL_HDD/.audio" ;;
+	e)	V_SOURCE="$G_EXTERNAL_HDD/audio" ;;
 	h)	usage 1 ;;
 	?)	usage 2 ;;
 	esac

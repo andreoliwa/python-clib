@@ -18,7 +18,7 @@ while getopts "nh" V_ARG ; do
 	esac
 done
 
-V_SOURCE_DIR="$G_EXTERNAL_HDD/.audio/music/in/phone/"
+V_SOURCE_DIR="$G_EXTERNAL_HDD/audio/music/in/phone/"
 V_DESTINATION_DIR='/media/MOTO DEFY/Music/phone/'
 [ ! -d $V_SOURCE_DIR ] &&	echo "Source directory not found: $V_SOURCE_DIR" && exit
 [ ! -d "$V_DESTINATION_DIR" ] && echo "Destination directory not found: $V_DESTINATION_DIR" && exit
@@ -32,7 +32,7 @@ ntfs-check-filenames.sh $V_SOURCE_DIR
 echo "Nao copia diretorio unknown ainda..."
 exit
 
-V_SOURCE_DIR='$G_EXTERNAL_HDD/.audio/music/unknown/'
+V_SOURCE_DIR='$G_EXTERNAL_HDD/audio/music/unknown/'
 V_DESTINATION_DIR='/media/MOTO DEFY/Music/unknown/'
 #@todo Nao fazer copy/paste
 [ ! -d $V_SOURCE_DIR ] &&	echo "Source directory not found: $V_SOURCE_DIR" && exit

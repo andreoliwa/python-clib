@@ -99,7 +99,7 @@ repo_partner() {
 common_packages() {
 	show_header 'Installing common packages'
 	call_aptget install 'installing or upgrading some of the packages' "bash-completion nautilus-open-terminal synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba iftop bum
-		xubuntu-desktop indicator-weather indicator-workspaces python-wnck cortina gnome-do indicator-multiload imwheel # Desktop
+		xubuntu-desktop indicator-weather indicator-workspaces python-wnck gnome-do indicator-multiload imwheel # Desktop
 		sublime-text-installer vim vim-gui-common exuberant-ctags meld # Dev tools
 		git git-core git-doc git-svn git-gui gitk
 		python-pip python-dev python-matplotlib # Python
@@ -118,7 +118,7 @@ common_packages() {
 		gimp gimp-data gimp-plugin-registry gimp-data-extras
 		handbrake-cli handbrake-gtk
 
-		php5-cli php-pear php5-xsl apache2-utils graphviz graphviz-doc phpmyadmin php5-sqlite php-apc
+		php5-cli php-pear php5-xsl apache2-utils graphviz graphviz-doc phpmyadmin php5-sqlite php-apc php5-intl php5-xdebug
 		mysql-client mysql-common mysql-server mysql-workbench libmysqlclient-dev libmysqlclient18 sqlite3
 		subversion
 		php5-curl php5-dev jenkins postfix
@@ -131,7 +131,7 @@ purge_packages() {
 		ubuntuone-client ubuntuone-client-gnome ubuntuone-control-panel ubuntuone-couch ubuntuone-installer # Ubuntu One
 		gwibber gwibber-service gwibber-service-facebook gwibber-service-identica gwibber-service-twitter libgwibber-gtk2 libgwibber2 # Gwibber
 		empathy empathy-common nautilus-sendto-empathy # Empathy
-		tagtool wallch subdownloader rubyripper # Media
+		tagtool wallch subdownloader rubyripper cortina # Media
 		classicmenu-indicator recoll # Unity
 		keepass2 ubuntu-tweak # Util
 		mongodb-clients
@@ -150,6 +150,7 @@ deb http://pkg.jenkins-ci.org/debian binary/
 deb http://ppa.launchpad.net/geod/ppa-geod/ubuntu natty main
 ppa:aheck/ppa
 ppa:atareao/atareao
+ppa:cs-sniffer/cortina
 ppa:diesch/testing
 ppa:do-testers/ppa
 ppa:indicator-multiload/stable-daily
@@ -168,7 +169,6 @@ ppa:webupd8team/sublime-text-2
 deb http://ppa.launchpad.net/do-testers/ppa/ubuntu precise main
 deb http://ppa.launchpad.net/midnightflash/ppa/ubuntu natty main
 deb http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu oneiric main
-ppa:cs-sniffer/cortina
 ppa:danielrichter2007/grub-customizer
 ppa:gcstar/ppa
 ppa:git-core/ppa
@@ -414,7 +414,7 @@ create_link() {
 	ls -lad --color=auto "$V_LINK_NAME"
 }
 
-if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
+setup_symbolic_links() {
 	#------------------------------------------------------------------------------------------------------------------------
 	# SYMBOLIC LINKS
 	#------------------------------------------------------------------------------------------------------------------------
@@ -429,12 +429,14 @@ if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
 	#create_link $HOME/.inputrc $V_BASH_UTILS_DIR/.inputrc
 
 	show_header 'Creating common symbolic links for directories'
-	create_link $HOME/.config/gcstar $G_DROPBOX_DIR/linux/config-gcstar/
 	create_link "$HOME/.config/sublime-text-3/Installed Packages" $G_DROPBOX_DIR/Apps/sublime-text-3/Installed\ Packages/
+	create_link $HOME/.config/gcstar $G_DROPBOX_DIR/linux/config-gcstar/
 	create_link $HOME/.config/sublime-text-3/Packages $G_DROPBOX_DIR/Apps/sublime-text-3/Packages/
 	create_link $HOME/.purple $G_DROPBOX_DIR/Apps/PidginPortable/Data/settings/.purple
 	create_link $HOME/bin $G_DROPBOX_DIR/linux/bin/
-	create_link $HOME/music-external-hdd $G_EXTERNAL_HDD/.audio/music/
+	create_link $HOME/music-external-hdd $G_EXTERNAL_HDD/audio/music/
+	create_link $HOME/Pictures/import-into-shotwell $G_EXTERNAL_HDD/import-into-shotwell
+	create_link $HOME/Pictures/shotwell $G_EXTERNAL_HDD/pix
 
 	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
 		show_header 'Creating home symbolic links for files'
@@ -443,14 +445,18 @@ if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
 
 		show_header 'Creating home symbolic links for directories'
 		create_link $HOME/.xbmc $G_MOVIES_HDD/.xbmc/
-		create_link $HOME/Music/hd $G_EXTERNAL_HDD/.audio/music/
+		create_link $HOME/Music/hd $G_EXTERNAL_HDD/audio/music/
 		create_link $HOME/Pictures/dropbox $G_DROPBOX_DIR/Photos/
 		create_link $HOME/Pictures/pix /pix/
 		create_link $HOME/Pictures/wallpapers $G_DROPBOX_DIR/Photos/wallpapers/
-		create_link $HOME/src/local $G_EXTERNAL_HDD/.backup/linux/$G_WORK_COMPUTER-Ubuntu-12.04.2-LTS/src/
+		create_link $G_WORK_SRC_DIR $G_EXTERNAL_HDD/backup/linux/$G_WORK_COMPUTER-Ubuntu-12.04.2-LTS/src/
 	else
 		show_header 'Creating work symbolic links for directories'
-		create_link $HOME/Music/in $G_EXTERNAL_HDD/.audio/music/in
-		create_link $HOME/Music/unknown $G_EXTERNAL_HDD/.audio/music/unknown
+		create_link $HOME/Music/in $G_EXTERNAL_HDD/audio/music/in
+		create_link $HOME/Music/unknown $G_EXTERNAL_HDD/audio/music/unknown
 	fi
+}
+
+if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
+	setup_symbolic_links
 fi

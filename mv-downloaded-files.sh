@@ -2,11 +2,11 @@
 cd $G_DOWNLOAD_DIR
 
 mv_ofx() {
-	for V_OFX_FILE in $(ls -1 *.ofx 2>/dev/null) ; do
+	for V_OFX_FILE in "$(ls -1 *.ofx 2>/dev/null)" ; do
 		echo
 		echo "File: $V_OFX_FILE"
 
-		V_ACCOUNT_NUMBER=$(cat $V_OFX_FILE | grep ACCTID | sed 's/[^0-9]//g')
+		V_ACCOUNT_NUMBER=$(cat "$V_OFX_FILE" | grep ACCTID | sed 's/[^0-9]//g')
 		echo "Account number: ${V_ACCOUNT_NUMBER}"
 		V_ACCOUNT_NAME=unknown
 		if [ "$V_ACCOUNT_NUMBER" = "$G_PERSONAL_BANK_ACCOUNT" ] ; then
@@ -16,7 +16,7 @@ mv_ofx() {
 			V_ACCOUNT_NAME=fisica
 		fi
 
-		V_DATE_TIME=$(stat -c %y $V_OFX_FILE | cut -b 1-19 | tr ' :' '_-')
+		V_DATE_TIME=$(stat -c %y "$V_OFX_FILE" | cut -b 1-19 | tr ' :' '_-')
 		echo "Date/time: $V_DATE_TIME"
 
 		V_NEW_DIR=$G_BANK_STATEMENTS_DIR/$V_ACCOUNT_NAME/0fx

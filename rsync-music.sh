@@ -5,7 +5,7 @@ if [ -n "$ARGS" ] ; then
 	echo "Argumentos: $ARGS"
 fi
 
-SOURCE_DIR=$G_EXTERNAL_HDD/.audio/music/
+SOURCE_DIR=$G_EXTERNAL_HDD/audio/music/
 DESTINATION_DIR=/home/music/
 if [ "$INVERT" = "-i" -o "$INVERT" = "--invert" -o "$INVERT" = "inv" ] ; then
 	echo "rsync invertido, trocando diretorios"
