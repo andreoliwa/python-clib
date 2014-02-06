@@ -68,7 +68,7 @@ if [ -z "$V_COMPARE" ] ; then
 	usage 3
 fi
 
-V_MELD_FILTER=$(find $HOME/src/local/dev_htdocs/common/classes/ -mindepth 1 -maxdepth 1 -type d -or \( -type f -and \( -iname 'geoip*' -or -iname 'enhance*' -or -iname 'lightopenid*' \) \) | sed 's#\(/[^/]\+\)\{7\}/##' | sort -u)
+V_MELD_FILTER=$(find $G_WORK_SRC_DIR/dev_htdocs/common/classes/ -mindepth 1 -maxdepth 1 -type d -or \( -type f -and \( -iname 'geoip*' -or -iname 'enhance*' -or -iname 'lightopenid*' \) \) | sed 's#\(/[^/]\+\)\{7\}/##' | sort -u)
 echo "Commons classes filter in Meld: "$V_MELD_FILTER
 
 echo -e "\nComparing these directories:"

@@ -1,5 +1,6 @@
 #!/bin/bash
-V_ALL_REPOS="$HOME/src/local/dev_bin $HOME/src/local/dev_htdocs"
+V_ALL_REPOS=$(find $G_WORK_SRC_DIR -type d -name .git | sed 's#/.git##' | sort)
+
 for V_REPO in $V_ALL_REPOS ; do
 	echo
 	echo "Repositorio Git $V_REPO"

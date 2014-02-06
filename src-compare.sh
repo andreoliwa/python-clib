@@ -12,8 +12,8 @@ if [ -z "$V_PERSON" ] || [ -z "$V_PROJECT" ] ; then
 	exit
 fi
 
-V_MY_ROOT=$HOME/src/local
-V_HIS_ROOT=$HOME/src/team
+V_MY_ROOT=$G_WORK_SRC_DIR
+V_HIS_ROOT=/folha/src/team
 
 V_MELD_DIRS=
 for V_SRC_DIR in $(project-folders.sh -u $V_PROJECT) ; do

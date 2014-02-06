@@ -37,16 +37,19 @@ tmux_session_gestao() {
 }
 
 tmux_session_git() {
-	tmux new-session -d -s $1 'cd ~/src/local/dev_bin/ ; git bs ; bash -i'
-	tmux split-window -t $1 -v -p 75 'cd ~/src/local/dev_htdocs/ ; git bs ; bash -i'
+	tmux new-session -d -s $1 "cd $G_WORK_SRC_DIR/dev_bin/ ; git bs ; bash -i"
+	tmux split-window -t $1 -v -p 75 "cd $G_WORK_SRC_DIR/dev_htdocs/ ; git bs ; bash -i"
+	tmux select-pane -t $1:0.0
+	tmux split-window -t $1 -h -p 50 "cd $G_WORK_SRC_DIR/project_documents/ ; git bs ; bash -i"
+	tmux select-pane -t $1:0.2
 }
 
 tmux_session_mysql() {
-	tmux new-session -d -s $1 'mysql -h sql_developer -u developers -pgAt01at390 -D dev_xavier'
+	tmux new-session -d -s $1 'mysql -h sql_developer -u developers -pgAt01at390 -D dev_cerberus'
 	tmux send-keys -t $1:0.0 'C-l'
-	tmux split-window -t $1 -v 'mysql -h sql_developer -u developers -pgAt01at390 -D test_xavier'
-	tmux send-keys -t $1:0.1 'C-l'
-	tmux select-pane -t $1:0.0
+	#tmux split-window -t $1 -v 'mysql -h sql_developer -u developers -pgAt01at390 -D dev_xavier'
+	#tmux send-keys -t $1:0.1 'C-l'
+	#tmux select-pane -t $1:0.0
 }
 
 tmux_session_vm206() {
