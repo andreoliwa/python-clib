@@ -24,8 +24,8 @@ V_DRY_RUN_STRING=
 git remote -v show
 echo
 
-echo "${V_DRY_RUN_STRING}Pushing changes to the origin remote"
-time git push $V_DRY_RUN origin
+echo "${V_DRY_RUN_STRING}Pushing matching branches to the origin remote"
+time git push $V_DRY_RUN origin :
 echo
 
 for V_OTHER_REMOTE in $(git remote show | grep -v origin) ; do
