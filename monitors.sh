@@ -39,7 +39,7 @@ if [ -n "$V_SINGLE" ] ; then
 		xrandr --output LVDS1 --mode 1280x800 --pos 0x0 --rotate normal --output DP1 --off --output VGA1 --off
 		set_panel_position LVDS1
 	else
-		echo "There is no configuration for $V_WHAT at WORK"
+		xrandr --output DisplayPort-1 --off --output DisplayPort-0 --mode 1280x1024 --pos 0x0 --rotate normal
 	fi
 else
 	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
