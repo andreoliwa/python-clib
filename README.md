@@ -1,4 +1,4 @@
-bash-utils
-==========
+clitools 0.5
+============
 
-Some Bash scripts to help everyday life
+Several general use scripts to help in everyday life.
