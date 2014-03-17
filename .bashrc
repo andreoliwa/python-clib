@@ -108,7 +108,7 @@ if [ -n "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
 	TITLEBAR='\[\e]0;\h:${PWD}\a\]'
 
 	# Development VM is green; production VMs are red
-	if [[ ($HOSTNAME == vm206*folha.com.br) || ($HOSTNAME == vm217*folha.com.br) ]] ; then
+	if [[ ($HOSTNAME == vm206*folha.com.br) || ($HOSTNAME == vm217*folha.com.br) || ($HOSTNAME == vm220*folha.com.br) || ($HOSTNAME == vm226*folha.com.br) ]] ; then
 		PS1="${COLOR_LIGHT_GREEN}${TITLEBAR}\u@\h:\W\$${COLOR_NONE} "
 	else
 		PS1="${COLOR_LIGHT_RED}${TITLEBAR}\u@\h:\W\$${COLOR_NONE} "
@@ -139,6 +139,7 @@ alias pwd='pwd;pwd -P'
 alias g='git'
 alias s='setup-ubuntu.sh -u'
 alias t='tmux-open.sh -s'
+alias v='ssh vm217'
 
 export HISTCONTROL=ignoreboth:ignoCOLOR_redups:erasedups
 export HISTSIZE=50000
