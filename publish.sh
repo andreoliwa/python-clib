@@ -28,7 +28,7 @@ echo "Publicando os seguintes projetos: $V_PROJECTS"
 # rsync: mkstemp "/folha/src/remote/common/classes/._spiffy_version_control_interface.class.php.P4rcfQ" failed: No such file or directory (2)
 # rsync: mkstemp "/folha/src/remote/common/classes/._spiffy_version_control_svn.class.php.TekeKE" failed: No such file or directory (2)
 # rsync error: some files/attrs were not transferred (see previous errors) (code 23) at main.c(1070) [sender=3.0.9]
-cp -vu $G_WORK_SRC_DIR/dev_htdocs/common/classes/_spiffy_* /folha/src/remote/common/classes/
+cp -vu $G_WORK_SRC_DIR/dev_htdocs/common/classes/_spiffy_* /folha/src/remote/common/classes/ 2> /dev/null
 
 V_PUBLISH_DIR=${G_WORK_SRC_DIR/local/remote}
 

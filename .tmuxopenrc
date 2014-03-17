@@ -45,7 +45,7 @@ tmux_session_git() {
 }
 
 tmux_session_mysql() {
-	tmux new-session -d -s $1 'mysql -h sql_developer -u developers -pgAt01at390 -D dev_cerberus'
+	tmux new-session -d -s $1 'mysql -h akagi -u developers -pgAt01at390 -D dev_cerberus'
 	tmux send-keys -t $1:0.0 'C-l'
 	#tmux split-window -t $1 -v 'mysql -h sql_developer -u developers -pgAt01at390 -D dev_xavier'
 	#tmux send-keys -t $1:0.1 'C-l'
