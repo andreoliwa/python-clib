@@ -19,7 +19,7 @@ mv_ofx() {
 		V_DATE_TIME=$(stat -c %y "$V_OFX_FILE" | cut -b 1-19 | tr ' :' '_-')
 		echo "Date/time: $V_DATE_TIME"
 
-		V_NEW_DIR=$G_BANK_STATEMENTS_DIR/$V_ACCOUNT_NAME/0fx
+		V_NEW_DIR=$G_BANK_STATEMENTS_DIR/buxfer/new
 		mkdir -p "$V_NEW_DIR"
 		V_NEW_FILE="$V_NEW_DIR/$V_ACCOUNT_NAME-$V_DATE_TIME.ofx"
 		echo "New file: $V_NEW_FILE"
