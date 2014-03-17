@@ -427,6 +427,9 @@ setup_symbolic_links() {
 	create_link $HOME/.tmux.conf $V_BASH_UTILS_DIR/.tmux.conf
 	create_link $HOME/.vimrc $V_BASH_UTILS_DIR/.vimrc
 	#create_link $HOME/.inputrc $V_BASH_UTILS_DIR/.inputrc
+	for V_TEMPLATE in $(find "$(dirname $0)/templates" -type f); do
+		create_link "$HOME/Templates/$(basename $V_TEMPLATE)" "$V_TEMPLATE"
+	done
 
 	show_header 'Creating common symbolic links for directories'
 	create_link "$HOME/.config/sublime-text-3/Installed Packages" $G_DROPBOX_DIR/Apps/sublime-text-3/Installed\ Packages/
@@ -449,11 +452,11 @@ setup_symbolic_links() {
 		create_link $HOME/Pictures/dropbox $G_DROPBOX_DIR/Photos/
 		create_link $HOME/Pictures/pix /pix/
 		create_link $HOME/Pictures/wallpapers $G_DROPBOX_DIR/Photos/wallpapers/
-		create_link $G_WORK_SRC_DIR $G_EXTERNAL_HDD/backup/linux/$G_WORK_COMPUTER-Ubuntu-12.04.2-LTS/src/
 	else
 		show_header 'Creating work symbolic links for directories'
 		create_link $HOME/Music/in $G_EXTERNAL_HDD/audio/music/in
 		create_link $HOME/Music/unknown $G_EXTERNAL_HDD/audio/music/unknown
+		create_link $G_WORK_SRC_DIR $G_EXTERNAL_HDD/backup/linux/$G_WORK_COMPUTER-Ubuntu-12.04.2-LTS/src/
 	fi
 }
 
