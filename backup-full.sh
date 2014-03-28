@@ -5,6 +5,7 @@ A single script to do all backups.
 
 OPTIONS
 -n  Dry-run
+-k  Kill files when using rsync (--del)
 -a  All options below
 -c  Configuration files (calls backup-config.sh)
 -d  Deja-dup files (backup tool)
@@ -18,6 +19,7 @@ OPTIONS
 }
 
 V_DRY_RUN=
+V_KILL=
 V_ALL=
 V_CONFIG=
 V_DEJA_DUP=
@@ -27,9 +29,10 @@ V_WINDOWS=
 V_SOMETHING_CHOSEN=
 V_JAQUE=
 V_PIX=
-while getopts "nancdfvwjph" V_ARG ; do
+while getopts "nkacdfjpvwh" V_ARG ; do
 	case $V_ARG in
 	n)	V_DRY_RUN=-n ;;
+	k)	V_KILL=--del ;;
 	a)	V_SOMETHING_CHOSEN=1 ; V_ALL=1 ;;
 	c)	V_SOMETHING_CHOSEN=1 ; V_CONFIG=1 ;;
 	d)	V_SOMETHING_CHOSEN=1 ; V_DEJA_DUP=1 ;;
@@ -78,7 +81,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_VIDEOS" ] ; then
 	if [ -d $V_BACKUP_EXTERNAL_DIR ] ; then
 		echo "Linux videos backup (Stanford and others)"
 		mkdir -p $V_BACKUP_EXTERNAL_DIR/Videos/
-		rsync -htrOvz $V_DRY_RUN --delete --progress --modify-window=2 ~/Videos/ $V_BACKUP_EXTERNAL_DIR/Videos/
+		rsync -htrOvz $V_DRY_RUN $V_KILL --progress --modify-window=2 ~/Videos/ $V_BACKUP_EXTERNAL_DIR/Videos/
 	fi
 fi
 
@@ -88,8 +91,12 @@ if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
 		[ ! -d "$V_BACKUP_EXTERNAL_DIR" ] && V_ERROR=1 && echo "Directory not found: $V_BACKUP_EXTERNAL_DIR"
 		[ ! -d "$G_WORK_SRC_DIR/" ] && V_ERROR=1 && echo "Directory not found: $G_WORK_SRC_DIR/"
 		if [ -z "$V_ERROR" ] ; then
+			echo "Home folder backup..."
+			rsync $V_DRY_RUN -trOlhDuzv $V_KILL --modify-window=2 --progress --exclude-from=$HOME/Dropbox/linux/rsync-exclude-folha.txt $HOME/ $G_EXTERNAL_HDD/backup/fsp$HOME/
+			#
+
 			echo "Source code backup from $G_WORK_SRC_DIR/ to $V_BACKUP_EXTERNAL_DIR/src/"
-			rsync $V_DRY_RUN -trOlhDuzv --del --modify-window=2 --progress $G_WORK_SRC_DIR/ $V_BACKUP_EXTERNAL_DIR/src/
+			rsync $V_DRY_RUN -trOlhDuzv $V_KILL --modify-window=2 --progress $G_WORK_SRC_DIR/ $V_BACKUP_EXTERNAL_DIR/src/
 			#--exclude=*.pack
 		fi
 	fi
@@ -109,7 +116,7 @@ function sync_dir() {
 	for V_DESTINATION_DIR in $V_BACKUP_DIRS ; do
 		echo
 		echo "Backing up $V_SOURCE_DIR/$1 directory in $V_DESTINATION_DIR/$1"
-		V_SYNC="rsync $V_DRY_RUN -trOlhDuzv --del --modify-window=2 --progress --exclude=lost+found/ --exclude=.dropbox.cache --exclude=.Trash-*"
+		V_SYNC="rsync $V_DRY_RUN -trOlhDuzv $V_KILL --modify-window=2 --progress --exclude=lost+found/ --exclude=.dropbox.cache --exclude=.Trash-*"
 		echo $V_SYNC \"$V_SOURCE_DIR/$1/\" \"$V_DESTINATION_DIR/$1/\"
 		mkdir -p "$V_DESTINATION_DIR/$1/"
 		$V_SYNC "$V_SOURCE_DIR/$1/" "$V_DESTINATION_DIR/$1/"
@@ -146,7 +153,7 @@ fi
 #	echo "Linux Dropbox"
 #	echo "rm -rvf -p $V_BACKUP_EXTERNAL_DIR/home/Dropbox/"
 #	V_EXCLUDE='--exclude=lost+found/ --exclude=.dropbox.cache  --exclude=lost+found/ --exclude=.cache'
-#	rsync -htrOvz $V_DRY_RUN --progress --modify-window=2 $V_EXCLUDE $G_DROPBOX_DIR/ $V_DESTINATION_DIR/Users/Wagner/Dropbox/  # --delete
+#	rsync -htrOvz $V_DRY_RUN $V_KILL --progress --modify-window=2 $V_EXCLUDE $G_DROPBOX_DIR/ $V_DESTINATION_DIR/Users/Wagner/Dropbox/
 #	echo "$V_DESTINATION_DIR/Users/Wagner/Dropbox/"
 #done
 
