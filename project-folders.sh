@@ -50,7 +50,7 @@ if [ -n "$V_SUFFIX" ] ; then
 	V_SUFFIX_CMD="sed s#\$#${V_SUFFIX}#"
 fi
 
-pushd $G_DROPBOX_DIR/sublime-projects/ >/dev/null
+pushd $G_DROPBOX_DIR/code/sublime-projects/ >/dev/null
 V_PROJECT_FILES=
 for V_PROJECT in $* ; do
 	[ "${V_PROJECT:0:1}" != '-' ] && [ "$V_PROJECT" != "$V_SUFFIX" ] && V_PROJECT_FILES="$V_PROJECT_FILES *$V_PROJECT*.sublime-project"
