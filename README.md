@@ -1,4 +1,4 @@
-clitools 0.61
+clitools 0.62
 =============
 
 Several general use scripts to help in everyday life.
