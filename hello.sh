@@ -59,8 +59,6 @@ IFS=$V_OLD_IFS
 [ $(find $G_DOWNLOAD_DIR -type f -not -wholename '*/.*/*' | wc -l) -ne 0 ] && xdg-open $G_DOWNLOAD_DIR
 
 if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
-	xdg-open $G_WORK_TIMECLOCK_URL &
-
 	dropbox-shutdown.sh
 else
 	for V_WINDOW_ID in $(wmctrl -lx | grep -i '\-terminal' | tr -s ' ' | cut -d ' ' -f 1) ; do

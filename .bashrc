@@ -23,7 +23,7 @@ function cd() {
 }
 
 # My personal environment variables
-[ -f ~/bin/my-variables ] && . ~/bin/my-variables
+[ -f ~/bin/.clitoolsrc ] && . ~/bin/.clitoolsrc
 
 if [ -n "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
 	# The colors seem to be different to CentOS

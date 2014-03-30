@@ -1,10 +1,10 @@
 #!/bin/bash
-V_SAMPLE_FILE=$(dirname $0)/my-variables.sample
-V_MY_VARIABLES_FILE=~/bin/my-variables
+V_SAMPLE_FILE=$(dirname $0)/.clitoolsrc.sample
+V_RC_FILE=~/bin/.clitoolsrc
 
 usage() {
 	echo "Usage: $(basename $0) [options]
-Create a sample file called $V_SAMPLE_FILE from the $V_MY_VARIABLES_FILE file.
+Create a sample file called $V_SAMPLE_FILE from the $V_RC_FILE file.
 
 OPTIONS
 -h   Help"
@@ -18,6 +18,6 @@ while getopts "h" V_ARG ; do
 	esac
 done
 
-sed 's/\(export.\+=\).\+$/\1/' $V_MY_VARIABLES_FILE > $V_SAMPLE_FILE
+sed 's/\(export.\+=\).\+$/\1/' $V_RC_FILE > $V_SAMPLE_FILE
 echo "Template file created: $(readlink -e $V_SAMPLE_FILE)"
 cat $V_SAMPLE_FILE
