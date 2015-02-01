@@ -43,7 +43,7 @@ save_if_needed() {
 save_if_needed etc-all.tar "all configuration files from /etc" "sudo tar -czf $V_CONFIG_DIR/etc-all.tar -C / etc"
 
 echo "Saving some config files (bash, git, beets) in $V_CONFIG_DIR"
-cp -ruvL ~/.bash* ~/.beetsconfig ~/.git* $V_CONFIG_DIR
+cp -ruvL ~/.bash* ~/.config/beets/config.yaml ~/.git* $V_CONFIG_DIR
 
 save_if_needed ifconfig.txt "IP and Ethernet configuration" "ifconfig -a -v"
 save_if_needed dpkg-get-selections.txt "list of installed packages" "dpkg --get-selections"

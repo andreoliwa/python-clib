@@ -47,7 +47,7 @@ fi
 V_OLD_IFS=$IFS
 IFS='
 '
-V_FIND=$(find $HOME -maxdepth 4 -type d -not -empty -and \( -name 2both -or -name $V_DOC_DIR -or -wholename '*deluge*downloads' \))
+V_FIND=$(find $HOME -maxdepth 4 -type d -not -empty -and \( -name 2both -or -name $V_DOC_DIR -or -wholename '*deluge*downloads' -or -wholename $G_BANK_STATEMENTS_DIR/buxfer/new -or -name Scanner -or -name torrent \))
 if [ -n "$V_FIND" ]; then
 	for V_ONE_DIR in $V_FIND; do
 		xdg-open $V_ONE_DIR
@@ -69,13 +69,6 @@ else
 	dropbox start
 fi
 
-V_HOME_OFFICE="$(git-home-office.sh -d)"
-if [ -n "$V_HOME_OFFICE" ] ; then
-	zenity --warning --no-wrap --text="<span foreground='red'><b>Hey there!</b></span>
-There are pending remote work hours to send:
-$(git-home-office.sh -td)" &
-fi
-
 # Show the workspaces indicator when we're not in a XFCE session
 if [ -z "$(pidof xfce4-session)" ] ; then
 	V_SECONDS=10
@@ -83,12 +76,6 @@ if [ -z "$(pidof xfce4-session)" ] ; then
 	sleep $V_SECONDS
 
 	indicator-workspaces-restart.sh
-fi
-
-if [ "$HOSTNAME" = "$G_WORK_COMPUTER" ] ; then
-	gnome-terminal -x ssh vm206 &
-else
-	skype &
 fi
 
 # I don't know why, but sometimes this script appears multiple times in the process list.

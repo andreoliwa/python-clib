@@ -148,34 +148,40 @@ shopt -s histappend
 # Prompt for the MySQL command line client
 export MYSQL_PS1="(\u@\h) \d>\_"
 
-if [ -z "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
-	# Enables the CONTROL+S shortcut to move forward in an incremental search started with CONTROL+R
-	stty -ixon
-
-	# Set PATH so it includes user's private bin if it exists
-	if [ -d "$HOME/bin" ] ; then
-		# Adding global Composer dir to the PATH, according to http://akrabat.com/php/global-installation-of-php-tools-with-composer/
-		export PATH="$HOME/bin:$G_DROPBOX_DIR/code/src/clitools:$HOME/.composer/vendor/bin:$PATH:$G_WORK_SRC_DIR/dev_bin/devqa"
-	fi
-
-	# Autocomplete for sudo?
-	if [ "$PS1" ] ; then
-		complete -cf sudo
-	fi
-
-	if [ -f /etc/bash_completion ] && ! shopt -oq posix ; then
-		. /etc/bash_completion
-	fi
-
-	# http://askubuntu.com/questions/85612/how-to-call-zenity-from-cron-script
-	xhost local:$(whoami) > /dev/null
-
-	### Added by the Heroku Toolbelt
-	export PATH="$PATH:/usr/local/heroku/bin"
-
-	# Setting a fixed browser to be used by Python's webbrowser module under Sublime Text 2
-	# It worked on the command line, after some research:
-	# https://github.com/revolunet/sublimetext-markdown-preview/issues/2#issuecomment-4221079
-	# http://docs.python.org/2/library/webbrowser.html#module-webbrowser
-	export BROWSER=/usr/bin/chromium-browser
+if [ -n "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
+	exit
 fi
+
+# Enables the CONTROL+S shortcut to move forward in an incremental search started with CONTROL+R
+stty -ixon
+
+# Set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+	# Adding global Composer dir to the PATH, according to http://akrabat.com/php/global-installation-of-php-tools-with-composer/
+	export PATH="$HOME/bin:$G_DROPBOX_DIR/code/src/clitools:$HOME/.composer/vendor/bin:$PATH"
+fi
+
+# Autocomplete for sudo?
+if [ "$PS1" ] ; then
+	complete -cf sudo
+fi
+
+if [ -f /etc/bash_completion ] && ! shopt -oq posix ; then
+	. /etc/bash_completion
+fi
+
+# http://askubuntu.com/questions/85612/how-to-call-zenity-from-cron-script
+xhost local:$(whoami) > /dev/null
+
+### Added by the Heroku Toolbelt
+export PATH="$PATH:/usr/local/heroku/bin"
+
+# Setting a fixed browser to be used by Python's webbrowser module under Sublime Text 2
+# It worked on the command line, after some research:
+# https://github.com/revolunet/sublimetext-markdown-preview/issues/2#issuecomment-4221079
+# http://docs.python.org/2/library/webbrowser.html#module-webbrowser
+export BROWSER=/usr/bin/chromium-browser
+
+# http://simononsoftware.com/virtualenv-tutorial-part-2/
+export WORKON_HOME=$HOME/.virtualenvs
+source /usr/local/bin/virtualenvwrapper_lazy.sh

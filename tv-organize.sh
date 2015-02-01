@@ -132,9 +132,10 @@ for V_ROOT in $V_ALL_ROOTS ; do
 
 		if [ -n "$V_MAKE_LINKS" ] ; then
 			V_MAIN_MOVIE_DIR="$V_MOVIES_DIR/All/$V_MOVIE_BASENAME"
-			if [ ! -d "$V_MAIN_MOVIE_DIR" ] ; then
+			if [ ! -d "$V_MAIN_MOVIE_DIR" ] || [ $(ls -1 "$V_MAIN_MOVIE_DIR" 2>/dev/null | wc -l) -ne $(ls -1 "$V_MOVIE_DIR" 2>/dev/null | wc -l) ] ; then
 				[ -n "$V_VERBOSE" ] && echo "  Criando link de $V_MOVIE_DIR para $V_MAIN_MOVIE_DIR"
 				[ -z "$V_DRY_RUN" ] && tv-ln.sh -s "$V_MOVIE_DIR" -t "$V_MAIN_MOVIE_DIR"
+				[ -z "$V_DRY_RUN" ] && tv-ln.sh -t "$V_MOVIE_DIR" -s "$V_MAIN_MOVIE_DIR"
 			fi
 		else
 			V_ESCAPED_MOVIE_NAME=$(echo "$V_MOVIE_BASENAME" | tr "'" '%')

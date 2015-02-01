@@ -30,7 +30,7 @@ while getopts "ns:CDvh" V_ARG ; do
 done
 
 V_VLC='vlc.Vlc'
-V_APPS="$V_VLC feh.feh google-chrome chromium-browser"
+V_APPS="$V_VLC feh.feh google-chrome Chromium-browser"
 
 declare -A V_LAST_TITLE
 declare -A V_LAST_DATE
@@ -80,7 +80,7 @@ while true ; do
 		V_TITLE=$(echo "$V_CURRENT_WINDOWS" | grep -e "^$V_APP" | sed "s/^${V_APP} ${HOSTNAME}\|N\/A //g")
 		if [ "$V_APP" = "$V_VLC" ] ; then
 			if [ "$V_TITLE" != ' VLC media player' ] ; then
-				V_TITLE=$(lsof -F -c vlc | grep /media/ | sed "s#.\+/system/##")
+				V_TITLE=$(lsof -F n -c vlc 2>/dev/null | grep /media/ | sed "s#.\+system/##" | tail -n 1)
 			fi
 		fi
 

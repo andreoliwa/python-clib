@@ -18,6 +18,27 @@ while getopts "oh" V_ARG ; do
 	esac
 done
 
+V_DELUGE_DIR=$G_EXTERNAL_HDD/deluge
+V_DEST_DIR=$V_DELUGE_DIR/ready-to-organize
+
+V_OLD_IFS=$IFS
+IFS='
+'
+for V_SOURCE_FILE in $(find $V_DELUGE_DIR/ -type f -not \( -name .keep -or -wholename *$V_DEST_DIR* -or -wholename */.incomplete* -or -wholename */.kill* \)); do
+	V_DEST_FILE="${V_SOURCE_FILE/$V_DELUGE_DIR/$V_DEST_DIR}"
+	mkdir -p "$(dirname "$V_DEST_FILE")"
+
+	cp -uv "$V_SOURCE_FILE" "$V_DEST_FILE"
+done
+IFS=$V_OLD_IFS
+
+rmdir-empty.sh $V_DELUGE_DIR
+exit
+
+
+
+
+
 V_DELUGE=$HOME/.config/deluge/completed-downloads
 V_HD=$G_EXTERNAL_HDD/backup
 

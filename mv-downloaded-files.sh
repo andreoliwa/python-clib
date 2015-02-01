@@ -2,12 +2,16 @@
 cd $G_DOWNLOAD_DIR
 
 mv_ofx() {
-	for V_OFX_FILE in "$(ls -1 *.ofx 2>/dev/null)" ; do
+	V_OLD_IFS=$IFS
+	IFS='
+'
+	for V_OFX_FILE in $(find $G_DOWNLOAD_DIR -iname '*.ofx') ; do
 		echo
 		echo "File: $V_OFX_FILE"
 
 		V_ACCOUNT_NUMBER=$(cat "$V_OFX_FILE" | grep ACCTID | sed 's/[^0-9]//g')
 		echo "Account number: ${V_ACCOUNT_NUMBER}"
+
 		V_ACCOUNT_NAME=unknown
 		if [ "$V_ACCOUNT_NUMBER" = "$G_PERSONAL_BANK_ACCOUNT" ] ; then
 			V_ACCOUNT_NAME=juridica
@@ -17,7 +21,6 @@ mv_ofx() {
 		fi
 
 		V_DATE_TIME=$(stat -c %y "$V_OFX_FILE" | cut -b 1-19 | tr ' :' '_-')
-		echo "Date/time: $V_DATE_TIME"
 
 		V_NEW_DIR=$G_BANK_STATEMENTS_DIR/buxfer/new
 		mkdir -p "$V_NEW_DIR"
@@ -26,6 +29,7 @@ mv_ofx() {
 
 		mv -v "$V_OFX_FILE" "$V_NEW_FILE"
 	done
+	IFS=$V_OLD_IFS
 }
 
 mv_torrent() {

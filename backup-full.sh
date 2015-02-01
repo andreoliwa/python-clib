@@ -9,7 +9,7 @@ OPTIONS
 -a  All options below
 -c  Configuration files (calls backup-config.sh)
 -d  Deja-dup files (backup tool)
--f  Source code
+-f  Home folder and source code
 -j  Jaque
 -p  Pictures (/pix directory)
 -v  Videos
@@ -50,7 +50,7 @@ if [ -z $V_SOMETHING_CHOSEN ] ; then
 fi
 
 if [ -n "$V_DRY_RUN" ] ; then
-	echo "This is only a test (dry-run mode)"
+	echo "This is only a test (DRY RUN)"
 fi
 
 if [ -n "$V_ALL" ] || [ -n "$V_CONFIG" ] ; then
@@ -70,56 +70,60 @@ if [ -n "$V_ALL" ] || [ -n "$V_DEJA_DUP" ] ; then
 	if [ -d $V_BACKUP_EXTERNAL_DIR ] ; then
 		echo "Syncing /var/backups/$HOSTNAME/ to $V_BACKUP_EXTERNAL_DIR/"
 		if [ -d $V_BACKUP_EXTERNAL_DIR ] ; then
-			rsync -htrOvz $V_DRY_RUN --progress --modify-window=2 /var/backups/$HOSTNAME/ $V_BACKUP_EXTERNAL_DIR/
+			V_CMD="rsync -htrOvz $V_DRY_RUN --progress --modify-window=2 /var/backups/$HOSTNAME/ $V_BACKUP_EXTERNAL_DIR/"
+			[ -n "$V_DRY_RUN" ] && echo && echo "(DRY RUN) $V_CMD"
+			eval "$V_CMD"
 		fi
 		echo "Done."
 	fi
 fi
 
-
 if [ -n "$V_ALL" ] || [ -n "$V_VIDEOS" ] ; then
 	if [ -d $V_BACKUP_EXTERNAL_DIR ] ; then
 		echo "Linux videos backup (Stanford and others)"
 		mkdir -p $V_BACKUP_EXTERNAL_DIR/Videos/
-		rsync -htrOvz $V_DRY_RUN $V_KILL --progress --modify-window=2 ~/Videos/ $V_BACKUP_EXTERNAL_DIR/Videos/
+		V_CMD="rsync -htrOvz $V_DRY_RUN $V_KILL --progress --modify-window=2 ~/Videos/ $V_BACKUP_EXTERNAL_DIR/Videos/"
+		[ -n "$V_DRY_RUN" ] && echo && echo "(DRY RUN) $V_CMD"
+		eval "$V_CMD"
 	fi
 fi
 
-if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
-	if [ -n "$V_ALL" ] || [ -n "$V_CODE" ] ; then
-		V_ERROR=
-		[ ! -d "$V_BACKUP_EXTERNAL_DIR" ] && V_ERROR=1 && echo "Directory not found: $V_BACKUP_EXTERNAL_DIR"
-		[ ! -d "$G_WORK_SRC_DIR/" ] && V_ERROR=1 && echo "Directory not found: $G_WORK_SRC_DIR/"
-		if [ -z "$V_ERROR" ] ; then
-			echo "Home folder backup..."
-			rsync $V_DRY_RUN -trOlhDuzv $V_KILL --modify-window=2 --progress --exclude-from=$HOME/Dropbox/linux/rsync-exclude-folha.txt $HOME/ $G_EXTERNAL_HDD/backup/fsp$HOME/
-			#
+if [ -n "$V_ALL" ] || [ -n "$V_CODE" ] ; then
+	if [ ! -d "$V_BACKUP_EXTERNAL_DIR" ] ; then
+		echo "Directory not found: $V_BACKUP_EXTERNAL_DIR"
+	else
+		echo "Home folder backup..."
+		mkdir -p "${V_BACKUP_EXTERNAL_DIR}${HOME}"
+		V_CMD="rsync $V_DRY_RUN -trOlhDuzv $V_KILL --modify-window=2 --progress --exclude-from=$(dirname $0)/backup-full-exclude-from-home.txt /home/ ${V_BACKUP_EXTERNAL_DIR}/home/"
+		[ -n "$V_DRY_RUN" ] && echo && echo "(DRY RUN) $V_CMD"
+		eval "$V_CMD"
 
-			echo "Source code backup from $G_WORK_SRC_DIR/ to $V_BACKUP_EXTERNAL_DIR/src/"
-			rsync $V_DRY_RUN -trOlhDuzv $V_KILL --modify-window=2 --progress $G_WORK_SRC_DIR/ $V_BACKUP_EXTERNAL_DIR/src/
-			#--exclude=*.pack
+		if [ $HOSTNAME = $G_WORK_COMPUTER ] ; then
+			if [ ! -d "$G_WORK_SRC_DIR/" ]; then
+			 	echo "Directory not found: $G_WORK_SRC_DIR/"
+			else
+				echo "Source code backup from $G_WORK_SRC_DIR/ to $V_BACKUP_EXTERNAL_DIR/src/"
+				V_CMD="rsync $V_DRY_RUN -trOlhDuzv $V_KILL --modify-window=2 --progress $G_WORK_SRC_DIR/ $V_BACKUP_EXTERNAL_DIR/src/"
+				#--exclude=*.pack
+				[ -n "$V_DRY_RUN" ] && echo && echo "(DRY RUN) $V_CMD"
+				eval "$V_CMD"
+			fi
 		fi
 	fi
 fi
 
-V_POSSIBLE_BACKUP_DIRS="$G_EXTERNAL_HDD/backup $G_BACKUP_HDD/.backup"
-V_BACKUP_DIRS=
-for V_DIR in $V_POSSIBLE_BACKUP_DIRS ; do
-	if [ -d "$V_DIR" ] ; then
-		V_BACKUP_DIRS="$V_BACKUP_DIRS $V_DIR"
-	else
-		echo "Backup directory not found: $V_DIR"
-	fi
-done
-
 function sync_dir() {
 	for V_DESTINATION_DIR in $V_BACKUP_DIRS ; do
 		echo
-		echo "Backing up $V_SOURCE_DIR/$1 directory in $V_DESTINATION_DIR/$1"
-		V_SYNC="rsync $V_DRY_RUN -trOlhDuzv $V_KILL --modify-window=2 --progress --exclude=lost+found/ --exclude=.dropbox.cache --exclude=.Trash-*"
-		echo $V_SYNC \"$V_SOURCE_DIR/$1/\" \"$V_DESTINATION_DIR/$1/\"
-		mkdir -p "$V_DESTINATION_DIR/$1/"
-		$V_SYNC "$V_SOURCE_DIR/$1/" "$V_DESTINATION_DIR/$1/"
+		if [ -d "$V_DESTINATION_DIR" ] ; then
+			echo "Backing up $V_SOURCE_DIR/$1 directory in $V_DESTINATION_DIR/$1"
+			V_SYNC="rsync $V_DRY_RUN -trOlhDuzv $V_KILL --modify-window=2 --progress --exclude=lost+found/ --exclude=.dropbox.cache --exclude=.Trash-*"
+			echo $V_SYNC \"$V_SOURCE_DIR/$1/\" \"$V_DESTINATION_DIR/$1/\"
+			mkdir -p "$V_DESTINATION_DIR/$1/"
+			$V_SYNC "$V_SOURCE_DIR/$1/" "$V_DESTINATION_DIR/$1/"
+		else
+			echo "Destination root not found: $V_DESTINATION_DIR"
+		fi
 	done
 }
 
@@ -127,21 +131,20 @@ if [ -n "$V_ALL" ] || [ -n "$V_PIX" ] ; then
 	echo "Pictures backup"
 
 	V_SOURCE_DIR='/home/wagner/Pictures'
-	V_BACKUP_DIRS=/media/wagner/blacks2/.backup
+	V_BACKUP_DIRS=$G_EXTERNAL_HDD/backup
 	sync_dir 'shotwell'
-	sync_dir 'import-into-shotwell'
-	exit
 fi
 
 if [ -n "$V_ALL" ] || [ -n "$V_WINDOWS" ] ; then
 	V_SOURCE_DIR='/mnt/windows7'
+	V_BACKUP_DIRS=$G_EXTERNAL_HDD/backup
 	if [ ! -d "$V_SOURCE_DIR" ] ; then
 		echo "Windows directory not mounted: $V_SOURCE_DIR"
 	else
 		sync_dir "Users/Public/Documents"
 		sync_dir "Users/Public/Pictures"
 		sync_dir "Users/Wagner/Documents"
-		sync_dir "Users/Wagner/Dropbox"
+		#sync_dir "Users/Wagner/Dropbox"
 		sync_dir "Users/Wagner/Favorites"
 		sync_dir "Users/Wagner/Music"
 		sync_dir "Users/Wagner/Pictures"
@@ -149,16 +152,9 @@ if [ -n "$V_ALL" ] || [ -n "$V_WINDOWS" ] ; then
 	fi
 fi
 
-#for V_DESTINATION_DIR in $V_BACKUP_DIRS ; do
-#	echo "Linux Dropbox"
-#	echo "rm -rvf -p $V_BACKUP_EXTERNAL_DIR/home/Dropbox/"
-#	V_EXCLUDE='--exclude=lost+found/ --exclude=.dropbox.cache  --exclude=lost+found/ --exclude=.cache'
-#	rsync -htrOvz $V_DRY_RUN $V_KILL --progress --modify-window=2 $V_EXCLUDE $G_DROPBOX_DIR/ $V_DESTINATION_DIR/Users/Wagner/Dropbox/
-#	echo "$V_DESTINATION_DIR/Users/Wagner/Dropbox/"
-#done
-
 if [ -n "$V_JAQUE" ] ; then
 	V_SOURCE_DIR='/media/OS'
+	V_BACKUP_DIRS=$G_EXTERNAL_HDD/backup
 	if [ ! -d "$V_SOURCE_DIR" ] ; then
 		echo "Windows directory (Jaque) not mounted: $V_SOURCE_DIR"
 	else

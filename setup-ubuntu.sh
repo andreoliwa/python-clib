@@ -98,20 +98,18 @@ repo_partner() {
 
 common_packages() {
 	show_header 'Installing common packages'
-	call_aptget install 'installing or upgrading some of the packages' "bash-completion nautilus-open-terminal synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba iftop bum
-		xubuntu-desktop indicator-weather indicator-workspaces python-wnck gnome-do indicator-multiload imwheel # Desktop
+	call_aptget install 'installing or upgrading some of the packages' "bash-completion nautilus-open-terminal synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba iftop bum udisks
+		xubuntu-desktop gnome-terminal indicator-weather indicator-workspaces python-wnck gnome-do indicator-multiload imwheel # Desktop
 		sublime-text-installer vim vim-gui-common exuberant-ctags meld # Dev tools
 		git git-core git-doc git-svn git-gui gitk
 		python-pip python-dev python-matplotlib # Python
 		chromium-browser lynx-cur # Browser
-		dkms virtualbox-guest-x11 virtualbox-guest-utils # Oracle VirtualBox
-		openjdk-6-jre icedtea6-plugin # Java
-		rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 vorbisgain eyed3 python-eyed3 gcstar soundconverter gstreamer0.10-plugins-ugly libcdio-utils k3b transcode # Media
+		oracle-java8-installer # Java
+		rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 vorbisgain eyed3 python-eyed3 gcstar soundconverter gstreamer0.10-plugins-ugly libcdio-utils k3b transcode nautilus-image-converter # Media
 		y-ppa-manager unsettings # Tweak
 		unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack lha arj cabextract file-roller # Archive tools
 		keepassx gtimelog backintime-gnome gtg thunderbird tmux htop calibre # Util
 
-		skype # Skype PPA: http://www.howopensource.com/2012/10/to-install-skype-4-0-0-8-in-ubuntu-12-10-12-04-using-ppa/
 		indicator-messages pidgin pidgin-awayonlock pidgin-data pidgin-extprefs pidgin-guifications pidgin-hotkeys pidgin-lastfm pidgin-libnotify pidgin-otr pidgin-plugin-pack pidgin-ppa pidgin-privacy-please pidgin-themes pidgin-dev pidgin-dbg
 		pidgin-skype # Pidgin plugin: http://askubuntu.com/a/9068
 
@@ -135,6 +133,7 @@ purge_packages() {
 		classicmenu-indicator recoll # Unity
 		keepass2 ubuntu-tweak # Util
 		mongodb-clients
+		openjdk-6-jre icedtea6-plugin # Java
 		transmission # Torrent
 		ejecter unity-lens-pidgin recoll-lens unity-lens-utilities unity-scope-calculator google-chrome-stable non-free-codecs # Unable to locate
 		$(dpkg --get-selections | grep -e lubuntu -e openbox | cut -f 1) # Removing LUbuntu e OpenBox"
@@ -180,6 +179,7 @@ ppa:webupd8team/jupiter
 ppa:webupd8team/sublime-text-3
 ppa:webupd8team/y-ppa-manager
 ppa:yannubuntu/boot-repair
+ppa:yorba/ppa
 '
 	for V_PPA in $V_PPA_INSTALL ; do
 		show_header "Adding repository $V_PPA"
@@ -237,6 +237,13 @@ if [ -n "$V_ALL" ] || [ -n "$V_UPDATE" ] ; then
 	pkill -9 update-manager
 fi
 
+autoremove_packages() {
+	show_header "Autoremoving unused packages"
+	V_ACTION=autoremove
+	sleep 1 && sudo apt-get --yes $V_ACTION
+	show_error 'autoremoving some of the packages' $V_ACTION
+}
+
 if [ -n "$V_ALL" ] || [ -n "$V_UPGRADE" ] ; then
 	show_header 'Upgrading regular packages'
 	V_ACTION=upgrade
@@ -247,6 +254,8 @@ if [ -n "$V_ALL" ] || [ -n "$V_UPGRADE" ] ; then
 	V_ACTION=dist-upgrade
 	sudo apt-get --yes $V_ACTION
 	show_error 'upgrading some of the distribution packages' $V_ACTION
+
+	autoremove_packages
 fi
 
 setup_python() {
@@ -291,7 +300,8 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	sleep 1 && sudo apt-get --yes install nautilus-compare
 
 	if [ -z "$(type -p beet)" ] ; then
-		sudo pip install -U beets
+		# https://github.com/sampsyo/beets/issues/915
+		sudo pip install -U beets discogs-client==1.1.1 pylast
 	fi
 
 	#------------------------------------------------------------------------------------------------------------------------
@@ -323,17 +333,13 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	fi
 	V_CODECS='libxine1-ffmpeg gxine mencoder totem-mozilla icedax mpg321'
 	V_PROGRAMMING='bzr'
-	V_MEDIA='vlc-nox libaudiofile1 libmad0 normalize-audio'
+	V_MEDIA='vlc vlc-nox libaudiofile1 libmad0 normalize-audio feh'
 	V_USENET='sabnzbdplus sabnzbdplus-theme-mobile'
 	sleep 1 && sudo apt-get --yes $V_ACTION $V_CODECS $V_PROGRAMMING $V_MEDIA $V_USENET
 	show_error 'installing or removing some of the packages for home only' $V_ACTION
 
 	purge_packages
-
-	show_header "Autoremoving unused packages"
-	V_ACTION=autoremove
-	sleep 1 && sudo apt-get --yes $V_ACTION
-	show_error 'autoremoving some of the packages' $V_ACTION
+	autoremove_packages
 
 	# http://www.webupd8.org/2012/04/things-to-tweak-after-installing-ubuntu.html
 	show_header 'Make all autostart items show up in Startup Applications dialog'
@@ -379,27 +385,6 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
 		show_header 'Bazaar autocomplete'
 		eval "$(bzr bash-completion)"
-
-		V_EPSON_INSTALLED="$(dpkg --get-selections | grep -i epson-inkjet)"
-		if [ -z "$V_EPSON_INSTALLED" ] ; then
-			show_header 'Installing Epson printer'
-			V_DOWNLOAD_LINK=http://linux.avasys.jp/drivers/lsb/epson-inkjet/stable/debian/dists/lsb3.2/main/binary-amd64/epson-inkjet-printer-201101w_1.0.0-1lsb3.2_amd64.deb
-			V_PACKAGE="$G_DOWNLOAD_DIR/$(basename $V_DOWNLOAD_LINK)"
-			if [ ! -f "$V_PACKAGE" ] ; then
-				wget --output-document="$V_PACKAGE" "$V_DOWNLOAD_LINK"
-			fi
-			if [ -f "$V_PACKAGE" ] ; then
-				sudo dpkg -i $V_PACKAGE
-				sudo apt-get install lsb
-				sudo apt-get -f install
-				sudo dpkg -i $V_PACKAGE
-			fi
-
-			# Scanning software... didn't work the last time
-			# sudo apt-get --yes install xsane libsane-extras xsltproc
-			# sudo dpkg --install iscan-data_1.6.0-0_all.deb
-			# sudo dpkg --install iscan_2.26.1-3.ltdl7_i386.deb
-		fi
 	fi
 fi
 
@@ -433,30 +418,32 @@ setup_symbolic_links() {
 
 	show_header 'Creating common symbolic links for directories'
 	create_link "$HOME/.config/sublime-text-3/Installed Packages" $G_DROPBOX_DIR/Apps/sublime-text-3/Installed\ Packages/
-	create_link $HOME/.config/gcstar $G_DROPBOX_DIR/linux/config-gcstar/
 	create_link $HOME/.config/sublime-text-3/Packages $G_DROPBOX_DIR/Apps/sublime-text-3/Packages/
 	create_link $HOME/.purple $G_DROPBOX_DIR/Apps/PidginPortable/Data/settings/.purple
 	create_link $HOME/bin $G_DROPBOX_DIR/linux/bin/
-	create_link $HOME/music-external-hdd $G_EXTERNAL_HDD/audio/music/
-	create_link $HOME/Pictures/import-into-shotwell $G_EXTERNAL_HDD/import-into-shotwell
-	create_link $HOME/Pictures/shotwell $G_EXTERNAL_HDD/pix
+	create_link $HOME/Music/ipod $G_EXTERNAL_HDD/audio/music/ipod
+	create_link $HOME/Music/unknown $G_EXTERNAL_HDD/audio/music/unknown
+	create_link $HOME/Music/interesting $G_EXTERNAL_HDD/audio/music/out/5
+	create_link $HOME/Music/funny $G_EXTERNAL_HDD/audio/music/out/6
+	create_link $HOME/Pictures/import-into-shotwell $G_EXTERNAL_HDD/shotwell/import
+	create_link $HOME/Pictures/shotwell $G_EXTERNAL_HDD/shotwell/pix
+
+	V_MOUNT_MUSIC=/mnt/music
+	if [ -L $V_MOUNT_MUSIC -a "$(readlink -f $V_MOUNT_MUSIC)" == "$G_EXTERNAL_HDD/audio/music" ]; then
+		echo '' >/dev/null
+	else
+		sudo ln -fs $G_EXTERNAL_HDD/audio/music/ /mnt/
+	fi
+	ls -lad --color=auto $V_MOUNT_MUSIC
 
 	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
 		show_header 'Creating home symbolic links for files'
-		create_link $HOME/.config/flexget/config.yml $G_DROPBOX_DIR/linux/flexget-config-imdb.yml
 		create_link $HOME/.gitconfig $G_DROPBOX_DIR/linux/.gitconfig
 
 		show_header 'Creating home symbolic links for directories'
 		create_link $HOME/.xbmc $G_MOVIES_HDD/.xbmc/
-		create_link $HOME/Music/hd $G_EXTERNAL_HDD/audio/music/
 		create_link $HOME/Pictures/dropbox $G_DROPBOX_DIR/Photos/
-		create_link $HOME/Pictures/pix /pix/
 		create_link $HOME/Pictures/wallpapers $G_DROPBOX_DIR/Photos/wallpapers/
-	else
-		show_header 'Creating work symbolic links for directories'
-		create_link $HOME/Music/in $G_EXTERNAL_HDD/audio/music/in
-		create_link $HOME/Music/unknown $G_EXTERNAL_HDD/audio/music/unknown
-		create_link $G_WORK_SRC_DIR $G_EXTERNAL_HDD/backup/linux/$G_WORK_COMPUTER-Ubuntu-12.04.2-LTS/src/
 	fi
 }
 

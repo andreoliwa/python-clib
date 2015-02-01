@@ -91,7 +91,6 @@ for V_DIR in $(find "$PWD" -type d) ; do
 	V_ID3="$(eyeD3 --no-color *.mp3 2>/dev/null)"
 	check_tag 'Directory' 'artist' '^artist: .\+' -a
 	check_tag 'Directory' 'album' '^album: .\+' -A
-	check_tag 'Directory' 'genre' 'genre: .\+' -G
 	check_tag 'Directory' 'recording date' '^recording date: .\+' '--recording-date'
 
 	for V_FILE in $(find "${V_DIR}" -maxdepth 1 -type f -name '*.mp3') ; do
