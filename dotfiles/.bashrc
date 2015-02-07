@@ -23,7 +23,7 @@ function cd() {
 }
 
 # My personal environment variables
-[ -f ~/bin/.clitoolsrc ] && . ~/bin/.clitoolsrc
+[ -f ~/bin/.clitoolkitrc ] && . ~/bin/.clitoolkitrc
 
 if [ -n "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
 	# The colors seem to be different to CentOS
@@ -158,7 +158,7 @@ stty -ixon
 # Set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
 	# Adding global Composer dir to the PATH, according to http://akrabat.com/php/global-installation-of-php-tools-with-composer/
-	export PATH="$HOME/bin:$G_DROPBOX_DIR/code/src/clitools:$HOME/.composer/vendor/bin:$PATH"
+	export PATH="$HOME/bin:$G_DROPBOX_DIR/src/python/clitoolkit/legacy:$HOME/.composer/vendor/bin:$PATH"
 fi
 
 # Autocomplete for sudo?
@@ -184,4 +184,5 @@ export BROWSER=/usr/bin/chromium-browser
 
 # http://simononsoftware.com/virtualenv-tutorial-part-2/
 export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$G_DROPBOX_DIR/src/python
 source /usr/local/bin/virtualenvwrapper_lazy.sh

@@ -1,6 +1,6 @@
 #!/bin/bash
-V_SAMPLE_FILE=$(dirname $0)/.clitoolsrc.sample
-V_RC_FILE=~/bin/.clitoolsrc
+V_SAMPLE_FILE=$(dirname $0)/.clitoolkitrc.sample
+V_RC_FILE=~/bin/.clitoolkitrc
 
 usage() {
 	echo "Usage: $(basename $0) [options]

@@ -16,7 +16,7 @@ while getopts "h" V_ARG ; do
 done
 
 source ~/.bashrc
-V_TMUX="$G_DROPBOX_DIR/code/src/clitools/tmux-open.sh -s"
+V_TMUX="$G_DROPBOX_DIR/src/python/clitoolkit/tmux-open.sh -s"
 gnome-terminal --disable-factory --maximize --tab --title=git --command "$V_TMUX git" --tab --title=mysql --command "$V_TMUX mysql" --tab --title=vm217 --command "$V_TMUX vm217" --tab --command "ssh vm217" --tab &
 
 # Returns to the first workspace and move windows to corresponding workspaces
