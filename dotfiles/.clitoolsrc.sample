@@ -16,7 +16,7 @@ export G_WORK_SVN_USERNAME=
 export G_DROPBOX_DIR=
 
 # Directory where you want to put your new scripts.
-# Usually it is the same Git dir for the clitools project
+# Usually it is the same Git dir for this project
 export G_NEW_SCRIPTS_DIR=
 
 # Download dir, usually $HOME/Downloads

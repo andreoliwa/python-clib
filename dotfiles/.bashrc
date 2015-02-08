@@ -23,7 +23,7 @@ function cd() {
 }
 
 # My personal environment variables
-[ -f ~/bin/.clitoolsrc ] && . ~/bin/.clitoolsrc
+[ -f ~/bin/.clitoolkitrc ] && . ~/bin/.clitoolkitrc
 
 if [ -n "$V_INSIDE_VIRTUAL_MACHINE" ] ; then
 	# The colors seem to be different to CentOS
@@ -136,10 +136,12 @@ alias top='top -d 1 -c'
 alias grep='grep --color=auto'
 alias psgrep='ps aux | grep -v grep | grep -e '^USER' -e '
 alias pwd='pwd;pwd -P'
-alias g='git'
-alias s='setup-ubuntu.sh -u'
 alias t='tmux-open.sh -s'
-alias v='ssh vm217'
+alias git=hub
+alias pf='pip freeze'
+alias gs='git status'
+alias gb='git branch'
+alias gd='git diff'
 
 export HISTCONTROL=ignoreboth:ignoCOLOR_redups:erasedups
 export HISTSIZE=50000
@@ -158,7 +160,7 @@ stty -ixon
 # Set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
 	# Adding global Composer dir to the PATH, according to http://akrabat.com/php/global-installation-of-php-tools-with-composer/
-	export PATH="$HOME/bin:$G_DROPBOX_DIR/code/src/clitools:$HOME/.composer/vendor/bin:$PATH"
+	export PATH="$HOME/bin:$G_DROPBOX_DIR/src/python/clitoolkit/legacy:$HOME/.composer/vendor/bin:$PATH"
 fi
 
 # Autocomplete for sudo?
@@ -184,4 +186,45 @@ export BROWSER=/usr/bin/chromium-browser
 
 # http://simononsoftware.com/virtualenv-tutorial-part-2/
 export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$G_DROPBOX_DIR/src/python
 source /usr/local/bin/virtualenvwrapper_lazy.sh
+
+# http://hmarr.com/2010/jan/19/making-virtualenv-play-nice-with-git/
+
+# Automatically activate Git projects' virtual environments based on the
+# directory name of the project. Virtual environment name can be overridden
+# by placing a .venv file in the project root with a virtualenv name in it
+function workon_cwd {
+    # Check that this is a Git repo
+    GIT_DIR=`git rev-parse --git-dir 2> /dev/null`
+    if [[ $? == 0 ]]
+    then
+        # Find the repo root and check for virtualenv name override
+        GIT_DIR=`\cd $GIT_DIR; pwd`
+        PROJECT_ROOT=`dirname "$GIT_DIR"`
+        ENV_NAME=`basename "$PROJECT_ROOT"`
+        if [ -f "$PROJECT_ROOT/.venv" ]; then
+            ENV_NAME=`cat "$PROJECT_ROOT/.venv"`
+        fi
+        # Activate the environment only if it is not already active
+        if [ "$VIRTUAL_ENV" != "$WORKON_HOME/$ENV_NAME" ]; then
+            if [ -e "$WORKON_HOME/$ENV_NAME/bin/activate" ]; then
+                workon "$ENV_NAME" && export CD_VIRTUAL_ENV="$ENV_NAME"
+            fi
+        fi
+    # elif [ $CD_VIRTUAL_ENV ]; then
+        # We've just left the repo, deactivate the environment
+        # Note: this only happens if the virtualenv was activated automatically
+        # deactivate && unset CD_VIRTUAL_ENV
+    fi
+}
+
+# New cd function that does the virtualenv magic
+function venv_cd {
+    builtin cd "$@" && workon_cwd
+}
+
+alias cd="venv_cd"
+
+# Call the function once, if you're already in a virtualenv dir (when you open a terminal from another)
+cd $PWD

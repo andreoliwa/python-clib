@@ -20,7 +20,7 @@ while getopts "12h" V_ARG ; do
 	esac
 done
 
-source ~/bin/.clitoolsrc
+source ~/bin/.clitoolkitrc
 
 if [ -n "$V_SINGLE" ] ; then
 	V_WHAT='a single monitor'
