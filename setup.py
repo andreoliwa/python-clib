@@ -14,13 +14,14 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
-requirements = [
-    # TODO: put package requirements here
-]
+with open('requirements.txt') as txt_file:
+    lines = txt_file.read()
+requirements = [line for line in lines.split('\n') if '=' in line]
 
-test_requirements = [
-    # TODO: put package test requirements here
-]
+with open('requirements_dev.txt') as txt_file:
+    lines = txt_file.read()
+test_requirements = [line for line in lines.split('\n') if '=' in line]
+test_requirements.extend(requirements)
 
 setup(
     name='clitoolkit',
