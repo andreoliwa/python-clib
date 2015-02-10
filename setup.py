@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import clitoolkit
 
 
 try:
@@ -25,7 +26,7 @@ test_requirements.extend(requirements)
 
 setup(
     name='clitoolkit',
-    version='0.7.0',
+    version=clitoolkit.__version__,
     description="Several general use scripts to help in everyday life.",
     long_description=readme + '\n\n' + history,
     author="Wagner Augusto Andreoli",
