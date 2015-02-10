@@ -7,7 +7,7 @@ function _git_stash_count(){
 	[[ $? -ne 0 ]] && return
 
 	# Show stash count
-	local stash_count=$(git stash list| wc -l)
+	local stash_count="$(git stash list| wc -l | sed -E 's/ +//')"
 	[[ ${stash_count} -eq 0 ]] && return
 	echo " %{$fg[red]%}(stash: ${stash_count})%{$reset_color%}"
 }
