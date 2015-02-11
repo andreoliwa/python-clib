@@ -83,6 +83,7 @@ export LANG=en_US.UTF-8
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias hi='hub pull-request -i'
+alias glm='git log ...master'
 
 if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
     cd ~/eatfirst/cave

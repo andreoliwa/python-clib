@@ -1,0 +1,6 @@
+Host *
+    User w.andreoli
+    GSSAPIAuthentication no
+    GSSAPIDelegateCredentials no
+    # http://serverfault.com/questions/283722/authentication-order-with-ssh
+    PreferredAuthentications publickey,gssapi-with-mic,hostbased,keyboard-interactive,password
