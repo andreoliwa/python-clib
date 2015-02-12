@@ -45,6 +45,6 @@
 	user = wagnerandreoli
 	token = 6e0f54783d050d53662979824c994bff
 [core]
-	editor = subl -w
+	editor = vim
 [log]
 	date = iso

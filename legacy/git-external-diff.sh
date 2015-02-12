@@ -13,7 +13,11 @@ if [ -n "$G_SINGLE_MELD_WINDOW" ] ; then
 	#echo "Comparando $V_LOCAL_FILE com o SVN"
 	echo '--diff '"$V_COPIED_FILE"' '"$V_LOCAL_FILE"
 else
-	meld "$V_TEMP_FILE" "$V_LOCAL_FILE" > /dev/null 2>&1
+	if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
+		diff $1 $2
+	else
+		meld "$V_TEMP_FILE" "$V_LOCAL_FILE" > /dev/null 2>&1
+	fi
 fi
 
 # http://mycodesnippets.com/2011/06/04/git-with-meld-diff-viewer-on-ubunt/

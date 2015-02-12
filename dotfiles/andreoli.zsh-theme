@@ -1,19 +1,23 @@
 # -*- sh -*- vim:set ft=sh ai et sw=4 sts=4:
 # A mix from other themes
 
-function _git_stash_count(){
-	# Check if it's a Git dir
+function _git_work_in_progress(){
+	# Check if we are inside a git repo
 	[ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1
 	[[ $? -ne 0 ]] && return
 
-	# Show stash count
+	# Show stash count if any
 	local stash_count="$(git stash list| wc -l | sed -E 's/ +//')"
-	[[ ${stash_count} -eq 0 ]] && return
-	echo " %{$fg[red]%}(stash: ${stash_count})%{$reset_color%}"
+	if [[ ${stash_count} -ne 0 ]]; then
+		echo -n " %{$fg[red]%}(stash: ${stash_count})"
+	fi
+	
+	# Search for WIP commits in the last 10
+	git log -n 10 | grep -q -c "\-\-wip\-\-" && echo -n " %{$fg[magenta]%}(WORK IN PROGRESS)"
 }
 
 # risto.zsh-theme
-PROMPT='%{$fg[cyan]%}$(virtualenv_prompt_info)%{$fg[green]%}%n@%m %{$fg_bold[blue]%}%~ $(git_prompt_info)$(_git_stash_count) %{$reset_color%}
+PROMPT='%{$fg[cyan]%}$(virtualenv_prompt_info)%{$fg[green]%}%n@%m %{$fg_bold[blue]%}%~ $(git_prompt_info)$(_git_work_in_progress) %{$reset_color%}
 %(!.#.$) '
 
 # murilasso.zsh-theme

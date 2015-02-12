@@ -45,8 +45,8 @@ ZSH_THEME="andreoli"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-flow pip virtualenv virtualenvwrapper)
-# vagrant brew copydir copyfile cp rsync extract git-extras npm)
+plugins=(git git-flow pip virtualenv virtualenvwrapper extract cp brew)
+# vagrant copydir copyfile rsync git-extras npm)
 
 # User configuration
 
@@ -83,10 +83,3 @@ export LANG=en_US.UTF-8
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias hi='hub pull-request -i'
-alias glm='git log ...master'
-alias gld='git log ...develop'
-
-if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
-    cd ~/eatfirst/cave
-fi
