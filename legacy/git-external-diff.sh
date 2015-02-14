@@ -14,7 +14,7 @@ if [ -n "$G_SINGLE_MELD_WINDOW" ] ; then
 	echo '--diff '"$V_COPIED_FILE"' '"$V_LOCAL_FILE"
 else
 	if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
-		diff $1 $2
+		diff $1 $2 | less
 	else
 		meld "$V_TEMP_FILE" "$V_LOCAL_FILE" > /dev/null 2>&1
 	fi
