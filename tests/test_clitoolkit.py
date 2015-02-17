@@ -10,8 +10,6 @@ Tests for `clitoolkit` module.
 
 import unittest
 
-from clitoolkit import clitoolkit
-
 
 class TestClitoolkit(unittest.TestCase):
 

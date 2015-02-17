@@ -5,7 +5,7 @@ export ZSH=$HOME/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="andreoli"
+ZSH_THEME="robbyrussell"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -45,22 +45,17 @@ ZSH_THEME="andreoli"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-flow pip virtualenv virtualenvwrapper extract cp brew)
-# vagrant copydir copyfile rsync git-extras npm)
+plugins=(git)
 
 # User configuration
 
-if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
-    export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/wagneraugusto/bin:/Users/wagneraugusto/Dropbox/src/python/clitoolkit/legacy"
-else
-    export PATH="/home/wagner/bin:/home/wagner/Dropbox/src/python/clitoolkit/legacy:/home/wagner/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/heroku/bin"
-fi
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
 
 # You may need to manually set your language environment
-export LANG=en_US.UTF-8
+# export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then

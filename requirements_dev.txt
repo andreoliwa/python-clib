@@ -4,7 +4,7 @@ binaryornot==0.3.0
 cookiecutter>=0.9.1
 coverage>=3.7.1
 docutils>=0.12
-flake8==2.3.0
+flake8>=2.3.0
 ipython>=2.4.0
 Jinja2==2.7.3
 MarkupSafe==0.23
@@ -17,3 +17,5 @@ PyYAML==3.11
 Sphinx>=1.2.3
 tox>=1.8.1
 virtualenv>=12.0.7
+pytest>=2.6.4
+pytest-cov>=1.8.1

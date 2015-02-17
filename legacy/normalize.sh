@@ -38,7 +38,7 @@ done
 V_TEXT="${V_TEXT:1}"
 
 if [ -n "$V_SLUG" ]; then
-	echo $V_TEXT | sed -e 's/\([A-Z][a-z0-9]\)/-\1/g' -e 's/^-//' | tr '[:upper:]' '[:lower:]' | tr --squeeze-repeats '_()#.,;:/?~^[]{} ' '-' | sed 'y/àáâãèéìíòóôõÔúç/aaaaeeiiooooouc/'
+	echo $V_TEXT | sed -e 's/\([A-Z][a-z0-9]\)/-\1/g' -e 's/^-//' | tr '[:upper:]' '[:lower:]' | tr --squeeze-repeats '_()#.,;:/?~^[]{} ' '-' | sed 'y/àáâãèéìíòóôõúçÀÁÂÃÈÉÌÍÒÓÔÕÚÇ/aaaaeeiiooooucaaaaeeiioooouc/'
 fi
 
 if [ -n "$V_CAMEL_CASE" ]; then

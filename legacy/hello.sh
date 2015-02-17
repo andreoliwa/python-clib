@@ -47,7 +47,7 @@ fi
 V_OLD_IFS=$IFS
 IFS='
 '
-V_FIND=$(find $HOME -maxdepth 4 -type d -not -empty -and \( -name 2both -or -name $V_DOC_DIR -or -wholename '*deluge*downloads' -or -wholename $G_BANK_STATEMENTS_DIR/buxfer/new -or -name Scanner -or -name torrent \))
+V_FIND=$(find $HOME -maxdepth 4 -type d -not -empty -and \( -name 2both -or -name $V_DOC_DIR -or -wholename '*deluge*downloads' -or -wholename $G_BANK_STATEMENTS_DIR/buxfer/new -or -name Scanner \))
 if [ -n "$V_FIND" ]; then
 	for V_ONE_DIR in $V_FIND; do
 		xdg-open $V_ONE_DIR
