@@ -44,10 +44,8 @@ test-all:
 	tox
 
 coverage:
-	coverage run --source clitoolkit setup.py test
-	coverage report -m
-	coverage html
-	open htmlcov/index.html
+	py.test --cov=clitoolkit --cov-report=term --cov-report=html
+	xdg-open htmlcov/index.html
 
 docs:
 	rm -f docs/clitoolkit.rst
