@@ -3,12 +3,16 @@
 Parsers and (later) crawlers
 """
 import argparse
+import logging
 import re
 from time import sleep
 import webbrowser
 
 from bs4 import BeautifulSoup
 import requests
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(format='[%(name)s:%(levelname)s] %(message)s')
 
 
 class ImmoScout24:
@@ -44,14 +48,22 @@ class ImmoScout24:
         for ad_url in self.urls:
             soup = BeautifulSoup(self.download_html(ad_url))
 
+            self.found = True
             address = soup.find(attrs={'data-qa': "is24-expose-address"})
             if address is None:
                 error = soup.find('div', {'id': 'oss-error'})
                 if 'nicht gefunden' in str(error):
                     self.found = False
-                    continue
+                    logger.error('Not found: %s', ad_url)
+            elif address.strong is None:
+                logger.error('No strong address? %s', ad_url)
+                self.found = False
+            else:
+                street = address.strong.string.strip()
 
-            street = address.strong.string.strip()
+            if not self.found:
+                continue
+
             neighborhood_content = [text_only.strip() for text_only in address.children if isinstance(text_only, str)]
             neighborhood = [zipcode.split(',')[0] for zipcode in neighborhood_content if zipcode][0]
 
@@ -60,12 +72,10 @@ class ImmoScout24:
             else:
                 self.full_address = '{}, {}'.format(street, neighborhood)
 
-            self.found = True
             map_url = self.MAP_URL.format(
                 origin=self.full_address.replace(' ', '+'),
                 destination=self.DEFAULT_DESTINATION)
 
-            print()
             self.browse(ad_url, 'AD')
             self.browse(map_url, 'Google Maps')
         return self
@@ -77,9 +87,9 @@ class ImmoScout24:
         :param url:
         :param description:
         """
-        print('{}: {}'.format(description, url))
+        logger.warning('%s: %s', description, url)
         webbrowser.open(url)
-        sleep(.5)
+        sleep(.2)
 
     @classmethod
     def main(cls):
