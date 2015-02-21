@@ -13,5 +13,5 @@ export PROJECT_HOME=~/Dropbox/src/python
 
 if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
 	alias gwip='git add -A; git ls-files --deleted -z | xargs git rm; git commit -m "--wip--"'
-    cd ~/eatfirst/cave
+    workon cave
 fi
