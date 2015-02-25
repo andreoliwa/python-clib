@@ -21,5 +21,5 @@ if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
     autoload run-help
     HELPDIR=/usr/local/share/zsh/help
 
-    workon cave
+    cd
 fi
