@@ -55,11 +55,10 @@ class ImmoScout24:
                 if 'nicht gefunden' in str(error):
                     self.found = False
                     logger.error('Not found: %s', ad_url)
-            elif address.strong is None:
-                logger.error('No strong address? %s', ad_url)
-                self.found = False
             else:
-                street = address.strong.string.strip()
+                # Take the first non blank line found in the address div
+                street = [line.strip() for line in address.find_all(text=True) if line.strip()][0]
+                street = ' '.join(street.split())
 
             if not self.found:
                 continue
@@ -76,8 +75,8 @@ class ImmoScout24:
                 origin=self.full_address.replace(' ', '+'),
                 destination=self.DEFAULT_DESTINATION)
 
-            self.browse(ad_url, 'AD')
             self.browse(map_url, 'Google Maps')
+            self.browse(ad_url, 'AD')
         return self
 
     @staticmethod
