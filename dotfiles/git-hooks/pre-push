@@ -62,7 +62,4 @@ if [[ $? -ne 0 ]]; then
 	exit 93
 fi
 
-# echo "TEST! not pushing"
-# exit 1
-
 exit 0
