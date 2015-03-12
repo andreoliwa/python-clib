@@ -42,7 +42,7 @@ do
 		fi
 
 		# Check for WIP commit
-		commit=`git rev-list -n 1 --grep '^WIP' "$range"`
+		commit=`git rev-list -n 1 --grep wip "$range"`
 		if [ -n "$commit" ]
 		then
 			echo "Found WIP commit in $local_ref, not pushing"
@@ -51,15 +51,15 @@ do
 	fi
 done
 
-#!/bin/sh
 # Redirect output to stderr.
 exec 1>&2
 
-echo "Running ./manage.py build"
+echo "Running ./manage.py build before pushing..."
 fig run cave bash -c "cd /cave && ./manage.py build > build/manage-build.log 2>&1"
 if [[ $? -ne 0 ]]; then
 	cat build/manage-build.log
 	exit 93
 fi
 
+echo 'Pushing...'
 exit 0

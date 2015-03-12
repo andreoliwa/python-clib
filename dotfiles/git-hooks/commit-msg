@@ -9,6 +9,7 @@
 # To enable this hook, rename this file to "commit-msg".
 import sys
 
+
 def abort_push(message):
     print('\n' + message)
     sys.exit(1)
@@ -20,6 +21,10 @@ if not current_branch.startswith('issue/') and not current_branch == 'hotfix':
 
 with open(sys.argv[1]) as handle:
     commit_message = handle.read()
+
+if commit_message.startswith('--wip--'):
+    sys.exit(0)
+
 issue_id_string = commit_message.split()[0]
 if issue_id_string[0] != '#':
     abort_push('Commit message: First char must be #')
