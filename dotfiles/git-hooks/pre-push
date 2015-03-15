@@ -54,11 +54,15 @@ done
 # Redirect output to stderr.
 exec 1>&2
 
-echo "Running ./manage.py build before pushing..."
-fig run cave bash -c "cd /cave && ./manage.py build > build/manage-build.log 2>&1"
-if [[ $? -ne 0 ]]; then
-	cat build/manage-build.log
-	exit 93
+if [[ $gp_NO_BUILD ]]; then
+    echo "Skipping ./manage.py build..."
+else
+    echo "Running ./manage.py build before pushing..."
+    fig run cave bash -c "cd /cave && ./manage.py build > build/manage-build.log 2>&1"
+    if [[ $? -ne 0 ]]; then
+	    cat build/manage-build.log
+	    exit 93
+    fi
 fi
 
 echo 'Pushing...'
