@@ -10,6 +10,7 @@ alias gdd='git diff develop'
 alias gstl='git stash list'
 alias gsta='git add -A; git stash'
 alias gci='git-checkout-issue.sh'
+alias pf='pip freeze'
 
 export PROJECT_HOME=~/Dropbox/src/python
 

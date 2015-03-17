@@ -45,8 +45,13 @@ ZSH_THEME="andreoli"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-flow pip virtualenv virtualenvwrapper extract cp brew)
-# vagrant copydir copyfile rsync git-extras npm)
+plugins_common=(git git-flow pip github virtualenv virtualenvwrapper extract cp rsync python pylint)
+# vagrant copydir copyfile git-extras npm
+if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
+    plugins=($plugins_common osx brew)
+else
+    plugins=($plugins_common ubuntu debian)
+fi
 
 # User configuration
 
