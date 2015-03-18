@@ -17,7 +17,6 @@ sudo dselect
 -r  Add and remove PPA repositories.
 -u  Execute upgrade and dist-upgrade.
 -i  Install/remove packages.
--l  Setup symbolic links
 -h  Help"
 	exit $1
 }
@@ -386,67 +385,4 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 		show_header 'Bazaar autocomplete'
 		eval "$(bzr bash-completion)"
 	fi
-fi
-
-create_link() {
-	V_LINK_NAME="$1"
-	V_TARGET="$2"
-
-	mkdir -p "$(dirname "$V_LINK_NAME")"
-
-	# Create if the target exists and the link doesn't
-	[ -e "$V_TARGET" ] && [ ! -e "$V_LINK_NAME" ] && ln -s "$V_TARGET" "$V_LINK_NAME"
-	ls -lad --color=auto "$V_LINK_NAME"
-}
-
-setup_symbolic_links() {
-	#------------------------------------------------------------------------------------------------------------------------
-	# SYMBOLIC LINKS
-	#------------------------------------------------------------------------------------------------------------------------
-	show_header 'Creating common symbolic links for files'
-	create_link $HOME/.bashrc $V_BASH_UTILS_DIR/.bashrc
-	[ -f "$HOME/.beetsconfig" ] && rm $HOME/.beetsconfig
-	create_link $HOME/.config/beets/config.yaml $G_DROPBOX_DIR/linux/beets-config.yaml
-	create_link $HOME/.imwheelrc $V_BASH_UTILS_DIR/.imwheelrc
-	create_link $HOME/.ssh/config $G_DROPBOX_DIR/linux/ssh-config
-	create_link $HOME/.tmux.conf $V_BASH_UTILS_DIR/.tmux.conf
-	create_link $HOME/.vimrc $V_BASH_UTILS_DIR/.vimrc
-	#create_link $HOME/.inputrc $V_BASH_UTILS_DIR/.inputrc
-	for V_TEMPLATE in $(find "$(dirname $0)/templates" -type f); do
-		create_link "$HOME/Templates/$(basename $V_TEMPLATE)" "$V_TEMPLATE"
-	done
-
-	show_header 'Creating common symbolic links for directories'
-	create_link "$HOME/.config/sublime-text-3/Installed Packages" $G_DROPBOX_DIR/Apps/sublime-text-3/Installed\ Packages/
-	create_link $HOME/.config/sublime-text-3/Packages $G_DROPBOX_DIR/Apps/sublime-text-3/Packages/
-	create_link $HOME/.purple $G_DROPBOX_DIR/Apps/PidginPortable/Data/settings/.purple
-	create_link $HOME/bin $G_DROPBOX_DIR/linux/bin/
-	create_link $HOME/Music/ipod $G_EXTERNAL_HDD/audio/music/ipod
-	create_link $HOME/Music/unknown $G_EXTERNAL_HDD/audio/music/unknown
-	create_link $HOME/Music/interesting $G_EXTERNAL_HDD/audio/music/out/5
-	create_link $HOME/Music/funny $G_EXTERNAL_HDD/audio/music/out/6
-	create_link $HOME/Pictures/import-into-shotwell $G_EXTERNAL_HDD/shotwell/import
-	create_link $HOME/Pictures/shotwell $G_EXTERNAL_HDD/shotwell/pix
-
-	V_MOUNT_MUSIC=/mnt/music
-	if [ -L $V_MOUNT_MUSIC -a "$(readlink -f $V_MOUNT_MUSIC)" == "$G_EXTERNAL_HDD/audio/music" ]; then
-		echo '' >/dev/null
-	else
-		sudo ln -fs $G_EXTERNAL_HDD/audio/music/ /mnt/
-	fi
-	ls -lad --color=auto $V_MOUNT_MUSIC
-
-	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
-		show_header 'Creating home symbolic links for files'
-		create_link $HOME/.gitconfig $G_DROPBOX_DIR/linux/.gitconfig
-
-		show_header 'Creating home symbolic links for directories'
-		create_link $HOME/.xbmc $G_MOVIES_HDD/.xbmc/
-		create_link $HOME/Pictures/dropbox $G_DROPBOX_DIR/Photos/
-		create_link $HOME/Pictures/wallpapers $G_DROPBOX_DIR/Photos/wallpapers/
-	fi
-}
-
-if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
-	setup_symbolic_links
 fi
