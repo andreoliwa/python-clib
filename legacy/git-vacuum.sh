@@ -1,16 +1,23 @@
 #!/bin/bash
-echo '>>> Pull'
-git checkout master
-[ $? = 0 ] && git pull
+_git_exec_command() {
+    V_COMMAND=$1
+    echo
+    echo '$ '$V_COMMAND
+    eval $V_COMMAND
+}
 
-echo '>>> Remote prune'
-git remote prune origin
+V_CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-echo '>>> Fetch prune'
-git fetch origin --prune
+_git_exec_command 'git checkout master'
+if [ $? = 0 ]; then
+    _git_exec_command 'git pull'
+fi
 
-echo '>>> Clear branches'
-git-clear-local-branches.sh
+_git_exec_command 'git remote prune origin'
+_git_exec_command 'git fetch origin --prune'
+_git_exec_command 'git-clear-local-branches.sh'
+_git_exec_command 'git gc --prune=now'
 
-echo '>>> GC'
-git gc --prune=now
+if [[ "$V_CURRENT_BRANCH" != 'master' ]]; then
+	_git_exec_command 'git checkout '$V_CURRENT_BRANCH
+fi
