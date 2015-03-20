@@ -4,6 +4,8 @@ VLC tools
 """
 import os
 import logging
+import pipes
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
@@ -14,6 +16,7 @@ EXTENSIONS = ['.asf', '.avi', '.divx', '.f4v', '.flc', '.flv', '.m4v', '.mkv',
               '.mov', '.mp4', '.mpa', '.mpeg', '.mpg', '.ogv', '.wmv']
 MINIMUM_VIDEO_SIZE = 10 * 1000 * 1000  # 10 megabytes
 VLC_ROOT_PATH = os.path.join(os.environ.get('VLC_ROOT_PATH', ''), '')
+APPS = ['vlc.Vlc', 'feh.feh', 'google-chrome', 'Chromium-browser']
 
 logger = logging.getLogger(__name__)
 engine = create_engine('sqlite:///:memory:', echo=True)
@@ -56,3 +59,28 @@ def scan_video_files():
         if size > MINIMUM_VIDEO_SIZE:
             session.add(Video(path=partial_path, size=size))
             session.commit()
+
+
+def list_current_windows():
+    """List current windows from selected applications.
+
+    :return: dict
+    """
+    grep_args = ' -e '.join(APPS)
+    t = pipes.Template()
+    t.prepend('wmctrl -l -x', '.-')
+    t.append('grep -e {}'.format(grep_args), '--')
+    with t.open_r('pipefile') as f:
+        lines = f.read()
+
+    windows = {}
+    for line in lines.split('\n'):
+        words = line.split()
+        if words:
+            app = words[2]
+            title = ' '.join(words[4:])
+            if app not in windows.keys():
+                windows[app] = [title]
+            else:
+                windows[app].append(title)
+    return windows
