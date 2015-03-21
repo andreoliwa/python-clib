@@ -8,24 +8,42 @@ import pipes
 from collections import defaultdict
 from datetime import datetime
 from time import sleep
+from subprocess import check_output, CalledProcessError
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, event
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.engine import Engine
 
+
+CONFIG_DIR = os.path.expanduser(os.path.join('~/.config/clitoolkit', ''))
+os.makedirs(CONFIG_DIR, exist_ok=True)
 
 EXTENSIONS = ['.asf', '.avi', '.divx', '.f4v', '.flc', '.flv', '.m4v', '.mkv',
               '.mov', '.mp4', '.mpa', '.mpeg', '.mpg', '.ogv', '.wmv']
 MINIMUM_VIDEO_SIZE = 10 * 1000 * 1000  # 10 megabytes
 VIDEO_ROOT_PATH = os.path.join(os.environ.get('VIDEO_ROOT_PATH', ''), '')
 APPS = ['vlc.Vlc', 'feh.feh', 'google-chrome', 'Chromium-browser']
+PIPEFILE = 'pipefile.tmp'
 
 logger = logging.getLogger(__name__)
-engine = create_engine('sqlite:///:memory:', echo=True)  # TODO Save to a .sqlite file
+engine = create_engine('sqlite:///{}'.format(os.path.join(CONFIG_DIR, 'media.sqlite')), echo=True)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
+
+
+@event.listens_for(Engine, "connect")
+def enable_foreign_keys(dbapi_connection, connection_record):
+    """Enable foreign keys in SQLite.
+    See http://docs.sqlalchemy.org/en/rel_0_9/dialects/sqlite.html#sqlite-foreign-keys
+
+    :param dbapi_connection:
+    :param connection_record:
+    """
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 
 class Video(Base):
@@ -33,11 +51,29 @@ class Video(Base):
     __tablename__ = 'video'
 
     video_id = Column(Integer, primary_key=True)
-    path = Column(String)
-    size = Column(Integer)
+    path = Column(String, nullable=False, unique=True)
+    size = Column(Integer, nullable=False)
 
     def __repr__(self):
         return "<Video(path='{}', size='{}')>".format(self.path, self.size)
+
+
+class WindowLog(Base):
+    """Log entry for an open window."""
+    __tablename__ = 'window_log'
+
+    window_id = Column(Integer, primary_key=True)
+
+    start_dt = Column(DateTime, nullable=False)
+    end_dt = Column(DateTime, nullable=False)
+    app_name = Column(String, nullable=False)
+    title = Column(String, nullable=False)
+
+    video_id = Column(Integer, ForeignKey('video.video_id'))
+    # video = relationship('Video', backref=backref('logs', order_by=window_id))
+
+    def __repr__(self):
+        return "<WindowLog(app='{}', title='{}')>".format(self.app_name, self.title)
 
 
 def scan_video_files():
@@ -49,8 +85,6 @@ def scan_video_files():
     if not VIDEO_ROOT_PATH:
         logger.error('The environment variable VIDEO_ROOT_PATH must contain the video root directory')
         return
-
-    Base.metadata.create_all(engine)
 
     # http://stackoverflow.com/questions/18394147/recursive-sub-folder-search-and-return-files-in-a-list-python
     for partial_path in [os.path.join(root, file).replace(VIDEO_ROOT_PATH, '')
@@ -74,7 +108,7 @@ def list_windows():
     t = pipes.Template()
     t.prepend('wmctrl -l -x', '.-')
     t.append('grep -e {}'.format(grep_args), '--')
-    with t.open_r('pipefile') as f:
+    with t.open_r(PIPEFILE) as f:
         lines = f.read()
 
     windows = {}
@@ -99,9 +133,9 @@ def list_vlc_open_files():
     t = pipes.Template()
     t.prepend('lsof -F n -c vlc 2>/dev/null', '.-')
     t.append("grep '^n{}'".format(VIDEO_ROOT_PATH), '--')
-    with t.open_r('pipefile') as f:
+    with t.open_r(PIPEFILE) as f:
         files = f.read()
-    return files.strip().split('\n')
+    return [file[1:] for file in files.strip().split('\n') if file]
 
 
 def window_monitor():
@@ -118,9 +152,12 @@ def window_monitor():
             sleep(.2)
 
             for app, new_titles in list_windows().items():
+                assert isinstance(app, str)
                 assert isinstance(new_titles, list)
+
                 if app not in last.keys():
                     last[app] = defaultdict(tuple)
+                # TODO video_paths = list_vlc_open_files() if app.startswith('vlc') else []
 
                 for index, new_title in enumerate(new_titles):
                     if last[app][index] and last[app][index][1] == new_title:
@@ -141,3 +178,53 @@ def window_monitor():
                             end=end_time.strftime(time_format)))
     except KeyboardInterrupt:
         return
+
+
+def is_vlc_running():
+    """Check if VLC is running.
+
+    :return: True if VLC is running.
+    :rtype bool
+    """
+    try:
+        check_output(['pidof', 'vlc'])
+        return True
+    except CalledProcessError:
+        return False
+
+
+def add_to_playlist(videos):
+    """Add one or more videos to VLC's playlist.
+
+    :param videos: One or more video paths.
+    :type videos list|str
+    :return: True if videos were added to the playlist.
+    :rtype bool
+    """
+    if not is_vlc_running():
+        logger.error('VLC is not running, please open it first.')
+        return False
+
+    videos = [videos] if isinstance(videos, str) else videos
+    t = pipes.Template()
+    t.append('xargs -0 vlc --quiet --no-fullscreen --no-playlist-autostart --no-auto-preparse', '--')
+    with t.open_w(PIPEFILE) as f:
+        f.write('\0'.join(videos))
+    return True
+
+
+def filter_videos_by_path(query_string):
+    """Return videos from the database based on a query string.
+    All spaces in the query string will be converted to %, to be used in a LIKE expression.
+
+    :param query_string:
+    :type query_string str
+    :return:
+    """
+    clean_query = '%{}%'.format('%'.join(query_string.split())) if query_string else None
+    filter_string = Video.path.like(clean_query) if clean_query else ''
+    return [os.path.join(VIDEO_ROOT_PATH, video.path)
+            for video in session.query(Video).filter(filter_string).all()]
+
+
+Base.metadata.create_all(engine)
