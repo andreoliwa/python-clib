@@ -10,7 +10,7 @@ from datetime import datetime
 from time import sleep
 from subprocess import check_output, CalledProcessError
 
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, event
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, event, or_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine import Engine
@@ -231,18 +231,25 @@ def add_to_playlist(videos):
     return True
 
 
-def query_videos_by_path(query_string=None):
+def query_videos_by_path(search=None):
     """Return videos from the database based on a query string.
     All spaces in the query string will be converted to %, to be used in a LIKE expression.
 
-    :param query_string: Optional query string to search; if not provided, return all videos.
-    :type query_string str
+    :param search: Optional query strings to search; if not provided, return all videos.
+    :type search str|list
     :return:
     """
-    clean_query = '%{}%'.format('%'.join(query_string.split())) if query_string else None
-    filter_string = Video.path.like(clean_query) if clean_query else ''
-    return [os.path.join(VIDEO_ROOT_PATH, video.path)
-            for video in session.query(Video).filter(filter_string).all()]
+    if not search:
+        sa_filter = session.query(Video)
+    else:
+        conditions = []
+        search = [search] if isinstance(search, str) else search
+        for query_string in search:
+            clean_query = '%{}%'.format('%'.join(query_string.split()))
+            print(clean_query)
+            conditions.append(Video.path.like(clean_query))
+        sa_filter = session.query(Video).filter(or_(*conditions))
+    return [os.path.join(VIDEO_ROOT_PATH, video.path) for video in sa_filter.all()]
 
 
 Base.metadata.create_all(engine)
