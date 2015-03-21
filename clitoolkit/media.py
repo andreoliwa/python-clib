@@ -14,6 +14,7 @@ from sqlalchemy import create_engine, Column, Integer, String, DateTime, Foreign
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine import Engine
+from sqlalchemy.orm.exc import NoResultFound
 
 
 CONFIG_DIR = os.path.expanduser(os.path.join('~/.config/clitoolkit', ''))
@@ -25,9 +26,10 @@ MINIMUM_VIDEO_SIZE = 10 * 1000 * 1000  # 10 megabytes
 VIDEO_ROOT_PATH = os.path.join(os.environ.get('VIDEO_ROOT_PATH', ''), '')
 APPS = ['vlc.Vlc', 'feh.feh', 'google-chrome', 'Chromium-browser']
 PIPEFILE = 'pipefile.tmp'
+TIME_FORMAT = '%H:%M:%S'
 
 logger = logging.getLogger(__name__)
-engine = create_engine('sqlite:///{}'.format(os.path.join(CONFIG_DIR, 'media.sqlite')), echo=True)
+engine = create_engine('sqlite:///{}'.format(os.path.join(CONFIG_DIR, 'media.sqlite')))
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -70,10 +72,13 @@ class WindowLog(Base):
     title = Column(String, nullable=False)
 
     video_id = Column(Integer, ForeignKey('video.video_id'))
-    # video = relationship('Video', backref=backref('logs', order_by=window_id))
 
     def __repr__(self):
-        return "<WindowLog(app='{}', title='{}')>".format(self.app_name, self.title)
+        diff = self.end_dt - self.start_dt
+        return "<WindowLog({start} to {end} ({diff}) {app}: '{title}' ({id}))>".format(
+            app=self.app_name, title=self.title, diff=diff, id=self.video_id,
+            start=self.start_dt.strftime(TIME_FORMAT),
+            end=self.end_dt.strftime(TIME_FORMAT))
 
 
 def scan_video_files():
@@ -111,22 +116,26 @@ def list_windows():
     with t.open_r(PIPEFILE) as f:
         lines = f.read()
 
-    windows = {}
+    windows = defaultdict(list)
     for line in lines.split('\n'):
         words = line.split()
         if words:
             app = words[2]
             title = ' '.join(words[4:])
-            if app not in windows.keys():
-                windows[app] = [title]
-            else:
-                windows[app].append(title)
-    return windows
+            if app.startswith('vlc'):
+                title = ''
+                open_files = list_vlc_open_files(False)
+                if open_files:
+                    windows[app].extend(open_files)
+                    continue
+            windows[app].append(title)
+    return dict(windows)
 
 
-def list_vlc_open_files():
+def list_vlc_open_files(full_path=True):
     """List files opened by VLC in the root directory.
 
+    :param full_path: True to show full path, False to strip the video root path.
     :return: Files currently opened.
     :rtype list
     """
@@ -135,7 +144,8 @@ def list_vlc_open_files():
     t.append("grep '^n{}'".format(VIDEO_ROOT_PATH), '--')
     with t.open_r(PIPEFILE) as f:
         files = f.read()
-    return [file[1:] for file in files.strip().split('\n') if file]
+    return [file[1:].replace(VIDEO_ROOT_PATH, '') if not full_path else file[1:]
+            for file in files.strip().split('\n') if file]
 
 
 def window_monitor():
@@ -146,7 +156,6 @@ def window_monitor():
     """
     last = {}
     monitor_start_time = datetime.now()
-    time_format = '%H:%M:%S'
     try:
         while True:
             sleep(.2)
@@ -157,25 +166,34 @@ def window_monitor():
 
                 if app not in last.keys():
                     last[app] = defaultdict(tuple)
-                # TODO video_paths = list_vlc_open_files() if app.startswith('vlc') else []
 
                 for index, new_title in enumerate(new_titles):
                     if last[app][index] and last[app][index][1] == new_title:
                         continue
 
                     last_info = last[app][index]
+                    # Time since last saved time, or since the beginning of the monitoring
                     start_time = last_info[0] if last_info else monitor_start_time
                     end_time = datetime.now()
-                    old_title = last_info[1] if last_info else ''
-                    diff = end_time - start_time
+                    # Save time info for the next change of window title
                     last[app][index] = (end_time, new_title)
 
-                    if old_title:
-                        # TODO Save to a log table
-                        print('{start} to {end} ({diff}) {title} ({app})'.format(
-                            app=app, title=old_title, diff=diff,
-                            start=start_time.strftime(time_format),
-                            end=end_time.strftime(time_format)))
+                    # Save logs only after the first change of title
+                    old_title = last_info[1] if last_info else ''
+                    if not old_title:
+                        continue
+
+                    try:
+                        video = session.query(Video).filter(Video.path == old_title).one()
+                        video_id = video.video_id
+                    except NoResultFound:
+                        video_id = None
+
+                    window_log = WindowLog(start_dt=start_time, end_dt=end_time, app_name=app,
+                                           title=old_title, video_id=video_id)
+                    print(window_log)
+                    session.add(window_log)
+                    session.commit()
     except KeyboardInterrupt:
         return
 
@@ -207,17 +225,17 @@ def add_to_playlist(videos):
 
     videos = [videos] if isinstance(videos, str) else videos
     t = pipes.Template()
-    t.append('xargs -0 vlc --quiet --no-fullscreen --no-playlist-autostart --no-auto-preparse', '--')
+    t.append('xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse --no-playlist-autostart', '--')
     with t.open_w(PIPEFILE) as f:
         f.write('\0'.join(videos))
     return True
 
 
-def filter_videos_by_path(query_string):
+def query_videos_by_path(query_string=None):
     """Return videos from the database based on a query string.
     All spaces in the query string will be converted to %, to be used in a LIKE expression.
 
-    :param query_string:
+    :param query_string: Optional query string to search; if not provided, return all videos.
     :type query_string str
     :return:
     """
@@ -228,3 +246,4 @@ def filter_videos_by_path(query_string):
 
 
 Base.metadata.create_all(engine)
+# TODO def query_not_logged_videos()
