@@ -24,7 +24,7 @@ EXTENSIONS = ['.asf', '.avi', '.divx', '.f4v', '.flc', '.flv', '.m4v', '.mkv',
               '.mov', '.mp4', '.mpa', '.mpeg', '.mpg', '.ogv', '.wmv']
 MINIMUM_VIDEO_SIZE = 10 * 1000 * 1000  # 10 megabytes
 VIDEO_ROOT_PATH = os.path.join(os.environ.get('VIDEO_ROOT_PATH', ''), '')
-APPS = ['vlc.Vlc', 'feh.feh', 'google-chrome', 'Chromium-browser']
+APPS = ['vlc.Vlc', 'feh.feh', 'google-chrome', 'Chromium-browser.Chromium-browser']
 PIPEFILE = 'pipefile.tmp'
 TIME_FORMAT = '%H:%M:%S'
 
@@ -191,6 +191,8 @@ def window_monitor(save_logs=True):
                     end_time = datetime.now()
                     # Save time info for the next change of window title
                     last[app][index] = (end_time, new_title)
+                    if new_title:
+                        print("{} Open window in {}: {}".format(end_time.strftime(TIME_FORMAT), app, new_title))
 
                     # Save logs only after the first change of title
                     old_title = last_info[1] if last_info else ''
@@ -243,6 +245,7 @@ def add_to_playlist(videos):
     t.append('xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse --no-playlist-autostart', '--')
     with t.open_w(PIPEFILE) as f:
         f.write('\0'.join(videos))
+    print('{} videos added to the playlist.'.format(len(videos)))
     return True
 
 
