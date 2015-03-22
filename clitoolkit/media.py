@@ -48,6 +48,15 @@ def enable_foreign_keys(dbapi_connection, connection_record):
     cursor.close()
 
 
+def check_video_root_path():
+    """Check if there is an environment variable with the video root path.
+
+    :return:
+    """
+    if not VIDEO_ROOT_PATH:
+        raise ValueError('The environment variable VIDEO_ROOT_PATH must contain the video root directory')
+
+
 class Video(Base):
     """Video file, with path and size."""
     __tablename__ = 'video'
@@ -87,10 +96,7 @@ def scan_video_files():
 
     :return: None
     """
-    if not VIDEO_ROOT_PATH:
-        logger.error('The environment variable VIDEO_ROOT_PATH must contain the video root directory')
-        return
-
+    check_video_root_path()
     # http://stackoverflow.com/questions/18394147/recursive-sub-folder-search-and-return-files-in-a-list-python
     for partial_path in [os.path.join(root, file).replace(VIDEO_ROOT_PATH, '')
                          for root, dirs, files in os.walk(VIDEO_ROOT_PATH)
@@ -105,6 +111,9 @@ def scan_video_files():
 
 def list_windows():
     """List current windows from selected applications.
+    Always return at least one element in each application list, even if it's an empty title.
+    This is needed by the window monitor to detect when an application was closed,
+        and still log a title change.
 
     :return: Window titles grouped by application.
     :rtype dict
@@ -116,11 +125,13 @@ def list_windows():
     with t.open_r(PIPEFILE) as f:
         lines = f.read()
 
-    windows = defaultdict(list)
+    windows = {app: [] for app in APPS}
     for line in lines.split('\n'):
         words = line.split()
         if words:
             app = words[2]
+            if app not in windows.keys():
+                windows[app] = []
             title = ' '.join(words[4:])
             if app.startswith('vlc'):
                 title = ''
@@ -129,7 +140,7 @@ def list_windows():
                     windows[app].extend(open_files)
                     continue
             windows[app].append(title)
-    return dict(windows)
+    return {key: value if value else [''] for key, value in windows.items()}
 
 
 def list_vlc_open_files(full_path=True):
@@ -139,6 +150,7 @@ def list_vlc_open_files(full_path=True):
     :return: Files currently opened.
     :rtype list
     """
+    check_video_root_path()
     t = pipes.Template()
     t.prepend('lsof -F n -c vlc 2>/dev/null', '.-')
     t.append("grep '^n{}'".format(VIDEO_ROOT_PATH), '--')
@@ -148,14 +160,16 @@ def list_vlc_open_files(full_path=True):
             for file in files.strip().split('\n') if file]
 
 
-def window_monitor():
+def window_monitor(save_logs=True):
     """Loop to monitor open windows of the selected applications.
     An app can have multiple windows, each one with its title.
 
+    :param save_logs: True to save logs (default), False to only display what would be saved (dry run).
     :return:
     """
     last = {}
     monitor_start_time = datetime.now()
+    print('Starting the window monitor now ({})...'.format(monitor_start_time.strftime(TIME_FORMAT)))
     try:
         while True:
             sleep(.2)
@@ -192,8 +206,9 @@ def window_monitor():
                     window_log = WindowLog(start_dt=start_time, end_dt=end_time, app_name=app,
                                            title=old_title, video_id=video_id)
                     print(window_log)
-                    session.add(window_log)
-                    session.commit()
+                    if save_logs:
+                        session.add(window_log)
+                        session.commit()
     except KeyboardInterrupt:
         return
 
@@ -257,6 +272,7 @@ def query_to_list(sa_filter):
     :type sa_filter sqlalchemy.orm.query.Query
     :return: List of videos with full path.
     """
+    check_video_root_path()
     return [os.path.join(VIDEO_ROOT_PATH, video.path) for video in sa_filter.all()]
 
 
@@ -272,3 +288,4 @@ def query_not_logged_videos():
 
 
 Base.metadata.create_all(engine)
+# TODO: Convert data from $HOME/.gtimelog/window-monitor.db
