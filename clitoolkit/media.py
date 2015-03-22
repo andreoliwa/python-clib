@@ -239,18 +239,36 @@ def query_videos_by_path(search=None):
     :type search str|list
     :return:
     """
-    if not search:
-        sa_filter = session.query(Video)
-    else:
+    sa_filter = session.query(Video)
+    if search:
         conditions = []
         search = [search] if isinstance(search, str) else search
         for query_string in search:
             clean_query = '%{}%'.format('%'.join(query_string.split()))
-            print(clean_query)
             conditions.append(Video.path.like(clean_query))
-        sa_filter = session.query(Video).filter(or_(*conditions))
+        sa_filter = sa_filter.filter(or_(*conditions))
+    return query_to_list(sa_filter)
+
+
+def query_to_list(sa_filter):
+    """Output a SQLAlchemy Video query as a list of videos with full path.
+
+    :param sa_filter: SQLAlchemy query filter.
+    :type sa_filter sqlalchemy.orm.query.Query
+    :return: List of videos with full path.
+    """
     return [os.path.join(VIDEO_ROOT_PATH, video.path) for video in sa_filter.all()]
 
 
+def query_not_logged_videos():
+    """Return videos that were not yet logged.
+
+    :return:
+    :rtype list
+    """
+    return query_to_list(session.query(Video).outerjoin(
+        WindowLog, Video.video_id == WindowLog.video_id).filter(
+        WindowLog.video_id.is_(None)))
+
+
 Base.metadata.create_all(engine)
-# TODO def query_not_logged_videos()
