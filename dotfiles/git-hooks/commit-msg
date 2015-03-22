@@ -16,8 +16,9 @@ def abort_push(message):
 
 import subprocess
 current_branch = subprocess.getoutput('git rev-parse --abbrev-ref HEAD')
-if not current_branch.startswith('issue/') and not current_branch == 'hotfix':
-    abort_push("Branch name must start with 'issue/', or be 'hotfix'")
+hotfix_branch = current_branch.startswith('hotfix')
+if not current_branch.startswith('issue/') and not hotfix_branch:
+    abort_push("Branch name must start with 'issue/' or 'hotfix'")
 
 with open(sys.argv[1]) as handle:
     commit_message = handle.read()
@@ -25,16 +26,17 @@ with open(sys.argv[1]) as handle:
 if commit_message.startswith('--wip--'):
     sys.exit(0)
 
-issue_id_string = commit_message.split()[0]
-if issue_id_string[0] != '#':
-    abort_push('Commit message: First char must be #')
+if not hotfix_branch:
+    issue_id_string = commit_message.split()[0]
+    if issue_id_string[0] != '#':
+        abort_push('Commit message: First char must be #')
 
-possible_issue_id = issue_id_string[1:]
-if not possible_issue_id.isdigit():
-    abort_push("Commit message: Invalid issue ID: '{}'".format(possible_issue_id))
+    possible_issue_id = issue_id_string[1:]
+    if not possible_issue_id.isdigit():
+        abort_push("Commit message: Invalid issue ID: '{}'".format(possible_issue_id))
 
-issue_id = int(possible_issue_id)
-if not current_branch.startswith('issue/{}'.format(issue_id)):
-    abort_push('Commit message: Issue ID does not match branch name')
+    issue_id = int(possible_issue_id)
+    if not current_branch.startswith('issue/{}'.format(issue_id)):
+        abort_push('Commit message: Issue ID does not match branch name')
 
 sys.exit(0)
