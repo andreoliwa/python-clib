@@ -28,7 +28,6 @@ APPS = ['vlc.Vlc', 'feh.feh', 'google-chrome', 'Chromium-browser.Chromium-browse
 PIPEFILE = 'pipefile.tmp'
 TIME_FORMAT = '%H:%M:%S'
 
-logger = logging.getLogger(__name__)
 engine = create_engine('sqlite:///{}'.format(os.path.join(CONFIG_DIR, 'media.sqlite')))
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
@@ -73,7 +72,7 @@ class WindowLog(Base):
     """Log entry for an open window."""
     __tablename__ = 'window_log'
 
-    window_id = Column(Integer, primary_key=True)
+    window_log_id = Column(Integer, primary_key=True)
 
     start_dt = Column(DateTime, nullable=False)
     end_dt = Column(DateTime, nullable=False)
@@ -237,7 +236,7 @@ def add_to_playlist(videos):
     :rtype bool
     """
     if not is_vlc_running():
-        logger.error('VLC is not running, please open it first.')
+        logging.error('VLC is not running, please open it first.')
         return False
 
     videos = [videos] if isinstance(videos, str) else videos
