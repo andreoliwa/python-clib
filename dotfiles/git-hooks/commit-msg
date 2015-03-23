@@ -23,7 +23,7 @@ if not current_branch.startswith('issue/') and not hotfix_branch:
 with open(sys.argv[1]) as handle:
     commit_message = handle.read()
 
-if commit_message.startswith('--wip--'):
+if commit_message.startswith('--wip--') or commit_message.startswith('Merge branch'):
     sys.exit(0)
 
 if not hotfix_branch:
