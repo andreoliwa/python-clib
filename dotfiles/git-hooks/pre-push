@@ -58,6 +58,7 @@ if [[ $gp_NO_BUILD ]]; then
     echo "Skipping ./manage.py build..."
 else
     echo "Running ./manage.py build before pushing..."
+    mkdir -p build
     fig run cave bash -c "cd /cave && ./manage.py build > build/manage-build.log 2>&1"
     if [[ $? -ne 0 ]]; then
 	    cat build/manage-build.log
