@@ -113,11 +113,10 @@ def scan_video_files():
 def list_windows():
     """List current windows from selected applications.
     Always return at least one element in each application list, even if it's an empty title.
-    This is needed by the window monitor to detect when an application was closed,
-        and still log a title change.
+    This is needed by the window monitor to detect when an application was closed, and still log a title change.
 
     :return: Window titles grouped by application.
-    :rtype dict
+    :rtype: dict
     """
     grep_args = ' -e '.join(APPS)
     t = pipes.Template()
@@ -149,7 +148,7 @@ def list_vlc_open_files(full_path=True):
 
     :param full_path: True to show full path, False to strip the video root path.
     :return: Files currently opened.
-    :rtype list
+    :rtype: list
     """
     video_path = video_root_path()
     t = pipes.Template()
@@ -220,7 +219,7 @@ def is_vlc_running():
     """Check if VLC is running.
 
     :return: True if VLC is running.
-    :rtype bool
+    :rtype: bool
     """
     try:
         check_output(['pidof', 'vlc'])
@@ -233,9 +232,10 @@ def add_to_playlist(videos):
     """Add one or more videos to VLC's playlist.
 
     :param videos: One or more video paths.
-    :type videos list|str
+    :type videos: list|str
+
     :return: True if videos were added to the playlist.
-    :rtype bool
+    :rtype: bool
     """
     if not is_vlc_running():
         logging.error('VLC is not running, please open it first.')
@@ -255,7 +255,7 @@ def query_videos_by_path(search=None):
     All spaces in the query string will be converted to %, to be used in a LIKE expression.
 
     :param search: Optional query strings to search; if not provided, return all videos.
-    :type search str|list
+    :type search: str|list
     :return:
     """
     sa_filter = session.query(Video)
@@ -273,7 +273,7 @@ def query_to_list(sa_filter):
     """Output a SQLAlchemy Video query as a list of videos with full path.
 
     :param sa_filter: SQLAlchemy query filter.
-    :type sa_filter sqlalchemy.orm.query.Query
+    :type sa_filter: sqlalchemy.orm.query.Query
     :return: List of videos with full path.
     """
     return [os.path.join(video_root_path(), video.path) for video in sa_filter.all()]
@@ -283,7 +283,7 @@ def query_not_logged_videos():
     """Return videos that were not yet logged.
 
     :return:
-    :rtype list
+    :rtype: list
     """
     return query_to_list(session.query(Video).outerjoin(
         WindowLog, Video.video_id == WindowLog.video_id).filter(

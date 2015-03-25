@@ -18,6 +18,7 @@ clean: clean-build clean-pyc clean-test
 
 clean-build:
 	rm -fr build/
+	rm -fr docs/_build/
 	rm -fr dist/
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +

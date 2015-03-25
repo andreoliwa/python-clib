@@ -7,7 +7,7 @@ from configparser import ConfigParser
 
 __author__ = 'Wagner Augusto Andreoli'
 __email__ = 'wagnerandreoli@gmail.com'
-__version__ = '0.7.0'
+__version__ = '0.7.1'
 
 config_filename = os.path.expanduser(os.path.join(
     '~/.config', os.path.basename(os.path.dirname(__file__)), 'config.ini'))

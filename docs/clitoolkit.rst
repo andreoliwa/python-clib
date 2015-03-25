@@ -12,6 +12,14 @@ clitoolkit.config module
     :undoc-members:
     :show-inheritance:
 
+clitoolkit.media module
+-----------------------
+
+.. automodule:: clitoolkit.media
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 clitoolkit.parsers module
 -------------------------
 
