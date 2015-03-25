@@ -34,7 +34,11 @@ if [ -z "$V_ALL_SCRIPTS" ] ; then
 fi
 
 open_script_file() {
-	ls -l --color=auto $1
+	if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
+		ls -lG $1
+	else
+		ls -l --color=auto $1
+	fi
 	if [ -z "$V_DRY_RUN" ] ; then
 		subl $1 &
 	fi
