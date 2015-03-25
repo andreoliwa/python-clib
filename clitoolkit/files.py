@@ -2,7 +2,27 @@
 import logging
 import os
 
+from colorlog import ColoredFormatter
+
 from clitoolkit import read_config, save_config
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+if not logger.hasHandlers():
+    ch = logging.StreamHandler()
+    ch.setFormatter(
+        ColoredFormatter(
+            "%(log_color)s%(levelname)-8s%(reset)s %(blue)s%(message)s", datefmt=None,
+            reset=True, log_colors={'DEBUG': 'cyan',
+                                    'INFO': 'green',
+                                    'WARNING': 'yellow',
+                                    'ERROR': 'red',
+                                    'CRITICAL': 'red,bg_white',
+                                    },
+            secondary_log_colors={}
+        ))
+    logger.addHandler(ch)
 
 
 def create_symbolic_links():
@@ -10,19 +30,53 @@ def create_symbolic_links():
     dot_files_dir = read_config(
         'dirs', 'dotfiles', os.path.realpath(os.path.join(os.path.dirname(__file__), '../dotfiles')))
     if not os.path.exists(dot_files_dir):
-        logging.warning("The directory '%s' does not exist", dot_files_dir)
-        return False
+        logger.warning("The directory '%s' does not exist", dot_files_dir)
+        return
 
+    links = {}
     cut = len(dot_files_dir) + 1
     for root, dirs, files in os.walk(dot_files_dir):
         for file in files:
-            key = os.path.join(root, file)[cut:]
-            target = read_config('file_links', key, '')
-            print("File '{}' points to '{}'".format(key, target))
+            source_file = os.path.join(root, file)
+            key = source_file[cut:]
+            raw_link_name = read_config('symlinks/files', key, '')
+            links[key] = (source_file, raw_link_name)
+    # http://stackoverflow.com/questions/9001509/how-can-i-sort-a-python-dictionary-sort-by-key/13990710#13990710
+    for key in sorted(links):
+        (source_file, raw_link_name) = links[key]
+        create_link(key, source_file, raw_link_name)
+
     save_config()
 
-    # TODO Warn if link exists
-    # TODO Warn if a dotfile has no json config
-    # TODO Warn if a json config has no real file
+
+def create_link(key, source_file, raw_link):
+    """Check and create a symbolic link.
+
+    :param key: Key name in the config.ini file.
+    :param source_file: Full path to the source file that will be linked.
+    :param raw_link: Raw destination link taken from config.ini.
+    :return:
+    """
+    message = ''
+    final_link = raw_link
+    if not raw_link:
+        message = 'empty link in the config file.'
+    else:
+        expanded_link = os.path.expanduser(raw_link)
+        if os.path.isdir(expanded_link):
+            final_link = os.path.join(expanded_link, os.path.basename(source_file))
+        else:
+            final_link = expanded_link
+
+        if os.path.islink(final_link):
+            message = 'link already exists.'
+            # TODO Check if the link is already pointing to the source_file
+            # TODO If 'yes', logger.info(); if 'no', logger.warning()
+        elif os.path.isfile(final_link):
+            message = 'file already exists.'
+            # TODO Check if both files are the same (call the 'diff' utility)
+            # TODO If files are identical, rename the target and continue with link creation
+
+    log_func = logger.warning if message else logger.info
+    log_func("'{}' -> '{}' ({})".format(key, final_link, message))
     # TODO Create if the target exists and the link doesn't
-    return True

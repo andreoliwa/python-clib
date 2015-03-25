@@ -12,6 +12,8 @@ __version__ = '0.7.0'
 config_filename = os.path.expanduser(os.path.join(
     '~/.config', os.path.basename(os.path.dirname(__file__)), 'config.ini'))
 config = ConfigParser()
+# http://stackoverflow.com/questions/19359556/configparser-reads-capital-keys-and-make-them-lower-case
+config.optionxform = str
 config.read(config_filename)
 
 
