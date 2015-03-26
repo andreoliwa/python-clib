@@ -14,9 +14,9 @@ def create_symbolic_links():
 
     links = {}
     cut = len(dot_files_dir) + 1
-    for root, dirs, files in os.walk(dot_files_dir):
-        for file in files:
-            source_file = os.path.join(root, file)
+    for root, _, files in os.walk(dot_files_dir):
+        for one_file in files:
+            source_file = os.path.join(root, one_file)
             key = source_file[cut:]
             raw_link_name = read_config('symlinks/files', key, '')
             links[key] = (source_file, raw_link_name)
