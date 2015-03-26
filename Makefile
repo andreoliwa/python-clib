@@ -37,6 +37,7 @@ clean-test:
 
 lint:
 	flake8 clitoolkit tests
+	pep257 clitoolkit tests
 
 ltd: lint test docs
 

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Files, symbolic links, operating system utilities."""
 import os
 from clitoolkit import logger, read_config, save_config
 

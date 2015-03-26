@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Initialize the clitoolkit module.
-"""
+"""Initialize the clitoolkit module."""
 import os
 import logging
 from configparser import ConfigParser
@@ -40,6 +38,7 @@ if not logger.hasHandlers():
 
 def read_config(section_name, key_name, default=None):
     """Read a value from the config file.
+
     Create section and key in the config object, if they don't exist.
     The config must be saved with save_config(), to persist the values.
 
