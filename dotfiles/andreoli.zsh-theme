@@ -9,11 +9,11 @@ function _git_work_in_progress(){
 	# Show stash count if any
 	local stash_count="$(git stash list| wc -l | sed -E 's/ +//')"
 	if [[ ${stash_count} -ne 0 ]]; then
-		echo -n " %{$fg[red]%}(stash: ${stash_count})"
+		echo -n " %{$fg[magenta]%}(Stash: ${stash_count})"
 	fi
 	
 	# Search for WIP commits in the last 10
-	git log -n 10 | grep -q -c "\-\-wip\-\-" && echo -n " %{$fg[magenta]%}(WORK IN PROGRESS)"
+	git log -n 10 | grep -q -c "\-\-wip\-\-" && echo -n " %{$fg[red]%}(WORK IN PROGRESS)"
 }
 
 # risto.zsh-theme
