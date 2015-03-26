@@ -1,28 +1,6 @@
 # -*- coding: utf-8 -*-
-import logging
 import os
-
-from colorlog import ColoredFormatter
-
-from clitoolkit import read_config, save_config
-
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-if not logger.hasHandlers():
-    ch = logging.StreamHandler()
-    ch.setFormatter(
-        ColoredFormatter(
-            "%(log_color)s%(levelname)-8s%(reset)s %(blue)s%(message)s", datefmt=None,
-            reset=True, log_colors={'DEBUG': 'cyan',
-                                    'INFO': 'green',
-                                    'WARNING': 'yellow',
-                                    'ERROR': 'red',
-                                    'CRITICAL': 'red,bg_white',
-                                    },
-            secondary_log_colors={}
-        ))
-    logger.addHandler(ch)
+from clitoolkit import logger, read_config, save_config
 
 
 def create_symbolic_links():

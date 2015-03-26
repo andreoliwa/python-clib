@@ -38,6 +38,8 @@ clean-test:
 lint:
 	flake8 clitoolkit tests
 
+ltd: lint test docs
+
 test:
 	python setup.py test
 

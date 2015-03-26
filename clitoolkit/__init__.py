@@ -3,7 +3,11 @@
 Initialize the clitoolkit module.
 """
 import os
+import logging
 from configparser import ConfigParser
+
+from colorlog import ColoredFormatter
+
 
 __author__ = 'Wagner Augusto Andreoli'
 __email__ = 'wagnerandreoli@gmail.com'
@@ -15,6 +19,23 @@ config = ConfigParser()
 # http://stackoverflow.com/questions/19359556/configparser-reads-capital-keys-and-make-them-lower-case
 config.optionxform = str
 config.read(config_filename)
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+if not logger.hasHandlers():
+    ch = logging.StreamHandler()
+    ch.setFormatter(
+        ColoredFormatter(
+            "%(log_color)s%(levelname)-8s%(reset)s %(blue)s%(message)s", datefmt=None,
+            reset=True, log_colors={'DEBUG': 'cyan',
+                                    'INFO': 'green',
+                                    'WARNING': 'yellow',
+                                    'ERROR': 'red',
+                                    'CRITICAL': 'red,bg_white',
+                                    },
+            secondary_log_colors={}
+        ))
+    logger.addHandler(ch)
 
 
 def read_config(section_name, key_name, default=None):

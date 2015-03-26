@@ -3,16 +3,14 @@
 Parsers and (later) crawlers
 """
 import argparse
-import logging
 import re
-from time import sleep
 import webbrowser
+from time import sleep
 
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(format='[%(name)s:%(levelname)s] %(message)s')
+from clitoolkit import logger
 
 
 class ImmoScout24:
@@ -86,7 +84,7 @@ class ImmoScout24:
         :param url:
         :param description:
         """
-        logger.warning('%s: %s', description, url)
+        logger.info('%s: %s', description, url)
         webbrowser.open(url)
         sleep(.2)
 
@@ -97,7 +95,9 @@ class ImmoScout24:
         parser = argparse.ArgumentParser()
         parser.add_argument('urls', nargs='+')
         args = parser.parse_args()
-        ImmoScout24(args.urls).parse()
+        # TODO 00 URLs in the command line.
+        # TODO 00 unique IDs.
+        cls(args.urls).parse()
 
     @staticmethod
     def download_html(ad_url):

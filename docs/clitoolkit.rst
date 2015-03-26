@@ -4,10 +4,10 @@ clitoolkit package
 Submodules
 ----------
 
-clitoolkit.config module
-------------------------
+clitoolkit.files module
+-----------------------
 
-.. automodule:: clitoolkit.config
+.. automodule:: clitoolkit.files
     :members:
     :undoc-members:
     :show-inheritance:

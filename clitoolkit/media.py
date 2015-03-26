@@ -3,13 +3,12 @@
 Media tools
 """
 import os
-import logging
 import pipes
 from collections import defaultdict
 from datetime import datetime
 from time import sleep
 from subprocess import check_output, CalledProcessError
-from clitoolkit import read_config
+from clitoolkit import read_config, logger
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, event, or_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -238,7 +237,7 @@ def add_to_playlist(videos):
     :rtype: bool
     """
     if not is_vlc_running():
-        logging.error('VLC is not running, please open it first.')
+        logger.error('VLC is not running, please open it first.')
         return False
 
     videos = [videos] if isinstance(videos, str) else videos
