@@ -8,10 +8,8 @@ _git_exec_command() {
 
 V_CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-_git_exec_command 'git checkout master'
-if [ $? = 0 ]; then
-    _git_exec_command 'git pull'
-fi
+_git_exec_command 'git checkout develop' && _git_exec_command 'git pull'
+_git_exec_command 'git checkout master' && _git_exec_command 'git pull'
 
 _git_exec_command 'git remote prune origin'
 _git_exec_command 'git fetch origin --prune'

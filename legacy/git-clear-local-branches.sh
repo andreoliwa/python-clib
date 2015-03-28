@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # http://stackoverflow.com/questions/7726949/remove-branches-not-longer-on-remote
 
 _git_remove_unused_branches() {
