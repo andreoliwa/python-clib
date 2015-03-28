@@ -176,7 +176,9 @@ def window_monitor(save_logs=True):
     """
     last = {}
     monitor_start_time = datetime.now()
-    print('Starting the window monitor now ({})...'.format(monitor_start_time.strftime(TIME_FORMAT)))
+    logger.info('Starting the window monitor now ({})...'.format(monitor_start_time.strftime(TIME_FORMAT)))
+    if not save_logs:
+        logger.error('Not saving logs to the database')
     try:
         while True:
             sleep(.2)
@@ -198,26 +200,26 @@ def window_monitor(save_logs=True):
                     end_time = datetime.now()
                     # Save time info for the next change of window title
                     last[app][index] = (end_time, new_title)
-                    if new_title:
-                        print("{} Open window in {}: {}".format(end_time.strftime(TIME_FORMAT), app, new_title))
 
                     # Save logs only after the first change of title
                     old_title = last_info[1] if last_info else ''
-                    if not old_title:
-                        continue
+                    if old_title:
+                        try:
+                            video = session.query(Video).filter(Video.path == old_title).one()
+                            video_id = video.video_id
+                        except NoResultFound:
+                            video_id = None
 
-                    try:
-                        video = session.query(Video).filter(Video.path == old_title).one()
-                        video_id = video.video_id
-                    except NoResultFound:
-                        video_id = None
+                        window_log = WindowLog(start_dt=start_time, end_dt=end_time, app_name=app,
+                                               title=old_title, video_id=video_id)
+                        logger.info(window_log)
+                        if save_logs:
+                            session.add(window_log)
+                            session.commit()
 
-                    window_log = WindowLog(start_dt=start_time, end_dt=end_time, app_name=app,
-                                           title=old_title, video_id=video_id)
-                    print(window_log)
-                    if save_logs:
-                        session.add(window_log)
-                        session.commit()
+                    if new_title:
+                        logger.warning("{} Open window in {}: {}".format(
+                            end_time.strftime(TIME_FORMAT), app, new_title))
     except KeyboardInterrupt:
         return
 
@@ -253,7 +255,7 @@ def add_to_playlist(videos):
     t.append('xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse --no-playlist-autostart', '--')
     with t.open_w(PIPEFILE) as f:
         f.write('\0'.join(videos))
-    print('{} videos added to the playlist.'.format(len(videos)))
+    logger.info('{} videos added to the playlist.'.format(len(videos)))
     return True
 
 
