@@ -8,7 +8,7 @@ from time import sleep
 import requests
 from bs4 import BeautifulSoup
 
-from clitoolkit import logger
+from clitoolkit import LOGGER
 
 
 class ImmoScout24:
@@ -55,7 +55,7 @@ class ImmoScout24:
                 error = soup.find('div', {'id': 'oss-error'})
                 if 'nicht gefunden' in str(error):
                     self.found = False
-                    logger.error('Not found: %s', ad_url)
+                    LOGGER.error('Not found: %s', ad_url)
             else:
                 # Take the first non blank line found in the address div
                 street = [line.strip() for line in address.find_all(text=True) if line.strip()][0]
@@ -87,7 +87,7 @@ class ImmoScout24:
         :param url:
         :param description:
         """
-        logger.info('%s: %s', description, url)
+        LOGGER.info('%s: %s', description, url)
         webbrowser.open(url)
         sleep(.2)
 

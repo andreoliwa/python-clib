@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Files, symbolic links, operating system utilities."""
 import os
-from clitoolkit import logger, read_config, save_config
+from clitoolkit import LOGGER, read_config, save_config
 
 
 def create_symbolic_links():
@@ -9,7 +9,7 @@ def create_symbolic_links():
     dot_files_dir = read_config(
         'dirs', 'dotfiles', os.path.realpath(os.path.join(os.path.dirname(__file__), '../dotfiles')))
     if not os.path.exists(dot_files_dir):
-        logger.warning("The directory '%s' does not exist", dot_files_dir)
+        LOGGER.warning("The directory '%s' does not exist", dot_files_dir)
         return
 
     links = {}
@@ -50,12 +50,12 @@ def create_link(key, source_file, raw_link):
         if os.path.islink(final_link):
             message = 'link already exists.'
             # TODO Check if the link is already pointing to the source_file
-            # TODO If 'yes', logger.info(); if 'no', logger.warning()
+            # TODO If 'yes', LOGGER.info(); if 'no', LOGGER.warning()
         elif os.path.isfile(final_link):
             message = 'file already exists.'
             # TODO Check if both files are the same (call the 'diff' utility)
             # TODO If files are identical, rename the target and continue with link creation
 
-    log_func = logger.warning if message else logger.info
+    log_func = LOGGER.warning if message else LOGGER.info
     log_func("'{}' -> '{}' ({})".format(key, final_link, message))
     # TODO Create if the target exists and the link doesn't

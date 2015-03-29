@@ -38,6 +38,7 @@ clean-test:
 lint:
 	flake8 clitoolkit tests
 	pep257 clitoolkit tests
+	pylint --rcfile=.pylintrc clitoolkit tests
 
 ltd: lint test docs
 

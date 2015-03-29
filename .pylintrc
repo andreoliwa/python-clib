@@ -5,11 +5,8 @@
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
-# init-hook='import os; import sys; sys.path.append()'
-# init-hook='import sys; sys.path.append("/home/wagner/Dropbox/src/python/clitoolkit/clitoolkit")'
 # http://stackoverflow.com/questions/1899436/pylint-unable-to-import-error-how-to-set-pythonpath
-init-hook='import os; import sys; print(sys.path)'
-#init-hook='sys.path = ["/home/wagner/.virtualenvs/clitoolkit/lib/python3.4/site-packages", os.path.abspath(os.curdir)]'
+#init-hook='import os; import sys; print(sys.path)'
 
 # Profiled execution.
 profile=no
@@ -46,16 +43,13 @@ jobs=3
 # no Warning level messages displayed, use"--disable=all --enable=classes
 # --disable=W"
 #   W0511 - Warning for fix me and to;do
-disable=W0511
+disable=W0511,locally-disabled
 
 [REPORTS]
 
 # Set the output format. Available formats are text, parseable, colorized, msvs
 # (visual studio) and html
 output-format=colorized
-
-# Include message's id in output
-include-ids=yes
 
 # Put messages in a separate file for each module / package specified on the
 # command line instead of printing them on stdout. Reports (if any) will be
@@ -244,7 +238,7 @@ max-parents=7
 max-attributes=7
 
 # Minimum number of public methods for a class (see R0903).
-min-public-methods=2
+min-public-methods=0
 
 # Maximum number of public methods for a class (see R0904).
 max-public-methods=20

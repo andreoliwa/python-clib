@@ -6,7 +6,7 @@ from collections import defaultdict
 from datetime import datetime
 from time import sleep
 from subprocess import check_output, CalledProcessError
-from clitoolkit import read_config, logger
+from clitoolkit import read_config, LOGGER
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, event, or_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -24,10 +24,10 @@ APPS = ['vlc.Vlc', 'feh.feh', 'google-chrome', 'Chromium-browser.Chromium-browse
 PIPEFILE = 'pipefile.tmp'
 TIME_FORMAT = '%H:%M:%S'
 
-engine = create_engine('sqlite:///{}'.format(os.path.join(CONFIG_DIR, 'media.sqlite')))
-Base = declarative_base()
-Session = sessionmaker(bind=engine)
-session = Session()
+ENGINE = create_engine('sqlite:///{}'.format(os.path.join(CONFIG_DIR, 'media.sqlite')))
+BASE_MODEL = declarative_base()
+SESSION_CLASS = sessionmaker(bind=ENGINE)
+SESSION_INSTANCE = SESSION_CLASS()
 
 
 @event.listens_for(Engine, "connect")
@@ -39,6 +39,7 @@ def enable_foreign_keys(dbapi_connection, connection_record):
     :param dbapi_connection:
     :param connection_record:
     """
+    assert connection_record
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
@@ -56,7 +57,7 @@ def video_root_path():
     return path
 
 
-class Video(Base):
+class Video(BASE_MODEL):  # pylint: disable=no-init
 
     """Video file, with path and size."""
 
@@ -71,7 +72,7 @@ class Video(Base):
         return "<Video(path='{}', size='{}')>".format(self.path, self.size)
 
 
-class WindowLog(Base):
+class WindowLog(BASE_MODEL):  # pylint: disable=no-init
 
     """Log entry for an open window."""
 
@@ -111,8 +112,8 @@ def scan_video_files():
         # http://stackoverflow.com/questions/2104080/how-to-check-file-size-in-python
         size = os.stat(full_path).st_size
         if size > MINIMUM_VIDEO_SIZE:
-            session.add(Video(path=partial_path, size=size))
-            session.commit()
+            SESSION_INSTANCE.add(Video(path=partial_path, size=size))
+            SESSION_INSTANCE.commit()
 
 
 def list_windows():
@@ -125,11 +126,11 @@ def list_windows():
     :rtype: dict
     """
     grep_args = ' -e '.join(APPS)
-    t = pipes.Template()
-    t.prepend('wmctrl -l -x', '.-')
-    t.append('grep -e {}'.format(grep_args), '--')
-    with t.open_r(PIPEFILE) as f:
-        lines = f.read()
+    pipe = pipes.Template()
+    pipe.prepend('wmctrl -l -x', '.-')
+    pipe.append('grep -e {}'.format(grep_args), '--')
+    with pipe.open_r(PIPEFILE) as handle:
+        lines = handle.read()
 
     windows = {app: [] for app in APPS}
     for line in lines.split('\n'):
@@ -157,11 +158,11 @@ def list_vlc_open_files(full_path=True):
     :rtype: list
     """
     video_path = video_root_path()
-    t = pipes.Template()
-    t.prepend('lsof -F n -c vlc 2>/dev/null', '.-')
-    t.append("grep '^n{}'".format(video_path), '--')
-    with t.open_r(PIPEFILE) as f:
-        files = f.read()
+    pipe = pipes.Template()
+    pipe.prepend('lsof -F n -c vlc 2>/dev/null', '.-')
+    pipe.append("grep '^n{}'".format(video_path), '--')
+    with pipe.open_r(PIPEFILE) as handle:
+        files = handle.read()
     return [file[1:].replace(video_path, '') if not full_path else file[1:]
             for file in files.strip().split('\n') if file]
 
@@ -176,9 +177,9 @@ def window_monitor(save_logs=True):
     """
     last = {}
     monitor_start_time = datetime.now()
-    logger.info('Starting the window monitor now ({})...'.format(monitor_start_time.strftime(TIME_FORMAT)))
+    LOGGER.info('Starting the window monitor now (%s)...', monitor_start_time.strftime(TIME_FORMAT))
     if not save_logs:
-        logger.error('Not saving logs to the database')
+        LOGGER.error('Not saving logs to the database')
     try:
         while True:
             sleep(.2)
@@ -205,21 +206,20 @@ def window_monitor(save_logs=True):
                     old_title = last_info[1] if last_info else ''
                     if old_title:
                         try:
-                            video = session.query(Video).filter(Video.path == old_title).one()
+                            video = SESSION_INSTANCE.query(Video).filter(Video.path == old_title).one()
                             video_id = video.video_id
                         except NoResultFound:
                             video_id = None
 
                         window_log = WindowLog(start_dt=start_time, end_dt=end_time, app_name=app,
                                                title=old_title, video_id=video_id)
-                        logger.info(window_log)
+                        LOGGER.info(window_log)
                         if save_logs:
-                            session.add(window_log)
-                            session.commit()
+                            SESSION_INSTANCE.add(window_log)
+                            SESSION_INSTANCE.commit()
 
                     if new_title:
-                        logger.warning("{} Open window in {}: {}".format(
-                            end_time.strftime(TIME_FORMAT), app, new_title))
+                        LOGGER.warning("%s Open window in %s: %s", end_time.strftime(TIME_FORMAT), app, new_title)
     except KeyboardInterrupt:
         return
 
@@ -247,15 +247,15 @@ def add_to_playlist(videos):
     :rtype: bool
     """
     if not is_vlc_running():
-        logger.error('VLC is not running, please open it first.')
+        LOGGER.error('VLC is not running, please open it first.')
         return False
 
     videos = [videos] if isinstance(videos, str) else videos
-    t = pipes.Template()
-    t.append('xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse --no-playlist-autostart', '--')
-    with t.open_w(PIPEFILE) as f:
-        f.write('\0'.join(videos))
-    logger.info('{} videos added to the playlist.'.format(len(videos)))
+    pipe = pipes.Template()
+    pipe.append('xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse --no-playlist-autostart', '--')
+    with pipe.open_w(PIPEFILE) as handle:
+        handle.write('\0'.join(videos))
+    LOGGER.info('%d videos added to the playlist.', len(videos))
     return True
 
 
@@ -269,7 +269,7 @@ def query_videos_by_path(search=None):
 
     :type search: str|list
     """
-    sa_filter = session.query(Video)
+    sa_filter = SESSION_INSTANCE.query(Video)
     if search:
         conditions = []
         search = [search] if isinstance(search, str) else search
@@ -296,10 +296,9 @@ def query_not_logged_videos():
     :return:
     :rtype: list
     """
-    return query_to_list(session.query(Video).outerjoin(
-        WindowLog, Video.video_id == WindowLog.video_id).filter(
-        WindowLog.video_id.is_(None)))
+    return query_to_list(SESSION_INSTANCE.query(Video).outerjoin(
+        WindowLog, Video.video_id == WindowLog.video_id).filter(WindowLog.video_id.is_(None)))
 
 
-Base.metadata.create_all(engine)
+BASE_MODEL.metadata.create_all(ENGINE)
 # TODO: Convert data from $HOME/.gtimelog/window-monitor.db
