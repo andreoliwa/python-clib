@@ -9,7 +9,7 @@ from colorlog import ColoredFormatter
 
 __author__ = 'Wagner Augusto Andreoli'
 __email__ = 'wagnerandreoli@gmail.com'
-__version__ = '0.7.1'
+__version__ = '0.7.2'
 
 config_filename = os.path.expanduser(os.path.join(
     '~/.config', os.path.basename(os.path.dirname(__file__)), 'config.ini'))
