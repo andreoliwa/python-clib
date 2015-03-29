@@ -58,13 +58,19 @@ if [[ $gp_NO_BUILD ]]; then
     echo "Skipping ./manage.py build..."
 else
     echo "Running ./manage.py build before pushing..."
+    py-vacuum.sh
     mkdir -p build
-    fig run cave bash -c "cd /cave && ./manage.py build > build/manage-build.log 2>&1"
+    docker-compose run cave bash -c "cd /cave && ./manage.py build > build/manage-build.log 2>&1"
     if [[ $? -ne 0 ]]; then
 	    cat build/manage-build.log
+        echo
+        echo 'Use this command to revert the last commit:'
+        echo 'git reset HEAD^'
+        echo
 	    exit 93
     fi
 fi
 
+py-vacuum.sh
 echo 'Pushing...'
 exit 0

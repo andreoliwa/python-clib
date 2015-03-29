@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 # http://stackoverflow.com/questions/7726949/remove-branches-not-longer-on-remote
 
-function _git_remove_unused_branches() {
+_git_remove_unused_branches() {
     V_BASE_BRANCH=$1
 
     git checkout $V_BASE_BRANCH &&

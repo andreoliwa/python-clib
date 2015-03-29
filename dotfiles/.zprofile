@@ -1,5 +1,5 @@
 # https://docs.docker.com/installation/mac/
-$(boot2docker shellinit)
+eval "$(docker-machine env dev)"
 
 export VIRTUALENVWRAPPER_PYTHON=$(which python3)
 
