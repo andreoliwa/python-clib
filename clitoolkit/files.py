@@ -11,6 +11,7 @@ def create_symbolic_links():
     if not os.path.exists(dot_files_dir):
         LOGGER.warning("The directory '%s' does not exist", dot_files_dir)
         return
+    LOGGER.info("Directory with dot files: '%s'", dot_files_dir)
 
     links = {}
     cut = len(dot_files_dir) + 1
@@ -25,6 +26,7 @@ def create_symbolic_links():
         (source_file, raw_link_name) = links[key]
         create_link(key, source_file, raw_link_name)
 
+    # TODO Create links for directories
     save_config()
 
 
@@ -36,10 +38,20 @@ def create_link(key, source_file, raw_link):
     :param raw_link: Raw destination link taken from config.ini.
     :return:
     """
-    message = ''
+    def message(text, logger_func=LOGGER.warning):
+        """Show a message with details about the links and files.
+
+        :param text: Text to be shown.
+        :param logger_func: Logger function to be used.
+        :return:
+        """
+        logger_func("%s -> '%s': %s", key, final_link, text)
+
+    create = True
     final_link = raw_link
     if not raw_link:
-        message = 'empty link in the config file.'
+        message('empty link in the config file')
+        create = False
     else:
         expanded_link = os.path.expanduser(raw_link)
         if os.path.isdir(expanded_link):
@@ -48,14 +60,23 @@ def create_link(key, source_file, raw_link):
             final_link = expanded_link
 
         if os.path.islink(final_link):
-            message = 'link already exists.'
-            # TODO Check if the link is already pointing to the source_file
-            # TODO If 'yes', LOGGER.info(); if 'no', LOGGER.warning()
+            create = False
+            try:
+                if os.path.samefile(source_file, final_link):
+                    message('link already exists', LOGGER.info)
+                else:
+                    message('link already exists, but points to a different file')
+            except FileNotFoundError as err:
+                message('file not found? {}'.format(err), LOGGER.error)
         elif os.path.isfile(final_link):
-            message = 'file already exists.'
-            # TODO Check if both files are the same (call the 'diff' utility)
-            # TODO If files are identical, rename the target and continue with link creation
+            create = False
+            if os.path.samefile(source_file, final_link):
+                message("an identical file already exists; it can be safely replaced")
+                # TODO If files are identical, rename the target and continue with link creation
+            else:
+                message("a file with the same name already exists, and they are not the same. "
+                        "Try comparing the files with:\nmeld '{}' '{}'".format(source_file, final_link), LOGGER.error)
 
-    log_func = LOGGER.warning if message else LOGGER.info
-    log_func("'{}' -> '{}' ({})".format(key, final_link, message))
-    # TODO Create if the target exists and the link doesn't
+    if create:
+        os.symlink(source_file, final_link, target_is_directory=False)
+        message('link created', LOGGER.info)
