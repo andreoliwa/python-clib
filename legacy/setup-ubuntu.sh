@@ -101,13 +101,13 @@ common_packages() {
 		xubuntu-desktop gnome-terminal indicator-weather indicator-workspaces python-wnck gnome-do indicator-multiload imwheel # Desktop
 		sublime-text-installer vim vim-gui-common exuberant-ctags meld # Dev tools
 		git git-core git-doc git-svn git-gui gitk
-		python-pip python-dev python-matplotlib # Python
+		python-pip python-dev python-matplotlib
 		chromium-browser lynx-cur # Browser
 		oracle-java8-installer # Java
 		rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 vorbisgain eyed3 python-eyed3 gcstar soundconverter gstreamer0.10-plugins-ugly libcdio-utils k3b transcode nautilus-image-converter # Media
 		y-ppa-manager unsettings # Tweak
 		unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack lha arj cabextract file-roller # Archive tools
-		keepassx gtimelog backintime-gnome gtg thunderbird tmux htop calibre # Util
+		keepassx gtimelog backintime-gnome gtg tmux htop calibre # Util
 
 		indicator-messages pidgin pidgin-awayonlock pidgin-data pidgin-extprefs pidgin-guifications pidgin-hotkeys pidgin-lastfm pidgin-libnotify pidgin-otr pidgin-plugin-pack pidgin-ppa pidgin-privacy-please pidgin-themes pidgin-dev pidgin-dbg
 		pidgin-skype # Pidgin plugin: http://askubuntu.com/a/9068
@@ -129,6 +129,7 @@ purge_packages() {
 		gwibber gwibber-service gwibber-service-facebook gwibber-service-identica gwibber-service-twitter libgwibber-gtk2 libgwibber2 # Gwibber
 		empathy empathy-common nautilus-sendto-empathy # Empathy
 		tagtool wallch subdownloader rubyripper cortina # Media
+		thunderbird
 		classicmenu-indicator recoll # Unity
 		keepass2 ubuntu-tweak # Util
 		mongodb-clients
@@ -257,39 +258,6 @@ if [ -n "$V_ALL" ] || [ -n "$V_UPGRADE" ] ; then
 	autoremove_packages
 fi
 
-setup_python() {
-	show_header 'Installing Python stuff'
-
-	# Using type instead of which, according to this answer: http://stackoverflow.com/a/677212/1391315
-	if [ -z "$(type -p pylint)" ] ; then
-		cd $G_DOWNLOAD_DIR
-		V_ZIP_BASENAME=pylint-0.25.2
-		V_ZIP=$V_ZIP_BASENAME.tar.gz
-		wget http://pypi.python.org/packages/source/p/pylint/$V_ZIP
-		tar -xzvf $V_ZIP
-		cd $V_ZIP_BASENAME/
-		sudo python setup.py install
-	fi
-
-	if [ -z "$(type -p pep8)" ] ; then
-		sudo pip install -U pep8
-	fi
-
-	V_PIP_NLTK=$(sudo pip freeze | grep nltk)
-	if [ -z "$V_PIP_NLTK" ] ; then
-		# http://nltk.org/install.html
-		show_header 'Installing Python NLP'
-		V_SETUPTOOLS_EGG_BASENAME=setuptools-0.6c11-py2.7.egg
-		V_SETUPTOOLS_EGG=$G_DOWNLOAD_DIR/$V_SETUPTOOLS_EGG_BASENAME
-		rm -v $V_SETUPTOOLS_EGG
-		wget -O $V_SETUPTOOLS_EGG http://pypi.python.org/packages/2.7/s/setuptools/$V_SETUPTOOLS_EGG_BASENAME
-		sudo sh $V_SETUPTOOLS_EGG
-		sudo pip install -U numpy pyyaml nltk
-		python -c 'import nltk
-nltk.download()'
-	fi
-}
-
 if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	common_packages
 
@@ -344,8 +312,6 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	show_header 'Make all autostart items show up in Startup Applications dialog'
 	sudo sed -i 's/NoDisplay=true/NoDisplay=false/g' /etc/xdg/autostart/*.desktop
 
-	setup_python
-
 	#V_COUCHPOTATO_DIR=/opt/couchpotato
 	#if [ ! -d "$V_COUCHPOTATO_DIR" ] ; then
 	#	show_header 'Installing Couch Potato'
@@ -363,16 +329,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	#	sudo update-rc.d couchpotato defaults
 	#fi
 
-	# http://www.webupd8.org/2012/09/subliminal-command-line-tool-to.html
-	V_SUBLIMINAL="$(type -p subliminal)"
-	if [ -z "$V_SUBLIMINAL" ] ; then
-		sudo pip install -U beautifulsoup4 guessit requests enzyme html5lib lxml
-		cd $G_DOWNLOAD_DIR
-		git clone https://github.com/Diaoul/subliminal.git
-		cd subliminal
-		sudo python setup.py install
-	fi
-
+	# Using type instead of which, according to this answer: http://stackoverflow.com/a/677212/1391315
 	if [ -z "$(type -p teamviewer)" ] ; then
 		show_header 'Installing Teamviewer'
 		V_DEB=$G_DOWNLOAD_DIR/teamviewer_linux_x64.deb
