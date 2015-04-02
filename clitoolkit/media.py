@@ -6,12 +6,14 @@ from collections import defaultdict
 from datetime import datetime
 from time import sleep
 from subprocess import check_output, CalledProcessError
-from clitoolkit import read_config, LOGGER
+
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, event, or_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm.exc import NoResultFound
+
+from clitoolkit import read_config, LOGGER
 
 
 CONFIG_DIR = os.path.expanduser(os.path.join('~/.config/clitoolkit', ''))

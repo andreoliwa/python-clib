@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Files, symbolic links, operating system utilities."""
 import os
+import click
 
 from clitoolkit import LOGGER, read_config, save_config, CONFIG
 
@@ -9,6 +10,7 @@ SECTION_SYMLINKS_FILES = 'symlinks/files'
 SECTION_SYMLINKS_DIRS = 'symlinks/dirs'
 
 
+@click.command()
 def create_symbolic_links():
     """Create symbolic links for files and dirs, following what's stored on the config file."""
     dot_files_dir = read_config(

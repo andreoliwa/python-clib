@@ -97,28 +97,34 @@ repo_partner() {
 
 common_packages() {
 	show_header 'Installing common packages'
-	call_aptget install 'installing or upgrading some of the packages' "bash-completion nautilus-open-terminal synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba iftop bum udisks
-		xubuntu-desktop gnome-terminal indicator-weather indicator-workspaces python-wnck gnome-do indicator-multiload imwheel # Desktop
+	call_aptget install 'installing or upgrading some of the packages' "
+		bash-completion nautilus-open-terminal synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool
+			gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba
+			iftop bum udisks
+		xubuntu-desktop gnome-terminal indicator-weather indicator-workspaces python-wnck gnome-do
+			indicator-multiload imwheel # Desktop
 		sublime-text-installer vim vim-gui-common exuberant-ctags meld # Dev tools
 		git git-core git-doc git-svn git-gui gitk
 		python-pip python-dev python-matplotlib
 		chromium-browser lynx-cur # Browser
 		oracle-java8-installer # Java
-		rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 vorbisgain eyed3 python-eyed3 gcstar soundconverter gstreamer0.10-plugins-ugly libcdio-utils k3b transcode nautilus-image-converter # Media
+		rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame
+			mp3gain ruby-gnome2 vorbisgain eyed3 python-eyed3 soundconverter gstreamer0.10-plugins-ugly libcdio-utils
+			k3b transcode nautilus-image-converter # Media
 		y-ppa-manager unsettings # Tweak
-		unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack lha arj cabextract file-roller # Archive tools
+		unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack lha arj cabextract
+			file-roller # Archive tools
 		keepassx gtimelog backintime-gnome gtg tmux htop calibre # Util
 
-		indicator-messages pidgin pidgin-awayonlock pidgin-data pidgin-extprefs pidgin-guifications pidgin-hotkeys pidgin-lastfm pidgin-libnotify pidgin-otr pidgin-plugin-pack pidgin-ppa pidgin-privacy-please pidgin-themes pidgin-dev pidgin-dbg
-		pidgin-skype # Pidgin plugin: http://askubuntu.com/a/9068
+		indicator-messages pidgin pidgin-awayonlock pidgin-data pidgin-extprefs pidgin-guifications pidgin-hotkeys
+			pidgin-lastfm pidgin-libnotify pidgin-otr pidgin-plugin-pack pidgin-ppa pidgin-privacy-please
+			pidgin-themes pidgin-dev pidgin-dbg
+			pidgin-skype # Pidgin plugin: http://askubuntu.com/a/9068
 
 		gimp gimp-data gimp-plugin-registry gimp-data-extras
 		handbrake-cli handbrake-gtk
-
-		php5-cli php-pear php5-xsl apache2-utils graphviz graphviz-doc phpmyadmin php5-sqlite php-apc php5-intl php5-xdebug
-		mysql-client mysql-common mysql-server mysql-workbench libmysqlclient-dev libmysqlclient18 sqlite3
-		subversion
-		php5-curl php5-dev jenkins postfix
+		sqlite3
+		postfix
 		filezilla"
 }
 
@@ -129,12 +135,16 @@ purge_packages() {
 		gwibber gwibber-service gwibber-service-facebook gwibber-service-identica gwibber-service-twitter libgwibber-gtk2 libgwibber2 # Gwibber
 		empathy empathy-common nautilus-sendto-empathy # Empathy
 		tagtool wallch subdownloader rubyripper cortina # Media
-		thunderbird
+		thunderbird gcstar
 		classicmenu-indicator recoll # Unity
 		keepass2 ubuntu-tweak # Util
+		php5-cli php-pear php5-xsl apache2-utils graphviz graphviz-doc phpmyadmin php5-sqlite php-apc php5-intl php5-xdebug
+		mysql-client mysql-common mysql-server mysql-workbench libmysqlclient-dev libmysqlclient18
+		subversion
+		php5-curl php5-dev jenkins
 		mongodb-clients
 		openjdk-6-jre icedtea6-plugin # Java
-		transmission # Torrent
+		sabnzbdplus sabnzbdplus-theme-mobile transmission # Torrent
 		ejecter unity-lens-pidgin recoll-lens unity-lens-utilities unity-scope-calculator google-chrome-stable non-free-codecs # Unable to locate
 		$(dpkg --get-selections | grep -e lubuntu -e openbox | cut -f 1) # Removing LUbuntu e OpenBox"
 }
@@ -153,6 +163,7 @@ ppa:cs-sniffer/cortina
 ppa:diesch/testing
 ppa:do-testers/ppa
 ppa:indicator-multiload/stable-daily
+ppa:jcfp/ppa
 ppa:recoll-backports/recoll-1.15-on
 ppa:scopes-packagers/ppa
 ppa:tualatrix/ppa
@@ -172,7 +183,6 @@ ppa:danielrichter2007/grub-customizer
 ppa:gcstar/ppa
 ppa:git-core/ppa
 ppa:indicator-multiload/daily
-ppa:jcfp/ppa
 ppa:pidgin-developers/ppa
 ppa:webupd8team/java
 ppa:webupd8team/jupiter
@@ -301,8 +311,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_CODECS='libxine1-ffmpeg gxine mencoder totem-mozilla icedax mpg321'
 	V_PROGRAMMING='bzr'
 	V_MEDIA='vlc vlc-nox libaudiofile1 libmad0 normalize-audio feh'
-	V_USENET='sabnzbdplus sabnzbdplus-theme-mobile'
-	sleep 1 && sudo apt-get --yes $V_ACTION $V_CODECS $V_PROGRAMMING $V_MEDIA $V_USENET
+	sleep 1 && sudo apt-get --yes $V_ACTION $V_CODECS $V_PROGRAMMING $V_MEDIA
 	show_error 'installing or removing some of the packages for home only' $V_ACTION
 
 	purge_packages
