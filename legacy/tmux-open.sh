@@ -1,5 +1,5 @@
 #!/bin/bash
-V_RC_FILE="$(dirname $0)/.tmuxopenrc"
+V_RC_FILE="~/.tmuxopenrc"
 
 usage() {
 	echo -e "Usage: $(basename $0) [options]

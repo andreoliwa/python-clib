@@ -9,31 +9,30 @@ from colorlog import ColoredFormatter
 
 __author__ = 'Wagner Augusto Andreoli'
 __email__ = 'wagnerandreoli@gmail.com'
-__version__ = '0.7.2'
+__version__ = '0.7.3'
 
-config_filename = os.path.expanduser(os.path.join(
+CONFIG_FILENAME = os.path.expanduser(os.path.join(
     '~/.config', os.path.basename(os.path.dirname(__file__)), 'config.ini'))
-config = ConfigParser()
+CONFIG = ConfigParser()
 # http://stackoverflow.com/questions/19359556/configparser-reads-capital-keys-and-make-them-lower-case
-config.optionxform = str
-config.read(config_filename)
+CONFIG.optionxform = str
+CONFIG.read(CONFIG_FILENAME)
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-if not logger.hasHandlers():
-    ch = logging.StreamHandler()
-    ch.setFormatter(
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.INFO)
+if not LOGGER.hasHandlers():
+    CHANNEL = logging.StreamHandler()
+    CHANNEL.setFormatter(
         ColoredFormatter(
             "%(log_color)s%(levelname)-8s%(reset)s %(blue)s%(message)s", datefmt=None,
             reset=True, log_colors={'DEBUG': 'cyan',
                                     'INFO': 'green',
                                     'WARNING': 'yellow',
                                     'ERROR': 'red',
-                                    'CRITICAL': 'red,bg_white',
-                                    },
+                                    'CRITICAL': 'red,bg_white'},
             secondary_log_colors={}
         ))
-    logger.addHandler(ch)
+    LOGGER.addHandler(CHANNEL)
 
 
 def read_config(section_name, key_name, default=None):
@@ -48,10 +47,10 @@ def read_config(section_name, key_name, default=None):
     :return: Section if key_name is empty; otherwise, return the key value or the default.
     """
     try:
-        section = config[section_name]
+        section = CONFIG[section_name]
     except KeyError:
-        config[section_name] = {}
-        section = config[section_name]
+        CONFIG[section_name] = {}
+        section = CONFIG[section_name]
     if not key_name:
         return section
 
@@ -64,6 +63,6 @@ def read_config(section_name, key_name, default=None):
 
 def save_config():
     """Save the config file."""
-    os.makedirs(os.path.dirname(config_filename), exist_ok=True)
-    with open(config_filename, 'w') as fp:
-        config.write(fp)
+    os.makedirs(os.path.dirname(CONFIG_FILENAME), exist_ok=True)
+    with open(CONFIG_FILENAME, 'w') as handle:
+        CONFIG.write(handle)
