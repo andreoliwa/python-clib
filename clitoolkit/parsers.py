@@ -1,28 +1,30 @@
 # -*- coding: utf-8 -*-
-"""
-Parsers and (later) crawlers
-"""
+"""Parsers and (later) crawlers."""
 import argparse
-import logging
 import re
-from time import sleep
 import webbrowser
+from time import sleep
 
-from bs4 import BeautifulSoup
 import requests
+from bs4 import BeautifulSoup
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(format='[%(name)s:%(levelname)s] %(message)s')
+from clitoolkit import LOGGER
 
 
 class ImmoScout24:
-    """Parse the address from Immobilien Scout 24 ads.
-    """
+
+    """Parse the address from Immobilien Scout 24 ads."""
+
     AD_URL = 'http://www.immobilienscout24.de/expose/{id}'
     MAP_URL = 'https://www.google.de/maps/dir/{origin}/{destination}/'
     DEFAULT_DESTINATION = 'Saarbrücker+Straße+20,+D-10405+Berlin,+Deutschland'
 
     def __init__(self, text):
+        """Init object.
+
+        :param text: Some text with URLs to be parsed.
+        :return:
+        """
         self.full_address = ''
         self.found = False
         self.urls = self.normalize_urls(text)
@@ -43,8 +45,7 @@ class ImmoScout24:
         return valid_urls
 
     def parse(self):
-        """Download and parse the stored URLs.
-        """
+        """Download and parse the stored URLs."""
         for ad_url in self.urls:
             soup = BeautifulSoup(self.download_html(ad_url))
 
@@ -54,7 +55,7 @@ class ImmoScout24:
                 error = soup.find('div', {'id': 'oss-error'})
                 if 'nicht gefunden' in str(error):
                     self.found = False
-                    logger.error('Not found: %s', ad_url)
+                    LOGGER.error('Not found: %s', ad_url)
             else:
                 # Take the first non blank line found in the address div
                 street = [line.strip() for line in address.find_all(text=True) if line.strip()][0]
@@ -86,18 +87,19 @@ class ImmoScout24:
         :param url:
         :param description:
         """
-        logger.warning('%s: %s', description, url)
+        LOGGER.info('%s: %s', description, url)
         webbrowser.open(url)
         sleep(.2)
 
     @classmethod
     def main(cls):
-        """Function to be called when invoked at the command line.
-        """
+        """Function to be called when invoked at the command line."""
         parser = argparse.ArgumentParser()
         parser.add_argument('urls', nargs='+')
         args = parser.parse_args()
-        ImmoScout24(args.urls).parse()
+        # TODO 00 URLs in the command line.
+        # TODO 00 unique IDs.
+        cls(args.urls).parse()
 
     @staticmethod
     def download_html(ad_url):

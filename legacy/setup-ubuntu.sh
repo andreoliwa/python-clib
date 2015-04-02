@@ -17,7 +17,6 @@ sudo dselect
 -r  Add and remove PPA repositories.
 -u  Execute upgrade and dist-upgrade.
 -i  Install/remove packages.
--l  Setup symbolic links
 -h  Help"
 	exit $1
 }
@@ -98,28 +97,34 @@ repo_partner() {
 
 common_packages() {
 	show_header 'Installing common packages'
-	call_aptget install 'installing or upgrading some of the packages' "bash-completion nautilus-open-terminal synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba iftop bum udisks
-		xubuntu-desktop gnome-terminal indicator-weather indicator-workspaces python-wnck gnome-do indicator-multiload imwheel # Desktop
+	call_aptget install 'installing or upgrading some of the packages' "
+		bash-completion nautilus-open-terminal synaptic gdebi gdebi-core alien gparted mutt curl wget wmctrl xdotool
+			gconf-editor dconf-tools grub-customizer boot-repair tree tasksel rcconf samba system-config-samba
+			iftop bum udisks
+		xubuntu-desktop gnome-terminal indicator-weather indicator-workspaces python-wnck gnome-do
+			indicator-multiload imwheel # Desktop
 		sublime-text-installer vim vim-gui-common exuberant-ctags meld # Dev tools
 		git git-core git-doc git-svn git-gui gitk
-		python-pip python-dev python-matplotlib # Python
+		python-pip python-dev python-matplotlib
 		chromium-browser lynx-cur # Browser
 		oracle-java8-installer # Java
-		rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame mp3gain ruby-gnome2 vorbisgain eyed3 python-eyed3 gcstar soundconverter gstreamer0.10-plugins-ugly libcdio-utils k3b transcode nautilus-image-converter # Media
+		rhythmbox id3 id3tool id3v2 lame-doc easytag nautilus-script-audio-convert cd-discid cdparanoia flac lame
+			mp3gain ruby-gnome2 vorbisgain eyed3 python-eyed3 soundconverter gstreamer0.10-plugins-ugly libcdio-utils
+			k3b transcode nautilus-image-converter # Media
 		y-ppa-manager unsettings # Tweak
-		unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack lha arj cabextract file-roller # Archive tools
-		keepassx gtimelog backintime-gnome gtg thunderbird tmux htop calibre # Util
+		unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack lha arj cabextract
+			file-roller # Archive tools
+		keepassx gtimelog backintime-gnome gtg tmux htop calibre # Util
 
-		indicator-messages pidgin pidgin-awayonlock pidgin-data pidgin-extprefs pidgin-guifications pidgin-hotkeys pidgin-lastfm pidgin-libnotify pidgin-otr pidgin-plugin-pack pidgin-ppa pidgin-privacy-please pidgin-themes pidgin-dev pidgin-dbg
-		pidgin-skype # Pidgin plugin: http://askubuntu.com/a/9068
+		indicator-messages pidgin pidgin-awayonlock pidgin-data pidgin-extprefs pidgin-guifications pidgin-hotkeys
+			pidgin-lastfm pidgin-libnotify pidgin-otr pidgin-plugin-pack pidgin-ppa pidgin-privacy-please
+			pidgin-themes pidgin-dev pidgin-dbg
+			pidgin-skype # Pidgin plugin: http://askubuntu.com/a/9068
 
 		gimp gimp-data gimp-plugin-registry gimp-data-extras
 		handbrake-cli handbrake-gtk
-
-		php5-cli php-pear php5-xsl apache2-utils graphviz graphviz-doc phpmyadmin php5-sqlite php-apc php5-intl php5-xdebug
-		mysql-client mysql-common mysql-server mysql-workbench libmysqlclient-dev libmysqlclient18 sqlite3
-		subversion
-		php5-curl php5-dev jenkins postfix
+		sqlite3
+		postfix
 		filezilla"
 }
 
@@ -130,11 +135,16 @@ purge_packages() {
 		gwibber gwibber-service gwibber-service-facebook gwibber-service-identica gwibber-service-twitter libgwibber-gtk2 libgwibber2 # Gwibber
 		empathy empathy-common nautilus-sendto-empathy # Empathy
 		tagtool wallch subdownloader rubyripper cortina # Media
+		thunderbird gcstar
 		classicmenu-indicator recoll # Unity
 		keepass2 ubuntu-tweak # Util
+		php5-cli php-pear php5-xsl apache2-utils graphviz graphviz-doc phpmyadmin php5-sqlite php-apc php5-intl php5-xdebug
+		mysql-client mysql-common mysql-server mysql-workbench libmysqlclient-dev libmysqlclient18
+		subversion
+		php5-curl php5-dev jenkins
 		mongodb-clients
 		openjdk-6-jre icedtea6-plugin # Java
-		transmission # Torrent
+		sabnzbdplus sabnzbdplus-theme-mobile transmission # Torrent
 		ejecter unity-lens-pidgin recoll-lens unity-lens-utilities unity-scope-calculator google-chrome-stable non-free-codecs # Unable to locate
 		$(dpkg --get-selections | grep -e lubuntu -e openbox | cut -f 1) # Removing LUbuntu e OpenBox"
 }
@@ -153,6 +163,7 @@ ppa:cs-sniffer/cortina
 ppa:diesch/testing
 ppa:do-testers/ppa
 ppa:indicator-multiload/stable-daily
+ppa:jcfp/ppa
 ppa:recoll-backports/recoll-1.15-on
 ppa:scopes-packagers/ppa
 ppa:tualatrix/ppa
@@ -172,7 +183,6 @@ ppa:danielrichter2007/grub-customizer
 ppa:gcstar/ppa
 ppa:git-core/ppa
 ppa:indicator-multiload/daily
-ppa:jcfp/ppa
 ppa:pidgin-developers/ppa
 ppa:webupd8team/java
 ppa:webupd8team/jupiter
@@ -258,39 +268,6 @@ if [ -n "$V_ALL" ] || [ -n "$V_UPGRADE" ] ; then
 	autoremove_packages
 fi
 
-setup_python() {
-	show_header 'Installing Python stuff'
-
-	# Using type instead of which, according to this answer: http://stackoverflow.com/a/677212/1391315
-	if [ -z "$(type -p pylint)" ] ; then
-		cd $G_DOWNLOAD_DIR
-		V_ZIP_BASENAME=pylint-0.25.2
-		V_ZIP=$V_ZIP_BASENAME.tar.gz
-		wget http://pypi.python.org/packages/source/p/pylint/$V_ZIP
-		tar -xzvf $V_ZIP
-		cd $V_ZIP_BASENAME/
-		sudo python setup.py install
-	fi
-
-	if [ -z "$(type -p pep8)" ] ; then
-		sudo pip install -U pep8
-	fi
-
-	V_PIP_NLTK=$(sudo pip freeze | grep nltk)
-	if [ -z "$V_PIP_NLTK" ] ; then
-		# http://nltk.org/install.html
-		show_header 'Installing Python NLP'
-		V_SETUPTOOLS_EGG_BASENAME=setuptools-0.6c11-py2.7.egg
-		V_SETUPTOOLS_EGG=$G_DOWNLOAD_DIR/$V_SETUPTOOLS_EGG_BASENAME
-		rm -v $V_SETUPTOOLS_EGG
-		wget -O $V_SETUPTOOLS_EGG http://pypi.python.org/packages/2.7/s/setuptools/$V_SETUPTOOLS_EGG_BASENAME
-		sudo sh $V_SETUPTOOLS_EGG
-		sudo pip install -U numpy pyyaml nltk
-		python -c 'import nltk
-nltk.download()'
-	fi
-}
-
 if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	common_packages
 
@@ -334,8 +311,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	V_CODECS='libxine1-ffmpeg gxine mencoder totem-mozilla icedax mpg321'
 	V_PROGRAMMING='bzr'
 	V_MEDIA='vlc vlc-nox libaudiofile1 libmad0 normalize-audio feh'
-	V_USENET='sabnzbdplus sabnzbdplus-theme-mobile'
-	sleep 1 && sudo apt-get --yes $V_ACTION $V_CODECS $V_PROGRAMMING $V_MEDIA $V_USENET
+	sleep 1 && sudo apt-get --yes $V_ACTION $V_CODECS $V_PROGRAMMING $V_MEDIA
 	show_error 'installing or removing some of the packages for home only' $V_ACTION
 
 	purge_packages
@@ -344,8 +320,6 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	# http://www.webupd8.org/2012/04/things-to-tweak-after-installing-ubuntu.html
 	show_header 'Make all autostart items show up in Startup Applications dialog'
 	sudo sed -i 's/NoDisplay=true/NoDisplay=false/g' /etc/xdg/autostart/*.desktop
-
-	setup_python
 
 	#V_COUCHPOTATO_DIR=/opt/couchpotato
 	#if [ ! -d "$V_COUCHPOTATO_DIR" ] ; then
@@ -364,16 +338,7 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 	#	sudo update-rc.d couchpotato defaults
 	#fi
 
-	# http://www.webupd8.org/2012/09/subliminal-command-line-tool-to.html
-	V_SUBLIMINAL="$(type -p subliminal)"
-	if [ -z "$V_SUBLIMINAL" ] ; then
-		sudo pip install -U beautifulsoup4 guessit requests enzyme html5lib lxml
-		cd $G_DOWNLOAD_DIR
-		git clone https://github.com/Diaoul/subliminal.git
-		cd subliminal
-		sudo python setup.py install
-	fi
-
+	# Using type instead of which, according to this answer: http://stackoverflow.com/a/677212/1391315
 	if [ -z "$(type -p teamviewer)" ] ; then
 		show_header 'Installing Teamviewer'
 		V_DEB=$G_DOWNLOAD_DIR/teamviewer_linux_x64.deb
@@ -386,67 +351,4 @@ if [ -n "$V_ALL" ] || [ -n "$V_INSTALL_PACKAGES" ] ; then
 		show_header 'Bazaar autocomplete'
 		eval "$(bzr bash-completion)"
 	fi
-fi
-
-create_link() {
-	V_LINK_NAME="$1"
-	V_TARGET="$2"
-
-	mkdir -p "$(dirname "$V_LINK_NAME")"
-
-	# Create if the target exists and the link doesn't
-	[ -e "$V_TARGET" ] && [ ! -e "$V_LINK_NAME" ] && ln -s "$V_TARGET" "$V_LINK_NAME"
-	ls -lad --color=auto "$V_LINK_NAME"
-}
-
-setup_symbolic_links() {
-	#------------------------------------------------------------------------------------------------------------------------
-	# SYMBOLIC LINKS
-	#------------------------------------------------------------------------------------------------------------------------
-	show_header 'Creating common symbolic links for files'
-	create_link $HOME/.bashrc $V_BASH_UTILS_DIR/.bashrc
-	[ -f "$HOME/.beetsconfig" ] && rm $HOME/.beetsconfig
-	create_link $HOME/.config/beets/config.yaml $G_DROPBOX_DIR/linux/beets-config.yaml
-	create_link $HOME/.imwheelrc $V_BASH_UTILS_DIR/.imwheelrc
-	create_link $HOME/.ssh/config $G_DROPBOX_DIR/linux/ssh-config
-	create_link $HOME/.tmux.conf $V_BASH_UTILS_DIR/.tmux.conf
-	create_link $HOME/.vimrc $V_BASH_UTILS_DIR/.vimrc
-	#create_link $HOME/.inputrc $V_BASH_UTILS_DIR/.inputrc
-	for V_TEMPLATE in $(find "$(dirname $0)/templates" -type f); do
-		create_link "$HOME/Templates/$(basename $V_TEMPLATE)" "$V_TEMPLATE"
-	done
-
-	show_header 'Creating common symbolic links for directories'
-	create_link "$HOME/.config/sublime-text-3/Installed Packages" $G_DROPBOX_DIR/Apps/sublime-text-3/Installed\ Packages/
-	create_link $HOME/.config/sublime-text-3/Packages $G_DROPBOX_DIR/Apps/sublime-text-3/Packages/
-	create_link $HOME/.purple $G_DROPBOX_DIR/Apps/PidginPortable/Data/settings/.purple
-	create_link $HOME/bin $G_DROPBOX_DIR/linux/bin/
-	create_link $HOME/Music/ipod $G_EXTERNAL_HDD/audio/music/ipod
-	create_link $HOME/Music/unknown $G_EXTERNAL_HDD/audio/music/unknown
-	create_link $HOME/Music/interesting $G_EXTERNAL_HDD/audio/music/out/5
-	create_link $HOME/Music/funny $G_EXTERNAL_HDD/audio/music/out/6
-	create_link $HOME/Pictures/import-into-shotwell $G_EXTERNAL_HDD/shotwell/import
-	create_link $HOME/Pictures/shotwell $G_EXTERNAL_HDD/shotwell/pix
-
-	V_MOUNT_MUSIC=/mnt/music
-	if [ -L $V_MOUNT_MUSIC -a "$(readlink -f $V_MOUNT_MUSIC)" == "$G_EXTERNAL_HDD/audio/music" ]; then
-		echo '' >/dev/null
-	else
-		sudo ln -fs $G_EXTERNAL_HDD/audio/music/ /mnt/
-	fi
-	ls -lad --color=auto $V_MOUNT_MUSIC
-
-	if [ $HOSTNAME = $G_HOME_COMPUTER ] ; then
-		show_header 'Creating home symbolic links for files'
-		create_link $HOME/.gitconfig $G_DROPBOX_DIR/linux/.gitconfig
-
-		show_header 'Creating home symbolic links for directories'
-		create_link $HOME/.xbmc $G_MOVIES_HDD/.xbmc/
-		create_link $HOME/Pictures/dropbox $G_DROPBOX_DIR/Photos/
-		create_link $HOME/Pictures/wallpapers $G_DROPBOX_DIR/Photos/wallpapers/
-	fi
-}
-
-if [ -n "$V_ALL" -o -n "$V_SYMBOLIC_LINKS" ] ; then
-	setup_symbolic_links
 fi
