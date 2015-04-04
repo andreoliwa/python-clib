@@ -55,6 +55,7 @@ coverage:
 docs:
 	rm -f docs/clitoolkit.rst
 	rm -f docs/modules.rst
+	mkdir -p docs/_static
 	sphinx-apidoc -o docs/ clitoolkit
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html

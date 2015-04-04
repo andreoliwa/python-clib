@@ -7,17 +7,11 @@ from datetime import datetime
 from time import sleep
 from subprocess import check_output, CalledProcessError
 
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, event, or_
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.engine import Engine
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, or_
 from sqlalchemy.orm.exc import NoResultFound
 
-from clitoolkit import read_config, LOGGER
+from clitoolkit import read_config, LOGGER, BASE_MODEL, SESSION_INSTANCE
 
-
-CONFIG_DIR = os.path.expanduser(os.path.join('~/.config/clitoolkit', ''))
-os.makedirs(CONFIG_DIR, exist_ok=True)
 
 EXTENSIONS = ['.asf', '.avi', '.divx', '.f4v', '.flc', '.flv', '.m4v', '.mkv',
               '.mov', '.mp4', '.mpa', '.mpeg', '.mpg', '.ogv', '.wmv']
@@ -25,26 +19,6 @@ MINIMUM_VIDEO_SIZE = 10 * 1000 * 1000  # 10 megabytes
 APPS = ['vlc.Vlc', 'feh.feh', 'google-chrome', 'Chromium-browser.Chromium-browser']
 PIPEFILE = 'pipefile.tmp'
 TIME_FORMAT = '%H:%M:%S'
-
-ENGINE = create_engine('sqlite:///{}'.format(os.path.join(CONFIG_DIR, 'media.sqlite')))
-BASE_MODEL = declarative_base()
-SESSION_CLASS = sessionmaker(bind=ENGINE)
-SESSION_INSTANCE = SESSION_CLASS()
-
-
-@event.listens_for(Engine, "connect")
-def enable_foreign_keys(dbapi_connection, connection_record):
-    """Enable foreign keys in SQLite.
-
-    See http://docs.sqlalchemy.org/en/rel_0_9/dialects/sqlite.html#sqlite-foreign-keys
-
-    :param dbapi_connection:
-    :param connection_record:
-    """
-    assert connection_record
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
 
 
 def video_root_path():
@@ -177,6 +151,7 @@ def window_monitor(save_logs=True):
     :param save_logs: True to save logs (default), False to only display what would be saved (dry run).
     :return:
     """
+    # TODO: Convert data from $HOME/.gtimelog/window-monitor.db
     last = {}
     monitor_start_time = datetime.now()
     LOGGER.info('Starting the window monitor now (%s)...', monitor_start_time.strftime(TIME_FORMAT))
@@ -300,7 +275,3 @@ def query_not_logged_videos():
     """
     return query_to_list(SESSION_INSTANCE.query(Video).outerjoin(
         WindowLog, Video.video_id == WindowLog.video_id).filter(WindowLog.video_id.is_(None)))
-
-
-BASE_MODEL.metadata.create_all(ENGINE)
-# TODO: Convert data from $HOME/.gtimelog/window-monitor.db
