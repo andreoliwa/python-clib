@@ -33,7 +33,7 @@ def test_extract_urls_string():
         'http://www.immobilienscout24.de/expose/79605539?PID=63188280&ftc=9004EXPXXUA&_s_cclid=1423869828'
         'http://forward.immobilienscout24.de/9004EXPXXUA/expose/79573194?PID=63188280'
         'http://forward.immobilienscout24.de/9004EXPXXUA/expose/79564822?PID=63188280')
-    assert len(obj.urls) == 3
+    assert len(obj.ids) == 3
 
 
 def test_extract_urls_list():
@@ -41,7 +41,7 @@ def test_extract_urls_list():
     obj = ImmoScout24([
         'http://forward.immobilienscout24.de/9004EXPXXUA/expose/79605539?PID=63188280',
         'http://www.immobilienscout24.de/expose/79564822?PID=63188280&ftc=9004EXPXXUA&_s_cclid=1423869828'])
-    assert len(obj.urls) == 2
+    assert len(obj.ids) == 2
 
 
 def load_file_into_string(partial_filename):

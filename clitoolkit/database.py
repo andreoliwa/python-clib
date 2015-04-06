@@ -4,7 +4,8 @@ import os
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine, event, Column, Integer, String, Enum, Boolean, TIMESTAMP, DateTime, ForeignKey
+from sqlalchemy import create_engine, event, Column, Integer, String, Enum, Boolean, TIMESTAMP, DateTime, ForeignKey, \
+    UniqueConstraint
 
 from clitoolkit import CONFIG_DIR, TIME_FORMAT
 
@@ -84,8 +85,11 @@ class Residence(BASE_MODEL):
     url = Column(String, nullable=False, unique=True)
     source_site = Column(Enum(SITE_IMMOSCOUT, name='source_types'), nullable=False, default=SITE_IMMOSCOUT)
     source_id = Column(Integer, nullable=False)
+    address = Column(String)
     active = Column(Boolean, nullable=False, default=True)
     last_seen = Column(TIMESTAMP)
+
+    UniqueConstraint('source_site', 'source_id', name='source_site_id')
 
     def __repr__(self):
         """Represent the instance as a string."""

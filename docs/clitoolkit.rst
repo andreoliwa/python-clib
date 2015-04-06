@@ -4,6 +4,14 @@ clitoolkit package
 Submodules
 ----------
 
+clitoolkit.database module
+--------------------------
+
+.. automodule:: clitoolkit.database
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 clitoolkit.files module
 -----------------------
 
