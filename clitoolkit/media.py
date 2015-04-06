@@ -7,10 +7,12 @@ from datetime import datetime
 from time import sleep
 from subprocess import check_output, CalledProcessError
 
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, or_
+from sqlalchemy import or_
 from sqlalchemy.orm.exc import NoResultFound
 
-from clitoolkit import read_config, LOGGER, BASE_MODEL, SESSION_INSTANCE
+from clitoolkit import read_config, LOGGER, TIME_FORMAT
+from clitoolkit.database import SESSION_INSTANCE, WindowLog
+from clitoolkit.database import Video
 
 
 EXTENSIONS = ['.asf', '.avi', '.divx', '.f4v', '.flc', '.flv', '.m4v', '.mkv',
@@ -18,7 +20,6 @@ EXTENSIONS = ['.asf', '.avi', '.divx', '.f4v', '.flc', '.flv', '.m4v', '.mkv',
 MINIMUM_VIDEO_SIZE = 10 * 1000 * 1000  # 10 megabytes
 APPS = ['vlc.Vlc', 'feh.feh', 'google-chrome', 'Chromium-browser.Chromium-browser']
 PIPEFILE = 'pipefile.tmp'
-TIME_FORMAT = '%H:%M:%S'
 
 
 def video_root_path():
@@ -31,45 +32,6 @@ def video_root_path():
     if not path:
         raise ValueError("The video_root key is empty in config.ini")
     return path
-
-
-class Video(BASE_MODEL):  # pylint: disable=no-init
-
-    """Video file, with path and size."""
-
-    __tablename__ = 'video'
-
-    video_id = Column(Integer, primary_key=True)
-    path = Column(String, nullable=False, unique=True)
-    size = Column(Integer, nullable=False)
-
-    def __repr__(self):
-        """Represent a video as a string."""
-        return "<Video(path='{}', size='{}')>".format(self.path, self.size)
-
-
-class WindowLog(BASE_MODEL):  # pylint: disable=no-init
-
-    """Log entry for an open window."""
-
-    __tablename__ = 'window_log'
-
-    window_log_id = Column(Integer, primary_key=True)
-
-    start_dt = Column(DateTime, nullable=False)
-    end_dt = Column(DateTime, nullable=False)
-    app_name = Column(String, nullable=False)
-    title = Column(String, nullable=False)
-
-    video_id = Column(Integer, ForeignKey('video.video_id'))
-
-    def __repr__(self):
-        """Represent a window log as a string."""
-        diff = self.end_dt - self.start_dt
-        return "<WindowLog({start} to {end} ({diff}) {app}: '{title}' ({id}))>".format(
-            app=self.app_name, title=self.title, diff=diff, id=self.video_id,
-            start=self.start_dt.strftime(TIME_FORMAT),
-            end=self.end_dt.strftime(TIME_FORMAT))
 
 
 def scan_video_files():
