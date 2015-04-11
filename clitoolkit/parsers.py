@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Parsers and (later) crawlers."""
-import argparse
 from datetime import datetime
 import re
 import webbrowser
 from time import sleep
 
+import click
 import requests
 from bs4 import BeautifulSoup
 from sqlalchemy.orm.exc import NoResultFound
@@ -108,16 +108,6 @@ class ImmoScout24:
         webbrowser.open(url)
         sleep(.2)
 
-    @classmethod
-    def main(cls):
-        """Function to be called when invoked at the command line."""
-        parser = argparse.ArgumentParser()
-        parser.add_argument('urls', nargs='+')
-        args = parser.parse_args()
-        # TODO 00 URLs in the command line.
-        # TODO 00 unique IDs.
-        cls(args.urls).parse()
-
     @staticmethod
     def download_html(ad_url):
         """Download the HTML of a URL.
@@ -127,3 +117,14 @@ class ImmoScout24:
         """
         response = requests.get(ad_url)
         return response.text
+
+
+@click.command()
+@click.option('--input-file', '-i', type=click.File(), multiple=True, help='Text file containing ad IDs to be parsed')
+@click.argument('urls', nargs=-1)
+def main_immoscout(input_file, urls):
+    """Parse Immobilien Scout 24 ads from URLs and/or text files given in the command line."""
+    text = [one_file.read() for one_file in input_file] + [url for url in urls]
+    immo = ImmoScout24('\n'.join(text))
+    LOGGER.info('%d unique IDs.', len(immo.ids))
+    immo.parse()

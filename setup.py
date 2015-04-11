@@ -74,7 +74,7 @@ setup(
     tests_require=test_requirements,
     entry_points={
         'console_scripts': [
-            'clit-immoscout24 = clitoolkit.parsers:ImmoScout24.main',
+            'clit-immoscout24 = clitoolkit.parsers:main_immoscout',
             'clit-symlinks = clitoolkit.files:create_symbolic_links'
         ],
     }
