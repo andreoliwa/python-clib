@@ -249,12 +249,13 @@ def add_to_playlist(videos):
     :rtype: bool
     """
     if not is_vlc_running():
-        LOGGER.error('VLC is not running, please open it first.')
-        return False
+        os.system('$(which vlc) -q &')
+        sleep(1)
 
     videos = [videos] if isinstance(videos, str) else videos
     pipe = pipes.Template()
     pipe.append('xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse --no-playlist-autostart', '--')
+    os.chdir(video_root_path())
     with pipe.open_w(PIPEFILE) as handle:
         handle.write('\0'.join(videos))
     LOGGER.info('%d videos added to the playlist.', len(videos))

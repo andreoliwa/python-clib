@@ -22,6 +22,10 @@ if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
     unalias run-help
     autoload run-help
     HELPDIR=/usr/local/share/zsh/help
-
-    cd
+else
+    # My personal environment variables
+    [ -f ~/bin/.clitoolkitrc ] && source ~/bin/.clitoolkitrc
 fi
+
+# Force a directory change, to change the virtualenv, if any.
+cd $PWD

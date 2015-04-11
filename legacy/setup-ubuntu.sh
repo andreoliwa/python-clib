@@ -162,6 +162,7 @@ ppa:atareao/atareao
 ppa:cs-sniffer/cortina
 ppa:diesch/testing
 ppa:do-testers/ppa
+ppa:gcstar/ppa
 ppa:indicator-multiload/stable-daily
 ppa:jcfp/ppa
 ppa:recoll-backports/recoll-1.15-on
@@ -180,10 +181,10 @@ deb http://ppa.launchpad.net/do-testers/ppa/ubuntu precise main
 deb http://ppa.launchpad.net/midnightflash/ppa/ubuntu natty main
 deb http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu oneiric main
 ppa:danielrichter2007/grub-customizer
-ppa:gcstar/ppa
 ppa:git-core/ppa
 ppa:indicator-multiload/daily
 ppa:pidgin-developers/ppa
+ppa:videolan/stable-daily
 ppa:webupd8team/java
 ppa:webupd8team/jupiter
 ppa:webupd8team/sublime-text-3
