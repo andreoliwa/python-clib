@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Initialize the clitoolkit module."""
+"""Main module."""
 import os
 import logging
 from configparser import ConfigParser
@@ -11,8 +11,10 @@ __author__ = 'Wagner Augusto Andreoli'
 __email__ = 'wagnerandreoli@gmail.com'
 __version__ = '0.7.3'
 
-CONFIG_FILENAME = os.path.expanduser(os.path.join(
-    '~/.config', os.path.basename(os.path.dirname(__file__)), 'config.ini'))
+CONFIG_DIR = os.path.expanduser(os.path.join('~/.config', os.path.basename(os.path.dirname(__file__)), ''))
+os.makedirs(CONFIG_DIR, exist_ok=True)
+
+CONFIG_FILENAME = os.path.join(CONFIG_DIR, 'config.ini')
 CONFIG = ConfigParser()
 # http://stackoverflow.com/questions/19359556/configparser-reads-capital-keys-and-make-them-lower-case
 CONFIG.optionxform = str
@@ -33,6 +35,8 @@ if not LOGGER.hasHandlers():
             secondary_log_colors={}
         ))
     LOGGER.addHandler(CHANNEL)
+
+TIME_FORMAT = '%H:%M:%S'
 
 
 def read_config(section_name, key_name, default=None):

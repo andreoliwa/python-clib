@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 """Parsers and (later) crawlers."""
-import argparse
+from datetime import datetime
 import re
 import webbrowser
 from time import sleep
 
+import click
 import requests
 from bs4 import BeautifulSoup
+from sqlalchemy.orm.exc import NoResultFound
 
 from clitoolkit import LOGGER
+from clitoolkit.database import Residence, SITE_IMMOSCOUT, SESSION_INSTANCE
 
 
 class ImmoScout24:
@@ -27,10 +30,11 @@ class ImmoScout24:
         """
         self.full_address = ''
         self.found = False
-        self.urls = self.normalize_urls(text)
+        self.ids = self.extract_ids(text)
 
-    def normalize_urls(self, text):
-        """Extract IDs and form URLs from a text (or a list of URLs).
+    @staticmethod
+    def extract_ids(text):
+        """Extract IDs from a text (or a list of URLs).
 
         :param text: Text to be inspected.
         :return:
@@ -39,14 +43,15 @@ class ImmoScout24:
             text = ''.join(text)
 
         regex = re.compile('expose/([0-9]+)')
-        valid_urls = []
-        for ad_id in set(regex.findall(text)):
-            valid_urls.append(self.AD_URL.format(id=ad_id))
-        return valid_urls
+        return [int(ad_id) for ad_id in set(regex.findall(text))]
 
-    def parse(self):
-        """Download and parse the stored URLs."""
-        for ad_url in self.urls:
+    def parse(self, show_existing=True):
+        """Download and parse the stored URLs.
+
+        :param show_existing: Show existing ads when parsing.
+        """
+        for ad_id in self.ids:
+            ad_url = self.AD_URL.format(id=ad_id)
             soup = BeautifulSoup(self.download_html(ad_url))
 
             self.found = True
@@ -55,13 +60,26 @@ class ImmoScout24:
                 error = soup.find('div', {'id': 'oss-error'})
                 if 'nicht gefunden' in str(error):
                     self.found = False
-                    LOGGER.error('Not found: %s', ad_url)
             else:
                 # Take the first non blank line found in the address div
                 street = [line.strip() for line in address.find_all(text=True) if line.strip()][0]
                 street = ' '.join(street.split())
 
+            try:
+                residence = SESSION_INSTANCE.query(Residence).filter(
+                    Residence.source_site == SITE_IMMOSCOUT).filter(Residence.source_id == ad_id).one()
+                if not show_existing:
+                    LOGGER.warning('Already exists in the database: %s', residence)
+                    continue
+            except NoResultFound:
+                residence = Residence(source_site=SITE_IMMOSCOUT, source_id=ad_id)
+
+            residence.url = ad_url
+            residence.active = self.found
+            SESSION_INSTANCE.add(residence)
+            SESSION_INSTANCE.commit()
             if not self.found:
+                LOGGER.error('Not found in the website: %s', ad_url)
                 continue
 
             neighborhood_content = [text_only.strip() for text_only in address.children if isinstance(text_only, str)]
@@ -75,6 +93,10 @@ class ImmoScout24:
             map_url = self.MAP_URL.format(
                 origin=self.full_address.replace(' ', '+'),
                 destination=self.DEFAULT_DESTINATION)
+
+            residence.address = self.full_address
+            residence.last_seen = datetime.now()
+            SESSION_INSTANCE.commit()
 
             self.browse(map_url, 'Google Maps')
             self.browse(ad_url, 'AD')
@@ -91,16 +113,6 @@ class ImmoScout24:
         webbrowser.open(url)
         sleep(.2)
 
-    @classmethod
-    def main(cls):
-        """Function to be called when invoked at the command line."""
-        parser = argparse.ArgumentParser()
-        parser.add_argument('urls', nargs='+')
-        args = parser.parse_args()
-        # TODO 00 URLs in the command line.
-        # TODO 00 unique IDs.
-        cls(args.urls).parse()
-
     @staticmethod
     def download_html(ad_url):
         """Download the HTML of a URL.
@@ -110,3 +122,17 @@ class ImmoScout24:
         """
         response = requests.get(ad_url)
         return response.text
+
+
+@click.command()
+@click.option('--text-file', '-t', type=click.File(), multiple=True, help='Text file containing ad IDs to be parsed.')
+@click.option('--show-existing', '-s', is_flag=True, default=False,
+              help='Show existing ads when parsing (default False).')
+@click.version_option()
+@click.argument('urls', nargs=-1)
+def main_immoscout(text_file, show_existing, urls):
+    """Parse Immobilien Scout 24 ads from URLs and/or text files given in the command line."""
+    text = [one_file.read() for one_file in text_file] + [url for url in urls]
+    immo = ImmoScout24('\n'.join(text))
+    LOGGER.info('%d unique IDs.', len(immo.ids))
+    immo.parse(show_existing)

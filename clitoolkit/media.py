@@ -7,44 +7,19 @@ from datetime import datetime
 from time import sleep
 from subprocess import check_output, CalledProcessError
 
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, event, or_
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.engine import Engine
+from sqlalchemy import or_
 from sqlalchemy.orm.exc import NoResultFound
 
-from clitoolkit import read_config, LOGGER
+from clitoolkit import read_config, LOGGER, TIME_FORMAT
+from clitoolkit.database import SESSION_INSTANCE, WindowLog
+from clitoolkit.database import Video
 
-
-CONFIG_DIR = os.path.expanduser(os.path.join('~/.config/clitoolkit', ''))
-os.makedirs(CONFIG_DIR, exist_ok=True)
 
 EXTENSIONS = ['.asf', '.avi', '.divx', '.f4v', '.flc', '.flv', '.m4v', '.mkv',
               '.mov', '.mp4', '.mpa', '.mpeg', '.mpg', '.ogv', '.wmv']
 MINIMUM_VIDEO_SIZE = 10 * 1000 * 1000  # 10 megabytes
 APPS = ['vlc.Vlc', 'feh.feh', 'google-chrome', 'Chromium-browser.Chromium-browser']
 PIPEFILE = 'pipefile.tmp'
-TIME_FORMAT = '%H:%M:%S'
-
-ENGINE = create_engine('sqlite:///{}'.format(os.path.join(CONFIG_DIR, 'media.sqlite')))
-BASE_MODEL = declarative_base()
-SESSION_CLASS = sessionmaker(bind=ENGINE)
-SESSION_INSTANCE = SESSION_CLASS()
-
-
-@event.listens_for(Engine, "connect")
-def enable_foreign_keys(dbapi_connection, connection_record):
-    """Enable foreign keys in SQLite.
-
-    See http://docs.sqlalchemy.org/en/rel_0_9/dialects/sqlite.html#sqlite-foreign-keys
-
-    :param dbapi_connection:
-    :param connection_record:
-    """
-    assert connection_record
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
 
 
 def video_root_path():
@@ -57,45 +32,6 @@ def video_root_path():
     if not path:
         raise ValueError("The video_root key is empty in config.ini")
     return path
-
-
-class Video(BASE_MODEL):  # pylint: disable=no-init
-
-    """Video file, with path and size."""
-
-    __tablename__ = 'video'
-
-    video_id = Column(Integer, primary_key=True)
-    path = Column(String, nullable=False, unique=True)
-    size = Column(Integer, nullable=False)
-
-    def __repr__(self):
-        """Represent a video as a string."""
-        return "<Video(path='{}', size='{}')>".format(self.path, self.size)
-
-
-class WindowLog(BASE_MODEL):  # pylint: disable=no-init
-
-    """Log entry for an open window."""
-
-    __tablename__ = 'window_log'
-
-    window_log_id = Column(Integer, primary_key=True)
-
-    start_dt = Column(DateTime, nullable=False)
-    end_dt = Column(DateTime, nullable=False)
-    app_name = Column(String, nullable=False)
-    title = Column(String, nullable=False)
-
-    video_id = Column(Integer, ForeignKey('video.video_id'))
-
-    def __repr__(self):
-        """Represent a window log as a string."""
-        diff = self.end_dt - self.start_dt
-        return "<WindowLog({start} to {end} ({diff}) {app}: '{title}' ({id}))>".format(
-            app=self.app_name, title=self.title, diff=diff, id=self.video_id,
-            start=self.start_dt.strftime(TIME_FORMAT),
-            end=self.end_dt.strftime(TIME_FORMAT))
 
 
 def scan_video_files():
@@ -177,6 +113,7 @@ def window_monitor(save_logs=True):
     :param save_logs: True to save logs (default), False to only display what would be saved (dry run).
     :return:
     """
+    # TODO: Convert data from $HOME/.gtimelog/window-monitor.db
     last = {}
     monitor_start_time = datetime.now()
     LOGGER.info('Starting the window monitor now (%s)...', monitor_start_time.strftime(TIME_FORMAT))
@@ -301,7 +238,3 @@ def query_not_logged_videos():
     """
     return query_to_list(SESSION_INSTANCE.query(Video).outerjoin(
         WindowLog, Video.video_id == WindowLog.video_id).filter(WindowLog.video_id.is_(None)))
-
-
-BASE_MODEL.metadata.create_all(ENGINE)
-# TODO: Convert data from $HOME/.gtimelog/window-monitor.db
