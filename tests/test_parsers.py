@@ -28,20 +28,18 @@ def teardown_module():
 
 def test_extract_urls_string():
     """Extract URLs from a string."""
-    obj = ImmoScout24(
+    assert len(ImmoScout24().parse(
         'http://forward.immobilienscout24.de/9004EXPXXUA/expose/79605539?PID=63188280'
         'http://www.immobilienscout24.de/expose/79605539?PID=63188280&ftc=9004EXPXXUA&_s_cclid=1423869828'
         'http://forward.immobilienscout24.de/9004EXPXXUA/expose/79573194?PID=63188280'
-        'http://forward.immobilienscout24.de/9004EXPXXUA/expose/79564822?PID=63188280')
-    assert len(obj.ids) == 3
+        'http://forward.immobilienscout24.de/9004EXPXXUA/expose/79564822?PID=63188280')) == 3
 
 
 def test_extract_urls_list():
     """Extract URLs from a list."""
-    obj = ImmoScout24([
+    assert len(ImmoScout24().parse([
         'http://forward.immobilienscout24.de/9004EXPXXUA/expose/79605539?PID=63188280',
-        'http://www.immobilienscout24.de/expose/79564822?PID=63188280&ftc=9004EXPXXUA&_s_cclid=1423869828'])
-    assert len(obj.ids) == 2
+        'http://www.immobilienscout24.de/expose/79564822?PID=63188280&ftc=9004EXPXXUA&_s_cclid=1423869828'])) == 2
 
 
 def load_file_into_string(partial_filename):
@@ -75,7 +73,9 @@ def mock_immo_scout(monkeypatch, function_name):
 
     monkeypatch.setattr(ImmoScout24, 'download_html', mockreturn)
     monkeypatch.setattr(webbrowser, 'open', lambda x: None)
-    return ImmoScout24('http://forward.immobilienscout24.de/9004EXPXXUA/expose/79605539?PID=63188280').parse()
+    obj = ImmoScout24()
+    obj.parse('http://forward.immobilienscout24.de/9004EXPXXUA/expose/79605539?PID=63188280')
+    return obj.crawl()
 
 
 def test_street_and_neighborhood(monkeypatch):
@@ -83,9 +83,10 @@ def test_street_and_neighborhood(monkeypatch):
 
     :param monkeypatch:
     """
-    immo_ad = mock_immo_scout(monkeypatch, test_street_and_neighborhood.__name__)
-    assert immo_ad.full_address == 'Husemannstraße 5, 10435 Berlin'
-    assert immo_ad.found
+    immo_ads = mock_immo_scout(monkeypatch, test_street_and_neighborhood.__name__)
+    assert len(immo_ads) == 1
+    assert immo_ads[0].active
+    assert immo_ads[0].address == 'Husemannstraße 5, 10435 Berlin'
 
 
 def test_not_found(monkeypatch):
@@ -93,9 +94,10 @@ def test_not_found(monkeypatch):
 
     :param monkeypatch:
     """
-    immo_ad = mock_immo_scout(monkeypatch, test_not_found.__name__)
-    assert immo_ad.full_address == ''
-    assert not immo_ad.found
+    immo_ads = mock_immo_scout(monkeypatch, test_not_found.__name__)
+    assert len(immo_ads) == 1
+    assert not immo_ads[0].active
+    assert immo_ads[0].address == 'Husemannstraße 5, 10435 Berlin'
 
 
 def test_no_street(monkeypatch):
@@ -103,6 +105,7 @@ def test_no_street(monkeypatch):
 
     :param monkeypatch:
     """
-    immo_ad = mock_immo_scout(monkeypatch, test_no_street.__name__)
-    assert immo_ad.full_address == '10555 Berlin'
-    assert immo_ad.found
+    immo_ads = mock_immo_scout(monkeypatch, test_no_street.__name__)
+    assert len(immo_ads) == 1
+    assert immo_ads[0].active
+    assert immo_ads[0].address == '10555 Berlin'
