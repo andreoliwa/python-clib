@@ -45,8 +45,11 @@ class ImmoScout24:
         regex = re.compile('expose/([0-9]+)')
         return [int(ad_id) for ad_id in set(regex.findall(text))]
 
-    def parse(self):
-        """Download and parse the stored URLs."""
+    def parse(self, show_existing=True):
+        """Download and parse the stored URLs.
+
+        :param show_existing: Show existing ads when parsing.
+        """
         for ad_id in self.ids:
             ad_url = self.AD_URL.format(id=ad_id)
             soup = BeautifulSoup(self.download_html(ad_url))
@@ -65,7 +68,9 @@ class ImmoScout24:
             try:
                 residence = SESSION_INSTANCE.query(Residence).filter(
                     Residence.source_site == SITE_IMMOSCOUT).filter(Residence.source_id == ad_id).one()
-                LOGGER.warning('Already exists in the database: %s', residence)
+                if not show_existing:
+                    LOGGER.warning('Already exists in the database: %s', residence)
+                    continue
             except NoResultFound:
                 residence = Residence(source_site=SITE_IMMOSCOUT, source_id=ad_id)
 
@@ -120,11 +125,14 @@ class ImmoScout24:
 
 
 @click.command()
-@click.option('--input-file', '-i', type=click.File(), multiple=True, help='Text file containing ad IDs to be parsed')
+@click.option('--text-file', '-t', type=click.File(), multiple=True, help='Text file containing ad IDs to be parsed.')
+@click.option('--show-existing', '-s', is_flag=True, default=False,
+              help='Show existing ads when parsing (default False).')
+@click.version_option()
 @click.argument('urls', nargs=-1)
-def main_immoscout(input_file, urls):
+def main_immoscout(text_file, show_existing, urls):
     """Parse Immobilien Scout 24 ads from URLs and/or text files given in the command line."""
-    text = [one_file.read() for one_file in input_file] + [url for url in urls]
+    text = [one_file.read() for one_file in text_file] + [url for url in urls]
     immo = ImmoScout24('\n'.join(text))
     LOGGER.info('%d unique IDs.', len(immo.ids))
-    immo.parse()
+    immo.parse(show_existing)
