@@ -40,7 +40,7 @@ open_script_file() {
 		ls -l --color=auto $1
 	fi
 	if [ -z "$V_DRY_RUN" ] ; then
-		subl $1 &
+		atom $1 &
 	fi
 }
 

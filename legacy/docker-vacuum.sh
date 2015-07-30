@@ -9,7 +9,8 @@ echo '# Remove all images'
 echo 'docker images -q -a | xargs docker rmi -f'
 echo
 echo '# Remove desired images'
-echo "docker images -a | grep -e '<none>' -e cave_ | awk '{print \$3}' | xargs docker rmi -f"
+echo "docker images -a | grep -e cave_ | awk '{print \$3}' | xargs docker rmi -f"
+# -e '<none>'
 
 # http://stackoverflow.com/questions/17236796/how-to-remove-old-docker-containers
 # Old containers

@@ -11,18 +11,18 @@ function _git_work_in_progress(){
 	if [[ ${stash_count} -ne 0 ]]; then
 		echo -n " %{$fg[magenta]%}(Stash: ${stash_count})"
 	fi
-	
+
 	# Search for WIP commits in the last 10
 	git log -n 10 | grep -q -c "\-\-wip\-\-" && echo -n " %{$fg[red]%}(WORK IN PROGRESS)"
 }
 
-# risto.zsh-theme
-PROMPT='%{$fg[cyan]%}$(virtualenv_prompt_info)%{$fg[green]%}%n@%m %{$fg_bold[blue]%}%~ $(git_prompt_info)$(_git_work_in_progress) %{$reset_color%}
-%(!.#.$) '
-
 # murilasso.zsh-theme
 local return_code="%(?..%{$fg[red]%}%? ↵ %{$reset_color%})"
-RPROMPT="${return_code} [%*]"
+# RPROMPT="${return_code} [%*]"
+
+# risto.zsh-theme
+PROMPT='%{$fg[magenta]%}%* %{$fg[cyan]%}$(virtualenv_prompt_info)%{$fg[green]%} %n@%m %{$fg_bold[blue]%}%~ $(git_prompt_info)$(_git_work_in_progress) %{$reset_color%} ${return_code}
+%(!.#.$) '
 
 ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[yellow]%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX=" %{$reset_color%}"

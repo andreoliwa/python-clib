@@ -1,24 +1,19 @@
-# https://docs.docker.com/installation/mac/
-eval "$(docker-machine env dev)"
-
-export VIRTUALENVWRAPPER_PYTHON=$(which python3)
-
 github_create_pullrequest() {
     BRANCH_DESTINATION="master"
     if [ -n "$2" ]
     then
         BRANCH_DESTINATION=$2
     fi
-     
+
     echo "Creating PR to:" $BRANCH_DESTINATION
     echo "You have 5 seconds to cancel"
-    
+
     for i in `seq 1 5`;
     do
         sleep 1
         echo "."
     done
- 
+
     if [ -n "$1" ]
     then
         git branch > /dev/null 2>&1
@@ -41,5 +36,14 @@ github_create_pullrequest() {
     fi
 }
 
-# EatFirst Pull Request
-alias epr="github_create_pullrequest"
+if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
+    # https://docs.docker.com/installation/mac/
+    docker-machine start dev
+    eval "$(docker-machine env dev)"
+
+    # EatFirst Pull Request
+    alias epr="github_create_pullrequest"
+    export BLUEPRINT_DEV=1
+fi
+
+export VIRTUALENVWRAPPER_PYTHON=$(which python3)

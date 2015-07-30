@@ -30,7 +30,7 @@ fi
 
 if [ -z "$V_LIST" ]; then
 	cd /media
-	for V_MEDIUM in $(find /media -maxdepth 2 -name red* -or -name '*samsung*' 2>/dev/null) ; do
+	for V_MEDIUM in $(find /media -maxdepth 2 -name 'red*' -or -name 'black*' 2>/dev/null) ; do
 		V_FILE=$V_CATALOG_DIR/catalog-media-$(basename $V_MEDIUM).txt
 		echo "Cataloging $V_MEDIUM into $V_FILE"
 		ls -clAhRF --author $V_MEDIUM/ > $V_FILE

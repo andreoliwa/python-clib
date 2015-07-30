@@ -17,6 +17,8 @@ export PROJECT_HOME=~/Dropbox/src/python
 
 if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
     alias gwip='git add -A; git ls-files --deleted -z | xargs git rm; git commit -m "--wip--"'
+    alias cave='cd ~/eatfirst/cave'
+    alias core='deactivate && cd ~/eatfirst/core'
 
     # ==> Caveats
     # Add the following to your zshrc to access the online help:
@@ -24,6 +26,8 @@ if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
     autoload run-help
     HELPDIR=/usr/local/share/zsh/help
 else
+    export BROWSER=chromium-browser
+
     # My personal environment variables
     [ -f ~/bin/.clitoolkitrc ] && source ~/bin/.clitoolkitrc
 fi

@@ -54,8 +54,8 @@ done
 # Redirect output to stderr.
 exec 1>&2
 
-if [[ $gp_NO_BUILD ]]; then
-    echo "Skipping ./manage.py build..."
+if [[ 1 || $gp_NO_BUILD ]]; then
+    echo "ALWAYS Skipping ./manage.py build..."
 else
     echo "Running ./manage.py build before pushing..."
     py-vacuum.sh
