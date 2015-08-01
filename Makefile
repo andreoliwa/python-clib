@@ -6,6 +6,8 @@ help:
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "clean-test - remove test and coverage artifacts"
 	@echo "lint - check style with flake8"
+	@echo "lt - lint and test"
+	@echo "ltd - lint, test and docs"
 	@echo "test - run tests quickly with the default Python"
 	@echo "test-all - run tests on every Python version with tox"
 	@echo "coverage - check code coverage quickly with the default Python"
@@ -39,6 +41,8 @@ lint:
 	flake8 clitoolkit tests
 	pep257 clitoolkit tests
 	pylint --rcfile=.pylintrc clitoolkit tests
+
+lt: lint test
 
 ltd: lint test docs
 

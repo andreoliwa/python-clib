@@ -2,6 +2,7 @@
 """Parsers and crawlers."""
 from datetime import datetime
 from getpass import getpass
+from http.client import NOT_FOUND
 import re
 import webbrowser
 from time import sleep
@@ -46,11 +47,13 @@ class ImmoScout24:
 
     AD_URL_TEMPLATE = 'http://www.immobilienscout24.de/expose/{id}'
     MAP_URL_TEMPLATE = 'https://www.google.de/maps/dir/{origin}/{destination}/'
-    REGEX = re.compile('expose/([0-9]+)')
+    REGEX = re.compile(r'expose/([0-9]+)')
 
-    def __init__(self):
+    def __init__(self, session=None):
         """Init instance."""
         self.ids = []
+        self.session = session or requests.session()
+        self.response = None
 
     def parse(self, text):
         """Parse IDs from a text or a list of URLs.
@@ -93,12 +96,9 @@ class ImmoScout24:
             residence.url = self.AD_URL_TEMPLATE.format(id=ad_id)
             soup = BeautifulSoup(self.download_html(residence.url))
 
-            residence.active = True
-            address = soup.find(attrs={'data-qa': "is24-expose-address"})
-            if address is None:
-                if 'nicht gefunden' in str(soup.find('div', {'id': 'oss-error'})):
-                    residence.active = False
-            else:
+            residence.active = (self.response.status_code != NOT_FOUND)
+            address = soup.find(attrs={'data-qa': 'is24-expose-address'})
+            if address is not None:
                 # Take the first non blank line found in the address div
                 street = [line.strip() for line in address.find_all(text=True) if line.strip()][0]
                 street = ' '.join(street.split())
@@ -142,15 +142,14 @@ class ImmoScout24:
         webbrowser.open(url)
         sleep(.2)
 
-    @staticmethod
-    def download_html(ad_url):
+    def download_html(self, ad_url):
         """Download the HTML of a URL.
 
         :param ad_url: URL of the ad.
         :return:
         """
-        response = requests.get(ad_url)
-        return response.text
+        self.response = self.session.get(ad_url)
+        return self.response.text
 
     @classmethod
     def read_emails(cls, ask_password=False):
