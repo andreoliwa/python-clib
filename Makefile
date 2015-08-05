@@ -5,7 +5,7 @@ help:
 	@echo "clean-build - remove build artifacts"
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "clean-test - remove test and coverage artifacts"
-	@echo "lint - check style with flake8"
+	@echo "lint - check style with flake8, pep257 and pylint"
 	@echo "lt - lint and test"
 	@echo "ltd - lint, test and docs"
 	@echo "test - run tests quickly with the default Python"

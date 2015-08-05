@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Main module."""
+"""Main module for clitoolkit."""
 import os
 import logging
 from configparser import ConfigParser

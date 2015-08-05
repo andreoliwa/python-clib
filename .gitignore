@@ -36,9 +36,6 @@ htmlcov
 .project
 .pydevproject
 
-# Pythoscope config
-.pythoscope
-
 # Complexity
 output/*.html
 output/*/index.html
@@ -46,7 +43,5 @@ output/*/index.html
 # Sphinx
 docs/_build
 
-# Other editors
-.sublime-workspace
-.ropeproject
+# Editors
 .idea
