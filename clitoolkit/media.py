@@ -4,16 +4,14 @@ import os
 import pipes
 from collections import defaultdict
 from datetime import datetime
+from subprocess import CalledProcessError, check_output
 from time import sleep
-from subprocess import check_output, CalledProcessError
 
 from sqlalchemy import or_
 from sqlalchemy.orm.exc import NoResultFound
 
-from clitoolkit import read_config, LOGGER, TIME_FORMAT
-from clitoolkit.database import SESSION_INSTANCE, WindowLog
-from clitoolkit.database import Video
-
+from clitoolkit import LOGGER, TIME_FORMAT, read_config
+from clitoolkit.database import SESSION_INSTANCE, Video, WindowLog
 
 EXTENSIONS = ['.asf', '.avi', '.divx', '.f4v', '.flc', '.flv', '.m4v', '.mkv',
               '.mov', '.mp4', '.mpa', '.mpeg', '.mpg', '.ogv', '.wmv']

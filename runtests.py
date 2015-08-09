@@ -3017,9 +3017,10 @@ SSMtNCNG+xCgOvOOWKuRtgMW3ZiDEJlMvtTShYqH5AB42YHuA+wuwHV8CLeOc3Ii4NEmivOrYIq6
 7fVMHtMWmIay9+6/bav/B0GM970=
 """
 
-import sys
 import base64
+import sys
 import zlib
+
 
 class DictImporter(object):
     def __init__(self, sources):

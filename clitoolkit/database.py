@@ -2,13 +2,13 @@
 """Database models, connection and events."""
 import os
 
+from sqlalchemy import (TIMESTAMP, Boolean, Column, DateTime, Enum, ForeignKey,
+                        Integer, String, UniqueConstraint, create_engine,
+                        event)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine, event, Column, Integer, String, Enum, Boolean, TIMESTAMP, DateTime, ForeignKey, \
-    UniqueConstraint
 
 from clitoolkit import CONFIG_DIR, TIME_FORMAT
-
 
 ENGINE = create_engine('sqlite:///{}'.format(os.path.join(CONFIG_DIR, 'database.sqlite')))
 BASE_MODEL = declarative_base()

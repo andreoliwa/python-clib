@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 """Parsers and crawlers."""
+import re
+import webbrowser
 from datetime import datetime
 from getpass import getpass
 from http.client import NOT_FOUND
-import re
-import webbrowser
 from time import sleep
 
 import click
 import keyring
 import requests
 from bs4 import BeautifulSoup
-from sqlalchemy.orm.exc import NoResultFound
 from imapclient import IMAPClient
+from sqlalchemy.orm.exc import NoResultFound
 
 from clitoolkit import LOGGER, read_config
-from clitoolkit.database import Residence, SITE_IMMOSCOUT, SESSION_INSTANCE
-
+from clitoolkit.database import SESSION_INSTANCE, SITE_IMMOSCOUT, Residence
 
 DESTINATION = read_config('parsers', 'destination', '')
 IMAP_HOST = read_config('parsers', 'imap_host', '')

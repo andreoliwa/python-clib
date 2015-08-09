@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Files, symbolic links, operating system utilities."""
 import os
+
 import click
 
-from clitoolkit import LOGGER, read_config, save_config, CONFIG
-
+from clitoolkit import CONFIG, LOGGER, read_config, save_config
 
 SECTION_SYMLINKS_FILES = 'symlinks/files'
 SECTION_SYMLINKS_DIRS = 'symlinks/dirs'

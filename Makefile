@@ -5,6 +5,7 @@ help:
 	@echo "clean-build - remove build artifacts"
 	@echo "clean-pyc - remove Python file artifacts"
 	@echo "clean-test - remove test and coverage artifacts"
+	@echo "fix-isort - fix import order with isort"
 	@echo "lint - check style with flake8, pep257 and pylint"
 	@echo "lt - lint and test"
 	@echo "ltd - lint, test and docs"
@@ -37,7 +38,11 @@ clean-test:
 	rm -f .coverage
 	rm -fr htmlcov/
 
+fix-isort:
+	isort --recursive *.py clitoolkit tests
+
 lint:
+	isort --recursive --check *.py clitoolkit tests
 	flake8 clitoolkit tests
 	pep257 clitoolkit tests
 	pylint --rcfile=.pylintrc clitoolkit tests

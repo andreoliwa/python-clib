@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """This module is always executed by pytest."""
 import os
-from betamax.recorder import Betamax
+
 import pytest
 import requests
+from betamax.recorder import Betamax
 
 
 @pytest.yield_fixture()

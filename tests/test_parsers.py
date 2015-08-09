@@ -6,8 +6,8 @@ Tests for the `parsers` module.
 """
 import logging
 import webbrowser
-from clitoolkit import LOGGER
 
+from clitoolkit import LOGGER
 from clitoolkit.parsers import ImmoScout24
 
 # Turn off error logging during testing

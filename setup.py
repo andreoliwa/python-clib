@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import clitoolkit
 
-
 try:
     from setuptools import setup, Command
 except ImportError:
@@ -15,11 +14,11 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
-with open('requirements.txt') as txt_file:
+with open('requirements/prod.txt') as txt_file:
     lines = txt_file.read()
 requirements = [line for line in lines.split('\n') if '=' in line]
 
-with open('requirements_dev.txt') as txt_file:
+with open('requirements/dev.txt') as txt_file:
     lines = txt_file.read()
 test_requirements = [line for line in lines.split('\n') if '=' in line]
 test_requirements.extend(requirements)
