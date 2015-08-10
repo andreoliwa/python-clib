@@ -93,7 +93,7 @@ class ImmoScout24:
                 residence = Residence(source_site=SITE_IMMOSCOUT, source_id=ad_id)
 
             residence.url = self.AD_URL_TEMPLATE.format(id=ad_id)
-            soup = BeautifulSoup(self.download_html(residence.url))
+            soup = BeautifulSoup(self.download_html(residence.url), "html.parser")
 
             residence.active = (self.response.status_code != NOT_FOUND)
             address = soup.find(attrs={'data-qa': 'is24-expose-address'})
