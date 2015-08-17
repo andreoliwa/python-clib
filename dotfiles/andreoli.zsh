@@ -12,6 +12,7 @@ alias gsta='git add -A; git stash'
 alias gci='git-checkout-issue.sh'
 alias pf='pip freeze'
 alias pfg='pip freeze | grep -i -e '
+alias wk=workon
 
 export PROJECT_HOME=~/Dropbox/src/python
 
