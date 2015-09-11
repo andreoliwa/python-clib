@@ -32,24 +32,34 @@ def video_root_path():
     return path
 
 
-def scan_video_files():
+def scan_video_files(ignore_paths=None):
     """Scan all video files in subdirectories, ignoring videos with less than 10 MB.
 
     Save the videos in SQLite.
 
     :return: None
     """
+    ignore_paths = ignore_paths or []
     video_path = video_root_path()
     # http://stackoverflow.com/questions/18394147/recursive-sub-folder-search-and-return-files-in-a-list-python
     for partial_path in [os.path.join(root, file).replace(video_path, '')
                          for root, dirs, files in os.walk(video_path)
                          for file in files if os.path.splitext(file)[1].lower() in EXTENSIONS]:
         full_path = os.path.join(video_path, partial_path)
+        if any([ignore for ignore in ignore_paths if ignore in full_path]):
+            continue
+
         # http://stackoverflow.com/questions/2104080/how-to-check-file-size-in-python
         size = os.stat(full_path).st_size
-        if size > MINIMUM_VIDEO_SIZE:
-            SESSION_INSTANCE.add(Video(path=partial_path, size=size))
-            SESSION_INSTANCE.commit()
+        if size <= MINIMUM_VIDEO_SIZE:
+            continue
+        elif SESSION_INSTANCE.query(Video).filter_by(path=partial_path).count() > 0:
+            continue
+
+        video = Video(path=partial_path, size=size)
+        LOGGER.info('Adding %s', video)
+        SESSION_INSTANCE.add(video)
+    SESSION_INSTANCE.commit()
 
 
 def list_windows():

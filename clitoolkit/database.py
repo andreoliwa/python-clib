@@ -2,9 +2,8 @@
 """Database models, connection and events."""
 import os
 
-from sqlalchemy import (TIMESTAMP, Boolean, Column, DateTime, Enum, ForeignKey,
-                        Integer, String, UniqueConstraint, create_engine,
-                        event)
+from sqlalchemy import (Column, DateTime, ForeignKey, Integer, String,
+                        create_engine, event)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -73,28 +72,6 @@ class WindowLog(BASE_MODEL):
             app=self.app_name, title=self.title, diff=diff, id=self.video_id,
             start=self.start_dt.strftime(TIME_FORMAT),
             end=self.end_dt.strftime(TIME_FORMAT))
-
-
-class Residence(BASE_MODEL):
-
-    """AD for a residence (apartment, WG, house, etc.)."""
-
-    __tablename__ = 'residence'
-
-    residence_id = Column(Integer, primary_key=True)
-    url = Column(String, nullable=False, unique=True)
-    source_site = Column(Enum(SITE_IMMOSCOUT, name='source_types'), nullable=False, default=SITE_IMMOSCOUT)
-    source_id = Column(Integer, nullable=False)
-    address = Column(String)
-    active = Column(Boolean, nullable=False, default=True)
-    last_seen = Column(TIMESTAMP)
-
-    UniqueConstraint('source_site', 'source_id', name='source_site_id')
-
-    def __repr__(self):
-        """Represent the instance as a string."""
-        return "<Residence(source_site={}, source_id={}, url='{}')>".format(
-            self.source_site, self.source_id, self.url)
 
 
 # After all models are declared, create them.
