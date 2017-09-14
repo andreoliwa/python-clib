@@ -45,7 +45,8 @@ lint:
 	isort --recursive --check *.py clitoolkit tests
 	flake8 clitoolkit tests
 	pep257 clitoolkit tests
-	pylint --rcfile=.pylintrc clitoolkit tests
+	# pylint still doesn't work with Python 3.6
+	# pylint --rcfile=.pylintrc clitoolkit tests
 
 lt: lint test
 
