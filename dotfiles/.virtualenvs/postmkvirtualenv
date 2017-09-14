@@ -1,3 +1,3 @@
 #!/bin/bash
-# This hook is sourced after a new virtualenv is activated.
-pip install ipython
+# This hook is sourced after a new virtualenv is created.
+pip install -U ipython plumbum click virtualenvwrapper

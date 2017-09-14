@@ -45,8 +45,8 @@ do
 		commit=`git rev-list -n 1 --grep wip "$range"`
 		if [ -n "$commit" ]
 		then
-			echo "Found WIP commit in $local_ref, not pushing"
-			exit 1
+			echo "Found WIP commit in $local_ref, not pushing: https://github.com/eatfirst/cave/commit/$commit"
+			# exit 1
 		fi
 	fi
 done

@@ -37,10 +37,6 @@ github_create_pullrequest() {
 }
 
 if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
-    # https://docs.docker.com/installation/mac/
-    docker-machine start dev
-    eval "$(docker-machine env dev)"
-
     # EatFirst Pull Request
     alias epr="github_create_pullrequest"
     export BLUEPRINT_DEV=1

@@ -1,27 +1,27 @@
 # Automatically migrated from legacy .beetsconfig.
 # https://beets.readthedocs.org/en/latest/reference/config.html
 
-library: /home/wagner/.config/beets/music-library.blb
-directory: /mnt/music
+directory: ~/Music/mp3/
+library: ~/Music/beets-library.blb
 
 import:
-    copy: true
-    write: true
-    delete: true
-    resume: ask
-    incremental: false
-    art: true
-    quiet_fallback: skip
-    timid: false
-    log: /home/wagner/.config/beets/import.log
-ignore: .* *~
+    move: yes
+#     copy: true
+#     write: true
+#     delete: true
+#     resume: ask
+#     incremental: false
+#     art: true
+#     quiet_fallback: skip
+#     timid: false
+#     log: /home/wagner/.config/beets/import.log
 
 replace:
     '[\\/\?"]': _
     '["\*<>\|]|\s+$': _
-    # Remove these chars
+    # Change these chars to underscores
     "[ .!,()':]+": _
-    # Remove multiple brackets
+    # Change multiple brackets to underscores
     '\[+|\]+': _
     # Merge duplicated underscores
     '_+': _
@@ -32,51 +32,59 @@ replace:
     # Change the equal sign in the beginning
     '^=+': '.'
 
-clutter:
-    - Thumbs.DB
-    - .DS_Store
-    - cover.jpg
-
-color: yes
-
+asciify_paths: yes
+original_date: yes
 id3v23: yes
 
+ui:
+    color: yes
+
 paths:
-    comp: listen/$bpm/=compilations/${original_or_recording_year}_$album%aunique{}/${disc_and_track} ${compilation_artist}${title}
-    singleton: listen/$bpm/=songs/$artist - $title
-    # VA_$genre/
-    grouping:@: ipod/playlists/${grouping}/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
-    bpm:1: ipod/lib/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
-    bpm:2: ipod/lib/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
-    bpm:3: ipod/lib/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
-    bpm:4: ipod/lib/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
-    bpm:5: out/$bpm/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
-    bpm:6: out/$bpm/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
-    bpm:7: out/$bpm/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
-    bpm:8: out/$bpm/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
-    bpm:9: out/$bpm/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
-    default: listen/$bpm/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
+#     comp: listen/$bpm/=compilations/${original_or_recording_year}_$album%aunique{}/${disc_and_track} ${compilation_artist}${title}
+#     singleton: listen/$bpm/=songs/$artist - $title
+#     # VA_$genre/
+#     grouping:@: ipod/playlists/${grouping}/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
+#     bpm:1: ipod/lib/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
+#     bpm:2: ipod/lib/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
+#     bpm:3: ipod/lib/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
+#     bpm:4: ipod/lib/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
+#     bpm:5: out/$bpm/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
+#     bpm:6: out/$bpm/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
+#     bpm:7: out/$bpm/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
+#     bpm:8: out/$bpm/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
+#     bpm:9: out/$bpm/${albumartist}/${original_or_recording_year}_${album}/${disc_and_track} ${compilation_artist}${title}
+    default: ${albumartist}_%upper{$artist_country}/${original_or_recording_year}_${album}/${disc_and_track}_${compilation_artist}${title}
+    # listen/$bpm/
 
 ####################################################################################################
 
 plugins:
     - inline # http://beets.readthedocs.org/en/latest/plugins/inline.html
+    - missing # http://beets.readthedocs.org/en/latest/plugins/missing.html
     - info # http://beets.readthedocs.org/en/latest/plugins/info.html
     - random # http://beets.readthedocs.org/en/latest/plugins/random.html
-    - discogs # http://beets.readthedocs.org/en/latest/plugins/discogs.html
     - lastgenre # http://beets.readthedocs.org/en/latest/plugins/lastgenre.html
     - embedart # https://beets.readthedocs.org/en/latest/plugins/embedart.html
     - fetchart # https://beets.readthedocs.org/en/latest/plugins/fetchart.html
     - lyrics # https://beets.readthedocs.org/en/latest/plugins/lyrics.html
-    - missing # http://beets.readthedocs.org/en/latest/plugins/missing.html
     - duplicates # http://beets.readthedocs.org/en/latest/plugins/duplicates.html
-    - mpdupdate # http://beets.readthedocs.org/en/latest/plugins/mpdupdate.html
+    - ftintitle # http://beets.readthedocs.org/en/latest/plugins/ftintitle.html
+    - lastimport # http://beets.readthedocs.org/en/latest/plugins/lastimport.html
+    - copyartifacts # https://github.com/sbarakat/beets-copyartifacts
+    - artistcountry # https://github.com/agrausem/beets-artistcountry
 
-item_fields:
-    disc_and_track: u'%02i%02i' % (disc, track) if
-                    disctotal > 1 else u'%02i' % (track)
+# broken plugins, try later:
+    # - discogs # http://beets.readthedocs.org/en/latest/plugins/discogs.html
+
+item_fields: # inline plugin
+    disc_and_track: u'%02i%02i' % (disc, track) if disctotal > 1 else u'%02i' % (track)
     compilation_artist: u'%s - ' % (artist) if comp else u''
     original_or_recording_year: original_year if original_year else year
+
+lastgenre:
+    canonical: ''
+    source: track
+    count: 3
 
 embedart:
     #auto: no
@@ -89,12 +97,11 @@ fetchart:
 
 lyrics:
     fallback: 'No lyrics found'
+    google_API_key: AIzaSyAnRaWZZuY_eV9UBntkBgRQgCpS6_F_4fk
 
-lastgenre:
-    canonical: ''
-    source: track
-    count: 3
+lastfm: # lastimport plugin
+    user: NiteKrawlerr
 
-mpd:
-    host: localhost
-    port: 6600
+# copyartifacts:
+#     # extensions: .jpg
+#     print_ignored: yes
