@@ -14,8 +14,6 @@ BASE_MODEL = declarative_base()
 SESSION_CLASS = sessionmaker(bind=ENGINE)
 SESSION_INSTANCE = SESSION_CLASS()
 
-SITE_IMMOSCOUT = 'i'
-
 # SQLAlchemy models don't need __init__()
 # pylint: disable=no-init
 
@@ -36,7 +34,6 @@ def enable_foreign_keys(dbapi_connection, connection_record):
 
 
 class Video(BASE_MODEL):
-
     """Video file, with path and size."""
 
     __tablename__ = 'video'
@@ -51,7 +48,6 @@ class Video(BASE_MODEL):
 
 
 class WindowLog(BASE_MODEL):
-
     """Log entry for an open window."""
 
     __tablename__ = 'window_log'

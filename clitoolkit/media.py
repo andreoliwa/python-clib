@@ -2,6 +2,7 @@
 """Media tools."""
 import os
 import pipes
+import sys
 from collections import defaultdict
 from datetime import datetime
 from subprocess import CalledProcessError, check_output
@@ -15,9 +16,10 @@ from clitoolkit.database import SESSION_INSTANCE, Video, WindowLog
 
 EXTENSIONS = ['.asf', '.avi', '.divx', '.f4v', '.flc', '.flv', '.m4v', '.mkv',
               '.mov', '.mp4', '.mpa', '.mpeg', '.mpg', '.ogv', '.wmv']
-MINIMUM_VIDEO_SIZE = 10 * 1000 * 1000  # 10 megabytes
-APPS = ['vlc.Vlc', 'feh.feh', 'google-chrome', 'Chromium-browser.Chromium-browser', 'Navigator.Firefox']
-PIPEFILE = 'pipefile.tmp'
+MINIMUM_VIDEO_SIZE = 7 * 1000 * 1000  # 7 megabytes
+APPS = ['vlc.vlc', 'feh.feh', 'google-chrome', 'Chromium-browser.Chromium-browser', 'Navigator.Firefox']
+PIPEFILE = '/tmp/pipefile.tmp'
+LAST_ADDED_VIDEOS = []
 
 
 def video_root_path():
@@ -32,7 +34,7 @@ def video_root_path():
     return path
 
 
-def scan_video_files(ignore_paths=None):
+def scan_video_files(ignore_paths=None, min_size=MINIMUM_VIDEO_SIZE):
     """Scan all video files in subdirectories, ignoring videos with less than 10 MB.
 
     Save the videos in SQLite.
@@ -41,17 +43,21 @@ def scan_video_files(ignore_paths=None):
     """
     ignore_paths = ignore_paths or []
     video_path = video_root_path()
+    all_files = [os.path.join(root, file).replace(video_path, '')
+                 for root, dirs, files in os.walk(video_path)
+                 for file in files if os.path.splitext(file)[1].lower() in EXTENSIONS]
     # http://stackoverflow.com/questions/18394147/recursive-sub-folder-search-and-return-files-in-a-list-python
-    for partial_path in [os.path.join(root, file).replace(video_path, '')
-                         for root, dirs, files in os.walk(video_path)
-                         for file in files if os.path.splitext(file)[1].lower() in EXTENSIONS]:
+    for index, partial_path in enumerate(all_files):
         full_path = os.path.join(video_path, partial_path)
+        if index % 100 == 0:
+            LOGGER.info('File #%d: %s', index, full_path)
+
         if any([ignore for ignore in ignore_paths if ignore in full_path]):
             continue
 
         # http://stackoverflow.com/questions/2104080/how-to-check-file-size-in-python
         size = os.stat(full_path).st_size
-        if size <= MINIMUM_VIDEO_SIZE:
+        if size <= min_size:
             continue
         elif SESSION_INSTANCE.query(Video).filter_by(path=partial_path).count() > 0:
             continue
@@ -131,6 +137,10 @@ def window_monitor(save_logs=True):
         while True:
             sleep(.2)
 
+            if not is_vlc_running():
+                LOGGER.error('Restarting VLC')
+                add_to_playlist(LAST_ADDED_VIDEOS)
+
             for app, new_titles in list_windows().items():
                 assert isinstance(app, str)
                 assert isinstance(new_titles, list)
@@ -195,15 +205,27 @@ def add_to_playlist(videos):
     """
     if not is_vlc_running():
         os.system('$(which vlc) -q &')
-        sleep(1)
+        sleep(2)
 
     videos = [videos] if isinstance(videos, str) else videos
-    pipe = pipes.Template()
-    pipe.append('xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse --no-playlist-autostart', '--')
     os.chdir(video_root_path())
-    with pipe.open_w(PIPEFILE) as handle:
-        handle.write('\0'.join(videos))
+
+    if sys.platform == 'darwin':
+        playlist = '/tmp/vlc_playlist.txt'
+        with open(playlist, mode='wt', encoding='utf-8') as handle:
+            handle.write('\0'.join(videos))
+        os.system('cat {playlist} | xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse'
+                  ' --no-playlist-autostart &'.format(playlist=playlist))
+    else:
+        pipe = pipes.Template()
+        pipe.append('xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse --no-playlist-autostart', '--')
+        with pipe.open_w(PIPEFILE) as handle:
+            handle.write('\0'.join(videos))
     LOGGER.info('%d videos added to the playlist.', len(videos))
+
+    global LAST_ADDED_VIDEOS
+    LAST_ADDED_VIDEOS = videos
+
     return True
 
 
