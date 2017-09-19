@@ -9,7 +9,7 @@ _tmux_session_python() {
 	tmux send-keys -t $V_SESSION 'clear; python' Enter
 	tmux split-window -t $V_SESSION -v -p 80 "cd $V_WORKING_DIR; git st ; bash -i"
 	tmux split-window -t $V_SESSION:0.0 -h "cd $V_WORKING_DIR; bash -i"
-	tmux send-keys -t $V_SESSION "clear; $G_DROPBOX_DIR/src/python/clitoolkit/pyguard.sh" Enter
+	tmux send-keys -t $V_SESSION "clear; $G_DROPBOX_DIR/src/python/python-clitoolkit/pyguard.sh" Enter
 	tmux select-pane -t $V_SESSION:0.1
 }
 
@@ -73,8 +73,8 @@ _tmux_session_vmdev() {
 }
 
 tmux_session_bash() {
-	subl --project $G_DROPBOX_DIR/src/sublime-projects/clitoolkit.sublime-project &
-	tmux new-session -d -s $1 "cd $G_DROPBOX_DIR/src/python/clitoolkit ; git st ; bash -i"
+	subl --project $G_DROPBOX_DIR/src/sublime-projects/python-clitoolkit.sublime-project &
+	tmux new-session -d -s $1 "cd $G_DROPBOX_DIR/src/python/python-clitoolkit ; git st ; bash -i"
 }
 
 tmux_session_seek() {

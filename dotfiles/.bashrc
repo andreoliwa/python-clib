@@ -160,7 +160,7 @@ stty -ixon
 # Set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
 	# Adding global Composer dir to the PATH, according to http://akrabat.com/php/global-installation-of-php-tools-with-composer/
-	export PATH="$HOME/bin:$G_DROPBOX_DIR/src/python/clitoolkit/legacy:$HOME/.composer/vendor/bin:$PATH"
+	export PATH="$HOME/bin:$G_DROPBOX_DIR/src/python/python-clitoolkit/legacy:$HOME/.composer/vendor/bin:$PATH"
 fi
 
 # Autocomplete for sudo?

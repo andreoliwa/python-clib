@@ -56,9 +56,9 @@ fi
 # User configuration
 
 if [[ "${OSTYPE//[0-9.]/}" == 'darwin' ]]; then
-    export PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:/Users/wagneraugusto/bin:/Users/wagneraugusto/Dropbox/Code/clitoolkit/legacy"
+    export PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:/Users/wagneraugusto/bin:/Users/wagneraugusto/Dropbox/Code/python-clitoolkit/legacy"
 else
-    export PATH="/home/wagner/dotfiles/bin:/home/wagner/bin:/home/wagner/Dropbox/Code/clitoolkit/legacy:/home/wagner/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/heroku/bin:/home/wagner/dotfiles_private/bin/"
+    export PATH="/home/wagner/dotfiles/bin:/home/wagner/bin:/home/wagner/Dropbox/Code/python-clitoolkit/legacy:/home/wagner/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/heroku/bin:/home/wagner/dotfiles_private/bin/"
 fi
 # export MANPATH="/usr/local/man:$MANPATH"
 

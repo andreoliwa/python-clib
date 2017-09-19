@@ -5,7 +5,7 @@ Credits
 Development Lead
 ----------------
 
-* Wagner Augusto Andreoli <wagnerandreoli@gmail.com>
+* Wagner Augusto Andreoli <andreoliwa@gmail.com>
 
 Contributors
 ------------

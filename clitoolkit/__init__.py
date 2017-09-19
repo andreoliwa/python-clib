@@ -8,8 +8,7 @@ from colorlog import ColoredFormatter
 
 
 __author__ = 'Wagner Augusto Andreoli'
-__email__ = 'wagnerandreoli@gmail.com'
-__version__ = '0.7.3'
+__email__ = 'andreoliwa@gmail.com'
 
 CONFIG_DIR = os.path.expanduser(os.path.join('~/.config', os.path.basename(os.path.dirname(__file__)), ''))
 os.makedirs(CONFIG_DIR, exist_ok=True)

@@ -42,7 +42,7 @@
 [status]
 	showUntrackedFiles = all
 [github]
-	user = wagnerandreoli
+	user = andreoliwa
 	token = 6e0f54783d050d53662979824c994bff
 [core]
 	editor = vim
