@@ -11,7 +11,7 @@ import os
 import sys
 from shutil import rmtree
 
-from setuptools import setup, Command
+from setuptools import find_packages, setup, Command
 
 # Package meta-data.
 NAME = 'clitoolkit'
@@ -111,7 +111,7 @@ setup(
     author=AUTHOR,
     author_email=EMAIL,
     url=URL,
-    py_modules=[NAME],
+    packages=find_packages(exclude=('tests',)),
     install_requires=prod_requirements,
     include_package_data=True,
     license='BSD',
@@ -138,7 +138,8 @@ setup(
     },
     test_suite='tests',
     tests_require=dev_requirements,
-    # entry_points={'console_scripts': [
-    #     'clit-symlinks = {}.files:create_symbolic_links'.format(NAME)
-    # ]},
+    entry_points={'console_scripts': [
+        'git-local-prune = {}.git:prune_local_branches'.format(NAME),
+        'git-vacuum = {}.git:vacuum'.format(NAME),
+    ]},
 )
