@@ -11,7 +11,7 @@ import os
 import sys
 from shutil import rmtree
 
-from setuptools import find_packages, setup, Command
+from setuptools import Command, find_packages, setup
 
 # Package meta-data.
 NAME = 'clitoolkit'
@@ -141,5 +141,6 @@ setup(
     entry_points={'console_scripts': [
         'git-local-prune = {}.git:prune_local_branches'.format(NAME),
         'git-vacuum = {}.git:vacuum'.format(NAME),
+        'pycharm-cli = {}.files:pycharm_cli'.format(NAME),
     ]},
 )

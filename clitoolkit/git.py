@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """Git tools."""
+from shlex import split
+
 from plumbum import ProcessExecutionError
 from plumbum.cmd import git
-from shlex import split
 
 DEVELOPMENT_BRANCH = 'develop'
 

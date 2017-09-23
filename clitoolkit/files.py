@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Files, symbolic links, operating system utilities."""
 import os
+from subprocess import call, check_output
 
 import click
 
@@ -8,6 +9,7 @@ from clitoolkit import CONFIG, LOGGER, read_config, save_config
 
 SECTION_SYMLINKS_FILES = 'symlinks/files'
 SECTION_SYMLINKS_DIRS = 'symlinks/dirs'
+PYCHARM_APP_FULL_PATH = '/Applications/PyCharm.app/Contents/MacOS/pycharm'
 
 
 @click.command()
@@ -96,3 +98,22 @@ def create_link(key, source_file, raw_link, is_dir):
 
     os.symlink(source_file, final_link, target_is_directory=not is_dir)
     message('link created', LOGGER.info)
+
+
+@click.command()
+@click.argument('files', nargs=-1)
+def pycharm_cli(files):
+    """Invoke PyCharm on the command line.
+
+    If a file doesn't exist, call `which` to find out the real location.
+    """
+    full_paths = []
+    for possible_file in files:
+        if os.path.isfile(possible_file):
+            real_file = os.path.abspath(possible_file)
+        else:
+            real_file = check_output(['which', possible_file]).decode().strip()
+        full_paths.append(real_file)
+    command_line = [PYCHARM_APP_FULL_PATH] + full_paths
+    print(command_line)
+    call(command_line)

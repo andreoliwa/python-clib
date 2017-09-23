@@ -20,18 +20,18 @@ clitoolkit.files module
     :undoc-members:
     :show-inheritance:
 
-clitoolkit.media module
------------------------
+clitoolkit.git module
+---------------------
 
-.. automodule:: clitoolkit.media
+.. automodule:: clitoolkit.git
     :members:
     :undoc-members:
     :show-inheritance:
 
-clitoolkit.parsers module
--------------------------
+clitoolkit.media module
+-----------------------
 
-.. automodule:: clitoolkit.parsers
+.. automodule:: clitoolkit.media
     :members:
     :undoc-members:
     :show-inheritance:
