@@ -18,7 +18,7 @@ SESSION_INSTANCE = SESSION_CLASS()
 # pylint: disable=no-init
 
 
-@event.listens_for(ENGINE, "connect")
+@event.listens_for(ENGINE, 'connect')
 def enable_foreign_keys(dbapi_connection, connection_record):
     """Enable foreign keys in SQLite.
 
@@ -29,7 +29,7 @@ def enable_foreign_keys(dbapi_connection, connection_record):
     """
     assert connection_record
     cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.execute('PRAGMA foreign_keys=ON')
     cursor.close()
 
 

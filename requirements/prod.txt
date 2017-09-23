@@ -1,6 +1,8 @@
 argcomplete==1.9.2
 click==6.7
 colorlog==3.1.0
+crayons==0.1.2
 requests==2.18.4
 SQLAlchemy==1.1.14
 plumbum==1.6.3
+prettyconf==1.2.3

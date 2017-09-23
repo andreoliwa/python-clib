@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+Package setup.
 
-# Updated with https://github.com/kennethreitz/setup.py
+Merged with https://github.com/kennethreitz/setup.py
 
-# Note: To use the 'upload' functionality of this file, you must:
-#   $ pip install twine
-
+Note: To use the 'upload' functionality of this file, you must:
+$ pip install twine
+"""
 import io
 import os
 import sys
@@ -59,16 +61,19 @@ class PublishCommand(Command):
 
     @staticmethod
     def status(s):
-        """Prints things in bold."""
+        """Print things in bold."""
         print('\033[1m{0}\033[0m'.format(s))
 
     def initialize_options(self):
+        """Init options."""
         pass
 
     def finalize_options(self):
+        """End options."""
         pass
 
     def run(self):
+        """Run the command."""
         try:
             self.status('Removing previous builds…')
             rmtree(os.path.join(here, 'dist'))
@@ -90,12 +95,15 @@ class PyTest(Command):
     user_options = []
 
     def initialize_options(self):
+        """Init options."""
         pass
 
     def finalize_options(self):
+        """End options."""
         pass
 
     def run(self):
+        """Run the command."""
         import subprocess
         import sys
         errno = subprocess.call([sys.executable, 'runtests.py'])
@@ -142,5 +150,6 @@ setup(
         'git-local-prune = {}.git:prune_local_branches'.format(NAME),
         'git-vacuum = {}.git:vacuum'.format(NAME),
         'pycharm-cli = {}.files:pycharm_cli'.format(NAME),
+        'backup-full = {}.files:backup_full'.format(NAME),
     ]},
 )

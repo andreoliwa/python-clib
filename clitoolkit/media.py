@@ -30,7 +30,7 @@ def video_root_path():
     """
     path = os.path.join(read_config('dirs', 'video_root', ''), '')
     if not path:
-        raise ValueError("The video_root key is empty in config.ini")
+        raise ValueError('The video_root key is empty in config.ini')
     return path
 
 
@@ -52,7 +52,7 @@ def scan_video_files(ignore_paths=None, min_size=MINIMUM_VIDEO_SIZE):
         if index % 100 == 0:
             LOGGER.info('File #%d: %s', index, full_path)
 
-        if any([ignore for ignore in ignore_paths if ignore in full_path]):
+        if any(ignore for ignore in ignore_paths if ignore in full_path):
             continue
 
         # http://stackoverflow.com/questions/2104080/how-to-check-file-size-in-python
@@ -176,7 +176,7 @@ def window_monitor(save_logs=True):
                             SESSION_INSTANCE.commit()
 
                     if new_title:
-                        LOGGER.warning("%s Open window in %s: %s", end_time.strftime(TIME_FORMAT), app, new_title)
+                        LOGGER.warning('%s Open window in %s: %s', end_time.strftime(TIME_FORMAT), app, new_title)
     except KeyboardInterrupt:
         return
 

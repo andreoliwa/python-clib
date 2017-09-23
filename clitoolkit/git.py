@@ -46,7 +46,7 @@ def prune_local_branches():
 
 
 def get_current_branch():
-    """Current branch name."""
+    """Get the current branch name."""
     return run_git('rev-parse --abbrev-ref HEAD', quiet=True).strip()
 
 

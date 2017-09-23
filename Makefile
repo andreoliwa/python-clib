@@ -42,11 +42,7 @@ fix-isort:
 	isort --recursive *.py clitoolkit tests
 
 lint:
-	isort --recursive --check *.py clitoolkit tests
-	flake8 clitoolkit tests
-	pep257 clitoolkit tests
-	# pylint still doesn't work with Python 3.6
-	# pylint --rcfile=.pylintrc clitoolkit tests
+	python setup.py flake8
 
 lt: lint test
 
