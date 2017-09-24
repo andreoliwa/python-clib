@@ -7,6 +7,7 @@ from typing import List
 
 import click
 import crayons
+from plumbum import FG
 from plumbum.cmd import rsync
 
 from clitoolkit import CONFIG, LOGGER, read_config, save_config
@@ -141,9 +142,7 @@ def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool=
             )
             print('Backing up source directory with', crayons.green('rsync {}'.format(rsync_args)))
             os.makedirs(full_dest_dir, exist_ok=True)
-            command = rsync[split(rsync_args)]
-            rv = command()
-            print(rv)
+            rsync[split(rsync_args)] & FG
 
 
 @click.command()
