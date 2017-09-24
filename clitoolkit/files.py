@@ -140,7 +140,7 @@ def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool=
                 src=src_dir,
                 dest=full_dest_dir,
             )
-            print('Backing up source directory with', crayons.green('rsync {}'.format(rsync_args)))
+            print(crayons.green('rsync {}'.format(rsync_args)))
             os.makedirs(full_dest_dir, exist_ok=True)
             rsync[split(rsync_args)] & FG
 
