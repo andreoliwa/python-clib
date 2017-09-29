@@ -3,12 +3,11 @@
 import os
 from shlex import split
 from subprocess import call, check_output
-from typing import List
+from typing import List, Tuple
 
 import click
 import crayons
-from plumbum import FG
-from plumbum.cmd import rsync
+from plumbum import FG, RETCODE
 
 from clitoolkit import CONFIG, LOGGER, read_config, save_config
 
@@ -126,6 +125,8 @@ def pycharm_cli(files):
 
 def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool=False, kill: bool=False):
     """Synchronize a source directory with a destination."""
+    # Import locally, so we get an error only in this function, and not in other functions of this module.
+    from plumbum.cmd import rsync
     from clitoolkit.environments import RSYNC_EXCLUDE
 
     for dest_dir in destination_dirs:
@@ -161,5 +162,31 @@ def backup_full(ctx, dry_run: bool, kill: bool, pictures: bool):
         print(ctx.get_help())
 
 
-if __name__ == '__main__':
-    backup_full()
+@click.command()
+@click.option('--clean', '-c', default=False, is_flag=True, help='Clean pytest directory first')
+@click.option('--failed', '-f', default=False, is_flag=True, help='Run only failed tests')
+@click.argument('qualified_class_names', nargs=-1)
+def pytest_run(clean: bool, failed: bool, qualified_class_names: Tuple[str]):
+    """Run pytest with some shortcut options."""
+    # Import locally, so we get an error only in this function, and not in other functions of this module.
+    from plumbum.cmd import time as time_cmd, rm
+
+    if clean:
+        print(crayons.green('Removing .pytest directory', bold=True))
+        rm['-rf', '.pytest'] & FG
+
+    pytest_plus_args = ['pytest', '-vv', '--run-intermittent']
+    if failed:
+        pytest_plus_args.append('--failed')
+
+    if qualified_class_names:
+        targets = []
+        for name in qualified_class_names:
+            parts = name.split('.')
+            targets.append('{}.py::{}'.format('/'.join(parts[0:-1]), parts[-1]))
+        pytest_plus_args.append('-s')
+        pytest_plus_args.extend(targets)
+
+    print(crayons.green('Running tests: time {}'.format(' '.join(pytest_plus_args)), bold=True))
+    rv = time_cmd[pytest_plus_args] & RETCODE(FG=True)
+    exit(rv)

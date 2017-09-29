@@ -7,6 +7,15 @@ Merged with https://github.com/kennethreitz/setup.py
 
 Note: To use the 'upload' functionality of this file, you must:
 $ pip install twine
+
+To reload the entry points on the development environment, activate the virtualenv and reinstall in dev mode:
+
+.. code-block:: bash
+
+    cd ~/Code/python-clitoolkit
+    pyenv activate tools3
+    pip install -e .
+    pyenv deactivate
 """
 import io
 import os
@@ -147,9 +156,10 @@ setup(
     test_suite='tests',
     tests_require=dev_requirements,
     entry_points={'console_scripts': [
+        'backup-full = {}.files:backup_full'.format(NAME),
         'git-local-prune = {}.git:prune_local_branches'.format(NAME),
         'git-vacuum = {}.git:vacuum'.format(NAME),
         'pycharm-cli = {}.files:pycharm_cli'.format(NAME),
-        'backup-full = {}.files:backup_full'.format(NAME),
+        'pytest-run = {}.files:pytest_run'.format(NAME),
     ]},
 )
