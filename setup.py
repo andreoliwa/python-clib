@@ -161,5 +161,6 @@ setup(
         'git-vacuum = {}.git:vacuum'.format(NAME),
         'pycharm-cli = {}.files:pycharm_cli'.format(NAME),
         'pytest-run = {}.files:pytest_run'.format(NAME),
+        'vlc-monitor = {}.media:vlc_monitor'.format(NAME),
     ]},
 )

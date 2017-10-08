@@ -8,6 +8,7 @@ from datetime import datetime
 from subprocess import CalledProcessError, check_output
 from time import sleep
 
+import click
 from sqlalchemy import or_
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -268,3 +269,21 @@ def query_not_logged_videos():
     """
     return query_to_list(SESSION_INSTANCE.query(Video).outerjoin(
         WindowLog, Video.video_id == WindowLog.video_id).filter(WindowLog.video_id.is_(None)))
+
+
+@click.command()
+@click.argument('videos', nargs=-1)
+@click.pass_context
+def vlc_monitor(ctx, videos):
+    """Open VLC with the requested videos.
+
+    Separate file names with commas.
+    Partial file names can be used.
+    """
+    if not videos:
+        print(ctx.get_help())
+        return
+
+    partial_names_list = ' '.join(videos).split(',')
+    add_to_playlist(query_videos_by_path(partial_names_list))
+    window_monitor()
