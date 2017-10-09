@@ -163,15 +163,16 @@ def backup_full(ctx, dry_run: bool, kill: bool, pictures: bool):
 
 
 @click.command()
-@click.option('--clean', '-c', default=False, is_flag=True, help='Clean pytest directory first')
+@click.option('--delete', '-d', default=False, is_flag=True, help='Delete pytest directory first')
 @click.option('--failed', '-f', default=False, is_flag=True, help='Run only failed tests')
-@click.argument('qualified_class_names', nargs=-1)
-def pytest_run(clean: bool, failed: bool, qualified_class_names: Tuple[str]):
+@click.option('--count', '-c', default=0, help='Repeat the same test several times')
+@click.argument('class_names_or_args', nargs=-1)
+def pytest_run(delete: bool, failed: bool, count: int, class_names_or_args: Tuple[str]):
     """Run pytest with some shortcut options."""
     # Import locally, so we get an error only in this function, and not in other functions of this module.
     from plumbum.cmd import time as time_cmd, rm
 
-    if clean:
+    if delete:
         print(crayons.green('Removing .pytest directory', bold=True))
         rm['-rf', '.pytest'] & FG
 
@@ -179,11 +180,18 @@ def pytest_run(clean: bool, failed: bool, qualified_class_names: Tuple[str]):
     if failed:
         pytest_plus_args.append('--failed')
 
-    if qualified_class_names:
+    if count:
+        pytest_plus_args.extend(['--count', str(count)])
+
+    if class_names_or_args:
         targets = []
-        for name in qualified_class_names:
-            parts = name.split('.')
-            targets.append('{}.py::{}'.format('/'.join(parts[0:-1]), parts[-1]))
+        for name in class_names_or_args:
+            if '.' in name:
+                parts = name.split('.')
+                targets.append('{}.py::{}'.format('/'.join(parts[0:-1]), parts[-1]))
+            else:
+                # It might be an extra argument, let's just append it
+                targets.append(name)
         pytest_plus_args.append('-s')
         pytest_plus_args.extend(targets)
 
