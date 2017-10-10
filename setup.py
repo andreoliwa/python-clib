@@ -155,12 +155,13 @@ setup(
     },
     test_suite='tests',
     tests_require=dev_requirements,
-    entry_points={'console_scripts': [
-        'backup-full = {}.files:backup_full'.format(NAME),
-        'git-local-prune = {}.git:prune_local_branches'.format(NAME),
-        'git-vacuum = {}.git:vacuum'.format(NAME),
-        'pycharm-cli = {}.files:pycharm_cli'.format(NAME),
-        'pytest-run = {}.files:pytest_run'.format(NAME),
-        'vlc-monitor = {}.media:vlc_monitor'.format(NAME),
-    ]},
+    entry_points="""
+        [console_scripts]
+        backup-full = {module_name}.files:backup_full
+        git-local-prune = {module_name}.git:prune_local_branches
+        git-vacuum = {module_name}.git:vacuum
+        pycharm-cli = {module_name}.files:pycharm_cli
+        pytest-run = {module_name}.files:pytest_run
+        vlc-monitor = {module_name}.media:vlc_monitor
+    """.format(module_name=NAME),
 )
