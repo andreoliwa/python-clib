@@ -272,18 +272,22 @@ def query_not_logged_videos():
 
 
 @click.command()
+@click.option('--new', '-n', default=False, is_flag=True, help='Add new videos (not logged yet)')
 @click.argument('videos', nargs=-1)
 @click.pass_context
-def vlc_monitor(ctx, videos):
+def vlc_monitor(ctx, new: bool, videos):
     """Open VLC with the requested videos.
 
     Separate file names with commas.
     Partial file names can be used.
     """
-    if not videos:
+    if not videos and not new:
         print(ctx.get_help())
         return
 
-    partial_names_list = ' '.join(videos).split(',')
-    add_to_playlist(query_videos_by_path(partial_names_list))
+    if videos:
+        partial_names_list = ' '.join(videos).split(',')
+        add_to_playlist(query_videos_by_path(partial_names_list))
+    if new:
+        add_to_playlist(query_not_logged_videos())
     window_monitor()
