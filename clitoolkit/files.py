@@ -166,8 +166,9 @@ def backup_full(ctx, dry_run: bool, kill: bool, pictures: bool):
 @click.option('--delete', '-d', default=False, is_flag=True, help='Delete pytest directory first')
 @click.option('--failed', '-f', default=False, is_flag=True, help='Run only failed tests')
 @click.option('--count', '-c', default=0, help='Repeat the same test several times')
+@click.option('--reruns', '-r', default=0, help='Re-run a failed test several times')
 @click.argument('class_names_or_args', nargs=-1)
-def pytest_run(delete: bool, failed: bool, count: int, class_names_or_args: Tuple[str]):
+def pytest_run(delete: bool, failed: bool, count: int, reruns: int, class_names_or_args: Tuple[str]):
     """Run pytest with some shortcut options."""
     # Import locally, so we get an error only in this function, and not in other functions of this module.
     from plumbum.cmd import time as time_cmd, rm
@@ -177,6 +178,8 @@ def pytest_run(delete: bool, failed: bool, count: int, class_names_or_args: Tupl
         rm['-rf', '.pytest'] & FG
 
     pytest_plus_args = ['pytest', '-vv', '--run-intermittent']
+    if reruns:
+        pytest_plus_args.extend(['--reruns', str(reruns)])
     if failed:
         pytest_plus_args.append('--failed')
 
