@@ -2,8 +2,7 @@
 """Database models, connection and events."""
 import os
 
-from sqlalchemy import (Column, DateTime, ForeignKey, Integer, String,
-                        create_engine, event)
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, create_engine, event
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
