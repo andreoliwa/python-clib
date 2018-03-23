@@ -41,11 +41,11 @@ here = os.path.abspath(os.path.dirname(__file__))
 # What packages are required for this module to be executed?
 with io.open(os.path.join(here, 'requirements/prod.txt'), encoding='utf-8') as f:
     lines = f.read()
-prod_requirements = [line for line in lines.split('\n') if '=' in line]
+prod_requirements = [line for line in lines.split('\n') if '=' in line and 'git+' not in line]
 
 with io.open(os.path.join(here, 'requirements/dev.txt'), encoding='utf-8') as f:
     lines = f.read()
-dev_requirements = [line for line in lines.split('\n') if '=' in line]
+dev_requirements = [line for line in lines.split('\n') if '=' in line and 'git+' not in line]
 dev_requirements.extend(prod_requirements)
 
 # Import the README and use it as the long-description.
