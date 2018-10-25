@@ -18,7 +18,7 @@ from clitoolkit.database import SESSION_INSTANCE, Video, WindowLog
 EXTENSIONS = ['.asf', '.avi', '.divx', '.f4v', '.flc', '.flv', '.m4v', '.mkv',
               '.mov', '.mp4', '.mpa', '.mpeg', '.mpg', '.ogv', '.wmv']
 MINIMUM_VIDEO_SIZE = 7 * 1000 * 1000  # 7 megabytes
-APPS = ['vlc.vlc', 'feh.feh', 'google-chrome', 'Chromium-browser.Chromium-browser', 'Navigator.Firefox']
+APPS = ['vlc.vlc', 'feh.feh', 'google-chrome', 'Chromium-browser.Chromium-browser', 'Navigator.Firefox', 'brave.brave']
 PIPEFILE = '/tmp/pipefile.tmp'
 LAST_ADDED_VIDEOS = []
 
