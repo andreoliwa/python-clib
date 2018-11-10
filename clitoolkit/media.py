@@ -15,11 +15,26 @@ from sqlalchemy.orm.exc import NoResultFound
 from clitoolkit import LOGGER, TIME_FORMAT, read_config
 from clitoolkit.database import SESSION_INSTANCE, Video, WindowLog
 
-EXTENSIONS = ['.asf', '.avi', '.divx', '.f4v', '.flc', '.flv', '.m4v', '.mkv',
-              '.mov', '.mp4', '.mpa', '.mpeg', '.mpg', '.ogv', '.wmv']
+EXTENSIONS = [
+    ".asf",
+    ".avi",
+    ".divx",
+    ".f4v",
+    ".flc",
+    ".flv",
+    ".m4v",
+    ".mkv",
+    ".mov",
+    ".mp4",
+    ".mpa",
+    ".mpeg",
+    ".mpg",
+    ".ogv",
+    ".wmv",
+]
 MINIMUM_VIDEO_SIZE = 7 * 1000 * 1000  # 7 megabytes
-APPS = ['vlc.vlc', 'feh.feh', 'google-chrome', 'Chromium-browser.Chromium-browser', 'Navigator.Firefox', 'brave.brave']
-PIPEFILE = '/tmp/pipefile.tmp'
+APPS = ["vlc.vlc", "feh.feh", "google-chrome", "Chromium-browser.Chromium-browser", "Navigator.Firefox", "brave.brave"]
+PIPEFILE = "/tmp/pipefile.tmp"
 LAST_ADDED_VIDEOS = []
 
 
@@ -29,9 +44,9 @@ def video_root_path():
     :return: Video root path.
     :raise ValueError: if the key is empty
     """
-    path = os.path.join(read_config('dirs', 'video_root', ''), '')
+    path = os.path.join(read_config("dirs", "video_root", ""), "")
     if not path:
-        raise ValueError('The video_root key is empty in config.ini')
+        raise ValueError("The video_root key is empty in config.ini")
     return path
 
 
@@ -44,14 +59,17 @@ def scan_video_files(ignore_paths=None, min_size=MINIMUM_VIDEO_SIZE):
     """
     ignore_paths = ignore_paths or []
     video_path = video_root_path()
-    all_files = [os.path.join(root, file).replace(video_path, '')
-                 for root, dirs, files in os.walk(video_path)
-                 for file in files if os.path.splitext(file)[1].lower() in EXTENSIONS]
+    all_files = [
+        os.path.join(root, file).replace(video_path, "")
+        for root, dirs, files in os.walk(video_path)
+        for file in files
+        if os.path.splitext(file)[1].lower() in EXTENSIONS
+    ]
     # http://stackoverflow.com/questions/18394147/recursive-sub-folder-search-and-return-files-in-a-list-python
     for index, partial_path in enumerate(all_files):
         full_path = os.path.join(video_path, partial_path)
         if index % 100 == 0:
-            LOGGER.info('File #%d: %s', index, full_path)
+            LOGGER.info("Scanning file #%d: %s", index, full_path)
 
         if any(ignore for ignore in ignore_paths if ignore in full_path):
             continue
@@ -64,7 +82,7 @@ def scan_video_files(ignore_paths=None, min_size=MINIMUM_VIDEO_SIZE):
             continue
 
         video = Video(path=partial_path, size=size)
-        LOGGER.info('Adding %s', video)
+        LOGGER.info("Adding %s", video)
         SESSION_INSTANCE.add(video)
     SESSION_INSTANCE.commit()
 
@@ -78,29 +96,29 @@ def list_windows():
     :return: Window titles grouped by application.
     :rtype: dict
     """
-    grep_args = ' -e '.join(APPS)
+    grep_args = " -e ".join(APPS)
     pipe = pipes.Template()
-    pipe.prepend('wmctrl -l -x', '.-')
-    pipe.append('grep -e {}'.format(grep_args), '--')
+    pipe.prepend("wmctrl -l -x", ".-")
+    pipe.append("grep -e {}".format(grep_args), "--")
     with pipe.open_r(PIPEFILE) as handle:
         lines = handle.read()
 
     windows = {app: [] for app in APPS}
-    for line in lines.split('\n'):
+    for line in lines.split("\n"):
         words = line.split()
         if words:
             app = words[2]
             if app not in windows.keys():
                 windows[app] = []
-            title = ' '.join(words[4:])
-            if app.startswith('vlc'):
-                title = ''
+            title = " ".join(words[4:])
+            if app.startswith("vlc"):
+                title = ""
                 open_files = list_vlc_open_files(False)
                 if open_files:
                     windows[app].extend(open_files)
                     continue
             windows[app].append(title)
-    return {key: value if value else [''] for key, value in windows.items()}
+    return {key: value if value else [""] for key, value in windows.items()}
 
 
 def list_vlc_open_files(full_path=True):
@@ -112,12 +130,13 @@ def list_vlc_open_files(full_path=True):
     """
     video_path = video_root_path()
     pipe = pipes.Template()
-    pipe.prepend('lsof -F n -c vlc 2>/dev/null', '.-')
-    pipe.append("grep '^n{}'".format(video_path), '--')
+    pipe.prepend("lsof -F n -c vlc 2>/dev/null", ".-")
+    pipe.append("grep '^n{}'".format(video_path), "--")
     with pipe.open_r(PIPEFILE) as handle:
         files = handle.read()
-    return [file[1:].replace(video_path, '') if not full_path else file[1:]
-            for file in files.strip().split('\n') if file]
+    return [
+        file[1:].replace(video_path, "") if not full_path else file[1:] for file in files.strip().split("\n") if file
+    ]
 
 
 def window_monitor(save_logs=True):
@@ -131,15 +150,15 @@ def window_monitor(save_logs=True):
     # TODO: Convert data from $HOME/.gtimelog/window-monitor.db
     last = {}
     monitor_start_time = datetime.now()
-    LOGGER.info('Starting the window monitor now (%s)...', monitor_start_time.strftime(TIME_FORMAT))
+    LOGGER.info("Starting the window monitor now (%s)...", monitor_start_time.strftime(TIME_FORMAT))
     if not save_logs:
-        LOGGER.error('Not saving logs to the database')
+        LOGGER.error("Not saving logs to the database")
     try:
         while True:
-            sleep(.2)
+            sleep(0.2)
 
             if not is_vlc_running():
-                LOGGER.error('Restarting VLC')
+                LOGGER.error("Restarting VLC")
                 add_to_playlist(LAST_ADDED_VIDEOS)
 
             for app, new_titles in list_windows().items():
@@ -161,7 +180,7 @@ def window_monitor(save_logs=True):
                     last[app][index] = (end_time, new_title)
 
                     # Save logs only after the first change of title
-                    old_title = last_info[1] if last_info else ''
+                    old_title = last_info[1] if last_info else ""
                     if old_title:
                         try:
                             video = SESSION_INSTANCE.query(Video).filter(Video.path == old_title).one()
@@ -169,15 +188,16 @@ def window_monitor(save_logs=True):
                         except NoResultFound:
                             video_id = None
 
-                        window_log = WindowLog(start_dt=start_time, end_dt=end_time, app_name=app,
-                                               title=old_title, video_id=video_id)
+                        window_log = WindowLog(
+                            start_dt=start_time, end_dt=end_time, app_name=app, title=old_title, video_id=video_id
+                        )
                         LOGGER.info(window_log)
                         if save_logs:
                             SESSION_INSTANCE.add(window_log)
                             SESSION_INSTANCE.commit()
 
                     if new_title:
-                        LOGGER.warning('%s Open window in %s: %s', end_time.strftime(TIME_FORMAT), app, new_title)
+                        LOGGER.warning("%s Open window in %s: %s", end_time.strftime(TIME_FORMAT), app, new_title)
     except KeyboardInterrupt:
         return
 
@@ -189,7 +209,7 @@ def is_vlc_running():
     :rtype: bool
     """
     try:
-        check_output(['pidof', 'vlc'])
+        check_output(["pidof", "vlc"])
         return True
     except CalledProcessError:
         return False
@@ -205,24 +225,26 @@ def add_to_playlist(videos):
     :rtype: bool
     """
     if not is_vlc_running():
-        os.system('$(which vlc) -q &')
+        os.system("$(which vlc) -q &")
         sleep(2)
 
     videos = [videos] if isinstance(videos, str) else videos
     os.chdir(video_root_path())
 
-    if sys.platform == 'darwin':
-        playlist = '/tmp/vlc_playlist.txt'
-        with open(playlist, mode='wt', encoding='utf-8') as handle:
-            handle.write('\0'.join(videos))
-        os.system('cat {playlist} | xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse'
-                  ' --no-playlist-autostart &'.format(playlist=playlist))
+    if sys.platform == "darwin":
+        playlist = "/tmp/vlc_playlist.txt"
+        with open(playlist, mode="wt", encoding="utf-8") as handle:
+            handle.write("\0".join(videos))
+        os.system(
+            "cat {playlist} | xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse"
+            " --no-playlist-autostart &".format(playlist=playlist)
+        )
     else:
         pipe = pipes.Template()
-        pipe.append('xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse --no-playlist-autostart', '--')
+        pipe.append("xargs -0 vlc --quiet --no-fullscreen --no-auto-preparse --no-playlist-autostart", "--")
         with pipe.open_w(PIPEFILE) as handle:
-            handle.write('\0'.join(videos))
-    LOGGER.info('%d videos added to the playlist.', len(videos))
+            handle.write("\0".join(videos))
+    LOGGER.info("%d videos added to the playlist.", len(videos))
 
     global LAST_ADDED_VIDEOS
     LAST_ADDED_VIDEOS = videos
@@ -245,7 +267,7 @@ def query_videos_by_path(search=None):
         conditions = []
         search = [search] if isinstance(search, str) else search
         for query_string in search:
-            clean_query = '%{}%'.format('%'.join(query_string.split()))
+            clean_query = "%{}%".format("%".join(query_string.split()))
             conditions.append(Video.path.like(clean_query))
         sa_filter = sa_filter.filter(or_(*conditions))
     return query_to_list(sa_filter)
@@ -267,26 +289,35 @@ def query_not_logged_videos():
     :return:
     :rtype: list
     """
-    return query_to_list(SESSION_INSTANCE.query(Video).outerjoin(
-        WindowLog, Video.video_id == WindowLog.video_id).filter(WindowLog.video_id.is_(None)))
+    return query_to_list(
+        SESSION_INSTANCE.query(Video)
+        .outerjoin(WindowLog, Video.video_id == WindowLog.video_id)
+        .filter(WindowLog.video_id.is_(None))
+    )
 
 
 @click.command()
-@click.option('--new', '-n', default=False, is_flag=True, help='Add new videos (not logged yet)')
-@click.argument('videos', nargs=-1)
+@click.option("--new", "-n", default=False, is_flag=True, help="Add new videos (not logged yet)")
+@click.option("--scan", "-s", metavar="CHOSEN_DIR1,CHOSEN_DIR2,...", help="Scan for videos, ignoring chosen dirs")
+@click.argument("videos", nargs=-1)
 @click.pass_context
-def vlc_monitor(ctx, new: bool, videos):
+def vlc_monitor(ctx, new: bool, scan: str, videos):
     """Open VLC with the requested videos.
 
     Separate file names with commas.
     Partial file names can be used.
     """
-    if not videos and not new:
+    if not videos and not new and not scan:
         print(ctx.get_help())
-        return
+        exit()
+
+    if scan:
+        ignore_dirs = scan.split(",")
+        scan_video_files(ignore_dirs)
+        exit()
 
     if videos:
-        partial_names_list = ' '.join(videos).split(',')
+        partial_names_list = " ".join(videos).split(",")
         add_to_playlist(query_videos_by_path(partial_names_list))
     if new:
         add_to_playlist(query_not_logged_videos())
