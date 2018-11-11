@@ -200,16 +200,20 @@ def window_monitor(dry_run=False):
                             video_id = video.video_id
                         except NoResultFound:
                             video_id = None
-                        if delete_video:
-                            LOGGER.error(f"Deleting video_id: {video_id} video: {video.path}")
+                        if delete_video and video_id:
+                            query = SESSION_INSTANCE.query(WindowLog).filter(WindowLog.video_id == video_id)
+                            LOGGER.error(f"Deleting video_id: {video_id} log_count={query.count()} video: {video.path}")
+                            if not dry_run:
+                                query.update({'video_id': None})
+                                SESSION_INSTANCE.delete(video)
+                                SESSION_INSTANCE.commit()
+
                             video_file = Path(root_dir) / video.path
                             if video_file.exists():
                                 LOGGER.error(f"Deleting video file: {video_file}")
                                 if not dry_run:
                                     video_file.unlink()
-                            if not dry_run:
-                                SESSION_INSTANCE.delete(video)
-                                SESSION_INSTANCE.commit()
+
                             video_id = None
                             delete_video = False
 
