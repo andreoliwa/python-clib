@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "clitoolkit"
+version = "0.9.0"
+description = "CLI tools and scripts to help in everyday life"
+authors = ["Augusto Wagner Andreoli <andreoliwa@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+argcomplete = "*"
+click = "*"
+colorlog = "*"
+crayons = "*"
+requests = "*"
+SQLAlchemy = "*"
+plumbum = "*"
+prettyconf = "*"
+
+[tool.poetry.dev-dependencies]
+coverage = "*"
+docutils = "*"
+nitpick = "*"
+pytest-cov = "*"
+pytest = "*"
+Sphinx = "*"
+tox = "*"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
