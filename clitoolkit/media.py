@@ -7,6 +7,8 @@ from collections import defaultdict
 from datetime import datetime
 from subprocess import CalledProcessError, check_output
 from time import sleep
+from select import select
+from pathlib import Path
 
 import click
 from sqlalchemy import or_
@@ -139,23 +141,34 @@ def list_vlc_open_files(full_path=True):
     ]
 
 
-def window_monitor(save_logs=True):
+def window_monitor(dry_run=False):
     """Loop to monitor open windows of the selected applications.
 
     An app can have multiple windows, each one with its title.
 
-    :param save_logs: True to save logs (default), False to only display what would be saved (dry run).
+    :param dry_run: True to only display what would be saved, without saving anything to the database.
     :return:
     """
     # TODO: Convert data from $HOME/.gtimelog/window-monitor.db
     last = {}
     monitor_start_time = datetime.now()
+    root_dir = video_root_path()
     LOGGER.info("Starting the window monitor now (%s)...", monitor_start_time.strftime(TIME_FORMAT))
-    if not save_logs:
+    if dry_run:
         LOGGER.error("Not saving logs to the database")
     try:
+        delete_video = False
         while True:
-            sleep(0.2)
+            i, o, e = select([sys.stdin], [], [], 0.2)
+            for s in i:
+                keypress = s.readline().strip()
+                if keypress == "d":
+                    delete_video = True
+                    LOGGER.error(f"The current video will be deleted when stopped or the next video starts")
+                if keypress == "c":
+                    delete_video = False
+                    LOGGER.info(f"All previous commands cancelled")
+            # sleep(0.2)
 
             if not is_vlc_running():
                 LOGGER.error("Restarting VLC")
@@ -187,17 +200,31 @@ def window_monitor(save_logs=True):
                             video_id = video.video_id
                         except NoResultFound:
                             video_id = None
+                        if delete_video:
+                            LOGGER.error(f"Deleting video_id: {video_id} video: {video.path}")
+                            video_file = Path(root_dir) / video.path
+                            if video_file.exists():
+                                LOGGER.error(f"Deleting video file: {video_file}")
+                                if not dry_run:
+                                    video_file.unlink()
+                            if not dry_run:
+                                SESSION_INSTANCE.delete(video)
+                                SESSION_INSTANCE.commit()
+                            video_id = None
+                            delete_video = False
 
                         window_log = WindowLog(
                             start_dt=start_time, end_dt=end_time, app_name=app, title=old_title, video_id=video_id
                         )
                         LOGGER.info(window_log)
-                        if save_logs:
+                        if not dry_run:
                             SESSION_INSTANCE.add(window_log)
                             SESSION_INSTANCE.commit()
 
                     if new_title:
                         LOGGER.warning("%s Open window in %s: %s", end_time.strftime(TIME_FORMAT), app, new_title)
+                        LOGGER.warning("d: Delete a video / c: Cancel command")
+                        delete_video = False
     except KeyboardInterrupt:
         return
 
@@ -299,9 +326,10 @@ def query_not_logged_videos():
 @click.command()
 @click.option("--new", "-n", default=False, is_flag=True, help="Add new videos (not logged yet)")
 @click.option("--scan", "-s", metavar="CHOSEN_DIR1,CHOSEN_DIR2,...", help="Scan for videos, ignoring chosen dirs")
+@click.option("-n", "--dry-run", is_flag=True, help="Dry-run, display but don't save logs to the database")
 @click.argument("videos", nargs=-1)
 @click.pass_context
-def vlc_monitor(ctx, new: bool, scan: str, videos):
+def vlc_monitor(ctx, new: bool, scan: str, dry_run: bool, videos):
     """Open VLC with the requested videos.
 
     Separate file names with commas.
@@ -312,13 +340,10 @@ def vlc_monitor(ctx, new: bool, scan: str, videos):
         exit()
 
     if scan:
-        ignore_dirs = scan.split(",")
-        scan_video_files(ignore_dirs)
-        exit()
-
+        scan_video_files(scan.split(","))
     if videos:
         partial_names_list = " ".join(videos).split(",")
         add_to_playlist(query_videos_by_path(partial_names_list))
     if new:
         add_to_playlist(query_not_logged_videos())
-    window_monitor()
+    window_monitor(dry_run)
