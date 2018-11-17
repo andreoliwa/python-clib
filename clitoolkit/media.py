@@ -5,17 +5,18 @@ import pipes
 import sys
 from collections import defaultdict
 from datetime import datetime
+from pathlib import Path
+from select import select
 from subprocess import CalledProcessError, check_output
 from time import sleep
-from select import select
-from pathlib import Path
+from typing import List
 
 import click
-from sqlalchemy import or_
-from sqlalchemy.orm.exc import NoResultFound
 
 from clitoolkit import LOGGER, TIME_FORMAT, read_config
 from clitoolkit.database import SESSION_INSTANCE, Video, WindowLog
+from sqlalchemy import or_
+from sqlalchemy.orm.exc import NoResultFound
 
 EXTENSIONS = [
     ".asf",
@@ -37,7 +38,7 @@ EXTENSIONS = [
 MINIMUM_VIDEO_SIZE = 7 * 1000 * 1000  # 7 megabytes
 APPS = ["vlc.vlc", "feh.feh", "google-chrome", "Chromium-browser.Chromium-browser", "Navigator.Firefox", "brave.brave"]
 PIPEFILE = "/tmp/pipefile.tmp"
-LAST_ADDED_VIDEOS = []
+LAST_ADDED_VIDEOS: List[str] = []
 
 
 def video_root_path():
@@ -61,6 +62,7 @@ def scan_video_files(ignore_paths=None, min_size=MINIMUM_VIDEO_SIZE):
     """
     ignore_paths = ignore_paths or []
     video_path = video_root_path()
+    print(f"Scanning {video_path}...", end="", flush=True)
     all_files = [
         os.path.join(root, file).replace(video_path, "")
         for root, dirs, files in os.walk(video_path)
@@ -71,7 +73,7 @@ def scan_video_files(ignore_paths=None, min_size=MINIMUM_VIDEO_SIZE):
     for index, partial_path in enumerate(all_files):
         full_path = os.path.join(video_path, partial_path)
         if index % 100 == 0:
-            LOGGER.info("Scanning file #%d: %s", index, full_path)
+            print(".", end="", flush=True)
 
         if any(ignore for ignore in ignore_paths if ignore in full_path):
             continue
@@ -204,7 +206,7 @@ def window_monitor(dry_run=False):
                             query = SESSION_INSTANCE.query(WindowLog).filter(WindowLog.video_id == video_id)
                             LOGGER.error(f"Deleting video_id: {video_id} log_count={query.count()} video: {video.path}")
                             if not dry_run:
-                                query.update({'video_id': None})
+                                query.update({"video_id": None})
                                 SESSION_INSTANCE.delete(video)
                                 SESSION_INSTANCE.commit()
 
@@ -283,7 +285,7 @@ def add_to_playlist(videos):
     return True
 
 
-def query_videos_by_path(search=None):
+def query_videos_by_path(search=None) -> List[str]:
     """Return videos from the database based on a query string.
 
     All spaces in the query string will be converted to %, to be used in a LIKE expression.
@@ -304,7 +306,7 @@ def query_videos_by_path(search=None):
     return query_to_list(sa_filter)
 
 
-def query_to_list(sa_filter):
+def query_to_list(sa_filter) -> List[str]:
     """Output a SQLAlchemy Video query as a list of videos with full path.
 
     :param sa_filter: SQLAlchemy query filter.
@@ -339,10 +341,6 @@ def vlc_monitor(ctx, new: bool, scan: str, dry_run: bool, videos):
     Separate file names with commas.
     Partial file names can be used.
     """
-    if not videos and not new and not scan:
-        print(ctx.get_help())
-        exit()
-
     if scan:
         scan_video_files(scan.split(","))
     if videos:
@@ -350,4 +348,8 @@ def vlc_monitor(ctx, new: bool, scan: str, dry_run: bool, videos):
         add_to_playlist(query_videos_by_path(partial_names_list))
     if new:
         add_to_playlist(query_not_logged_videos())
-    window_monitor(dry_run)
+    if videos or new:
+        window_monitor(dry_run)
+    elif not scan:
+        print(ctx.get_help())
+        exit()
