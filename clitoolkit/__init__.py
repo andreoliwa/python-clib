@@ -7,13 +7,13 @@ from configparser import ConfigParser
 from colorlog import ColoredFormatter
 
 
-__author__ = 'Wagner Augusto Andreoli'
-__email__ = 'andreoliwa@gmail.com'
+__author__ = "Wagner Augusto Andreoli"
+__email__ = "andreoliwa@gmail.com"
 
-CONFIG_DIR = os.path.expanduser(os.path.join('~/.config', os.path.basename(os.path.dirname(__file__)), ''))
+CONFIG_DIR = os.path.expanduser(os.path.join("~/.config", os.path.basename(os.path.dirname(__file__)), ""))
 os.makedirs(CONFIG_DIR, exist_ok=True)
 
-CONFIG_FILENAME = os.path.join(CONFIG_DIR, 'config.ini')
+CONFIG_FILENAME = os.path.join(CONFIG_DIR, "config.ini")
 CONFIG = ConfigParser()
 # http://stackoverflow.com/questions/19359556/configparser-reads-capital-keys-and-make-them-lower-case
 CONFIG.optionxform = str
@@ -25,17 +25,22 @@ if not LOGGER.hasHandlers():
     CHANNEL = logging.StreamHandler()
     CHANNEL.setFormatter(
         ColoredFormatter(
-            '%(log_color)s%(levelname)-8s%(reset)s %(blue)s%(message)s', datefmt=None,
-            reset=True, log_colors={'DEBUG': 'cyan',
-                                    'INFO': 'green',
-                                    'WARNING': 'yellow',
-                                    'ERROR': 'red',
-                                    'CRITICAL': 'red,bg_white'},
-            secondary_log_colors={}
-        ))
+            "%(log_color)s%(levelname)-8s%(reset)s %(blue)s%(message)s",
+            datefmt=None,
+            reset=True,
+            log_colors={
+                "DEBUG": "cyan",
+                "INFO": "green",
+                "WARNING": "yellow",
+                "ERROR": "red",
+                "CRITICAL": "red,bg_white",
+            },
+            secondary_log_colors={},
+        )
+    )
     LOGGER.addHandler(CHANNEL)
 
-TIME_FORMAT = '%H:%M:%S'
+TIME_FORMAT = "%H:%M:%S"
 
 
 def read_config(section_name, key_name, default=None):
@@ -67,5 +72,5 @@ def read_config(section_name, key_name, default=None):
 def save_config():
     """Save the config file."""
     os.makedirs(os.path.dirname(CONFIG_FILENAME), exist_ok=True)
-    with open(CONFIG_FILENAME, 'w') as handle:
+    with open(CONFIG_FILENAME, "w") as handle:
         CONFIG.write(handle)
