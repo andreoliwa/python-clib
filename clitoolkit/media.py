@@ -12,11 +12,11 @@ from time import sleep
 from typing import List
 
 import click
+from sqlalchemy import or_
+from sqlalchemy.orm.exc import NoResultFound
 
 from clitoolkit import LOGGER, TIME_FORMAT, read_config
 from clitoolkit.database import SESSION_INSTANCE, Video, WindowLog
-from sqlalchemy import or_
-from sqlalchemy.orm.exc import NoResultFound
 
 EXTENSIONS = [
     ".asf",
