@@ -2,6 +2,6 @@
 Usage
 ========
 
-To use clitoolkit in a project::
+To use clit in a project::
 
-    import clitoolkit
+    import clit

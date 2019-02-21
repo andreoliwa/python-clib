@@ -1,7 +1,7 @@
-clitoolkit
+clit
 ==========
 
 .. toctree::
    :maxdepth: 4
 
-   clitoolkit
+   clit

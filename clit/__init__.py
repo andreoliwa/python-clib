@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Main module for clitoolkit."""
+"""Main module for clit."""
 import os
 import logging
 from configparser import ConfigParser
@@ -7,7 +7,7 @@ from configparser import ConfigParser
 from colorlog import ColoredFormatter
 
 
-__author__ = "Wagner Augusto Andreoli"
+__author__ = "W. Augusto Andreoli"
 __email__ = "andreoliwa@gmail.com"
 
 CONFIG_DIR = os.path.expanduser(os.path.join("~/.config", os.path.basename(os.path.dirname(__file__)), ""))

@@ -1,37 +1,37 @@
-clitoolkit package
+clit package
 ==================
 
 Submodules
 ----------
 
-clitoolkit.database module
+clit.database module
 --------------------------
 
-.. automodule:: clitoolkit.database
+.. automodule:: clit.database
     :members:
     :undoc-members:
     :show-inheritance:
 
-clitoolkit.files module
+clit.files module
 -----------------------
 
-.. automodule:: clitoolkit.files
+.. automodule:: clit.files
     :members:
     :undoc-members:
     :show-inheritance:
 
-clitoolkit.git module
+clit.git module
 ---------------------
 
-.. automodule:: clitoolkit.git
+.. automodule:: clit.git
     :members:
     :undoc-members:
     :show-inheritance:
 
-clitoolkit.media module
+clit.media module
 -----------------------
 
-.. automodule:: clitoolkit.media
+.. automodule:: clit.media
     :members:
     :undoc-members:
     :show-inheritance:
@@ -40,7 +40,7 @@ clitoolkit.media module
 Module contents
 ---------------
 
-.. automodule:: clitoolkit
+.. automodule:: clit
     :members:
     :undoc-members:
     :show-inheritance:
