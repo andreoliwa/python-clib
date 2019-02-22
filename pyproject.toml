@@ -20,9 +20,8 @@ classifiers = [
 ]
 
 # TODO This is still not working properly; the scripts are created but not added to the PATH. Temporary workaround:
-# Every time the scripts below change, setup.py has to be regenerated like described below.
-# Regenerate setup.py based on this .toml file with these commands:
-# poetry build && tar -xvz --strip-components 1 -f dist/*.gz */setup.py && rm -rf dist/
+# Every time the scripts below change, run:
+# poetry run generate-setup-py
 [tool.poetry.scripts]
 backup-full = "clit.files:backup_full"
 git-local-prune = "clit.git:prune_local_branches"
@@ -30,6 +29,7 @@ git-vacuum = "clit.git:vacuum"
 pycharm-cli = "clit.files:pycharm_cli"
 pytest-run = "clit.files:pytest_run"
 pypi = "clit.dev:pypi"
+poetry-setup-py = "clit.dev:poetry_setup_py"
 
 [tool.poetry.dependencies]
 python = "^3.6 || ^3.7"

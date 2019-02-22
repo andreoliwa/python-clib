@@ -16,7 +16,7 @@ os.makedirs(CONFIG_DIR, exist_ok=True)
 CONFIG_FILENAME = os.path.join(CONFIG_DIR, "config.ini")
 CONFIG = ConfigParser()
 # http://stackoverflow.com/questions/19359556/configparser-reads-capital-keys-and-make-them-lower-case
-CONFIG.optionxform = str
+CONFIG.optionxform = str  # type: ignore
 CONFIG.read(CONFIG_FILENAME)
 
 LOGGER = logging.getLogger(__name__)

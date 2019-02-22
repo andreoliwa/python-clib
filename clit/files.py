@@ -151,7 +151,8 @@ def backup_full(ctx, dry_run: bool, kill: bool, pictures: bool):
 def shell(command_line, quiet=False, return_lines=False, **kwargs):
     """Print and run a shell command."""
     if not quiet:
-        print("$ {}".format(command_line))
+        click.secho("$ ", fg="magenta", nl=False)
+        click.secho(command_line, fg="yellow")
     if return_lines:
         kwargs.setdefault("stdout", PIPE)
 
@@ -163,7 +164,7 @@ def shell(command_line, quiet=False, return_lines=False, **kwargs):
     return stdout.split("\n") if stdout else []
 
 
-def shell_find(command_line, **kwargs):
+def shell_find(command_line, **kwargs) -> List[str]:
     """Run a find command using the shell, and return its output as a list."""
     if not command_line.startswith("find"):
         command_line = f"find {command_line}"

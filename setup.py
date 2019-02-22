@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
-"""
-This file was generated manually.
-
-Check [tool.poetry.scripts] on pyproject.toml for instructions on how to regenerate it.
-"""
+"""NOTICE: This file was generated automatically by the command: poetry-setup-py."""
 from distutils.core import setup
 
 packages = ["clit"]
 
 package_data = {"": ["*"]}
 
-install_requires = ["SQLAlchemy", "argcomplete", "click", "colorlog", "crayons", "plumbum", "prettyconf", "requests"]
+install_requires = ["SQLAlchemy", "argcomplete", "click", "colorlog", "plumbum", "prettyconf", "requests"]
 
 entry_points = {
     "console_scripts": [
         "backup-full = clit.files:backup_full",
         "git-local-prune = clit.git:prune_local_branches",
         "git-vacuum = clit.git:vacuum",
+        "poetry-setup-py = clit.dev:poetry_setup_py",
         "pycharm-cli = clit.files:pycharm_cli",
+        "pypi = clit.dev:pypi",
         "pytest-run = clit.files:pytest_run",
     ]
 }
@@ -38,4 +36,4 @@ setup_kwargs = {
 }
 
 
-setup(**setup_kwargs)
+setup(**setup_kwargs)  # type: ignore

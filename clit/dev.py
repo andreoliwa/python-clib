@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from shutil import rmtree
 from subprocess import call, check_output
+from textwrap import dedent
 from typing import Tuple
 
 import click
@@ -167,3 +168,28 @@ def full(part):
 def changelog():
     """Preview the changelog."""
     shell(f"{PyPICommands.CHANGELOG} -u | less")
+
+
+@click.command()
+def poetry_setup_py():
+    """Use poetry to generate a setup.py file from pyproject.toml."""
+    shell("poetry build")
+    shell("tar -xvzf dist/*.gz --strip-components 1 */setup.py")
+    shell("black setup.py")
+
+    setup_py_path: Path = Path.cwd() / "setup.py"
+    lines = setup_py_path.read_text().split("\n")
+    lines.insert(
+        1,
+        dedent(
+            '''
+        """NOTICE: This file was generated automatically by the command: poetry-setup-py."""
+    '''
+        ).strip(),
+    )
+
+    # Add a hint so mypy ignores the setup() line
+    lines[-2] += "  # type: ignore"
+
+    setup_py_path.write_text("\n".join(lines))
+    click.secho("setup.py generated!", fg="green")
