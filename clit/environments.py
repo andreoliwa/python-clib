@@ -4,7 +4,7 @@ from typing import List  # noqa
 
 from prettyconf import config
 
-from libwaa.prettyconf import cast_to_directory_list
+from clit.config import cast_to_directory_list
 
 config.starting_path = os.path.expanduser("~/.config/clit")
 

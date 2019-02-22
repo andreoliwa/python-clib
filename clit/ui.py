@@ -19,3 +19,8 @@ def notify(title, message):
                 Path(__file__).name, title, message
             )
         )
+
+
+def prompt(message: str) -> None:
+    """Display a prompt with a message."""
+    input(f"{message}\nPress ENTER to continue or Ctrl-C to abort")

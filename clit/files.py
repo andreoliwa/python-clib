@@ -9,7 +9,6 @@ from time import sleep
 from typing import List
 
 import click
-import crayons
 from plumbum import FG
 
 from clit import CONFIG, LOGGER, read_config, save_config
@@ -123,11 +122,11 @@ def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool 
             rsync_args = "{dry_run}{kill}-trOlhDuzv --modify-window=2 --progress {exclude} {src}/ {dest}/".format(
                 dry_run="-n " if dry_run else "",
                 kill="--del " if kill else "",
-                exclude=" ".join(["--exclude={}".format(e) for e in RSYNC_EXCLUDE]),
+                exclude=" ".join([f"--exclude={e}" for e in RSYNC_EXCLUDE]),
                 src=src_dir,
                 dest=full_dest_dir,
             )
-            print(crayons.green("rsync {}".format(rsync_args)))
+            click.secho(f"rsync {rsync_args}", fg="green")
             os.makedirs(full_dest_dir, exist_ok=True)
             rsync[split(rsync_args)] & FG
 
@@ -140,12 +139,12 @@ def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool 
 def backup_full(ctx, dry_run: bool, kill: bool, pictures: bool):
     """Perform all backups in a single script."""
     if pictures:
-        print(crayons.green("Pictures backup", bold=True))
+        click.secho("Pictures backup", bold=True, fg="green")
         from clit.environments import PICTURE_DIRS, BACKUP_DIRS
 
         sync_dir(PICTURE_DIRS, BACKUP_DIRS, dry_run, kill)
     else:
-        print(crayons.red("Choose one of the options below."))
+        click.secho("Choose one of the options below.", fg="red")
         print(ctx.get_help())
 
 
