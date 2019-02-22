@@ -30,6 +30,7 @@ pycharm-cli = "clit.dev:pycharm_cli"
 xpytest = "clit.dev:extra_pytest"
 pypi = "clit.dev:pypi"
 xpoetry = "clit.dev:extra_poetry"
+xpostgres = "clit.db:extra_postgres"
 
 [tool.poetry.dependencies]
 python = "^3.6 || ^3.7"

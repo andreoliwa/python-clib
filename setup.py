@@ -25,6 +25,7 @@ entry_points = {
         "pycharm-cli = clit.dev:pycharm_cli",
         "pypi = clit.dev:pypi",
         "xpoetry = clit.dev:extra_poetry",
+        "xpostgres = clit.db:extra_postgres",
         "xpytest = clit.dev:extra_pytest",
     ]
 }

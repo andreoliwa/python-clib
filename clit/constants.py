@@ -12,3 +12,4 @@ CONFIG_DIR = Path("~/.config/dotfiles/").expanduser()
 # ___ Error on setup of test_name ___
 # ___ test_name[Parameter] ___
 TEST_NAMES_REGEX = re.compile(r"___ .*(test[^\[\] ]+)[\[\]A-Za-z]* ___")
+POSTGRES_DOCKER_CONTAINER_NAME = "postgres10"
