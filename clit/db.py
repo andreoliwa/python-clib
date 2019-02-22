@@ -3,9 +3,10 @@ import argparse
 from pathlib import Path
 from typing import List, Optional
 
-from clit.constants import POSTGRES_DOCKER_CONTAINER_NAME
 from clit.docker import DockerContainer
 from clit.files import existing_directory_type, existing_file_type, shell
+
+POSTGRES_DOCKER_CONTAINER_NAME = "postgres10"
 
 
 class DatabaseServer:

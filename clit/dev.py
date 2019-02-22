@@ -1,5 +1,6 @@
 """Development helpers."""
 import os
+import re
 from pathlib import Path
 from shutil import rmtree
 from subprocess import call, check_output
@@ -10,9 +11,16 @@ import click
 from plumbum import FG, RETCODE
 from requests_html import HTMLSession
 
-from clit.constants import PYCHARM_MACOS_APP_PATH, TEST_NAMES_REGEX
 from clit.files import shell
 from clit.ui import prompt
+
+# Possible formats for tests:
+# ___ test_name ___
+# ___ Error on setup of test_name ___
+# ___ test_name[Parameter] ___
+TEST_NAMES_REGEX = re.compile(r"___ .*(test[^\[\] ]+)[\[\]A-Za-z]* ___")
+
+PYCHARM_MACOS_APP_PATH = Path("/Applications/PyCharm.app/Contents/MacOS/pycharm")
 
 
 @click.command()
@@ -222,7 +230,7 @@ def setup_py():
         1,
         dedent(
             '''
-        """NOTICE: This file was generated automatically by the command: poetry-setup-py."""
+        """NOTICE: This file was generated automatically by the command: xpoetry setup-py."""
     '''
         ).strip(),
     )

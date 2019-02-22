@@ -24,13 +24,14 @@ classifiers = [
 # poetry run generate-setup-py
 [tool.poetry.scripts]
 backup-full = "clit.files:backup_full"
+docker-find = "clit.docker:docker_find"
 git-local-prune = "clit.git:prune_local_branches"
 git-vacuum = "clit.git:vacuum"
 pycharm-cli = "clit.dev:pycharm_cli"
-xpytest = "clit.dev:extra_pytest"
 pypi = "clit.dev:pypi"
 xpoetry = "clit.dev:extra_poetry"
 xpostgres = "clit.db:extra_postgres"
+xpytest = "clit.dev:extra_pytest"
 
 [tool.poetry.dependencies]
 python = "^3.6 || ^3.7"

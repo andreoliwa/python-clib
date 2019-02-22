@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""NOTICE: This file was generated automatically by the command: poetry-setup-py."""
+"""NOTICE: This file was generated automatically by the command: xpoetry setup-py."""
 from distutils.core import setup
 
 packages = ["clit"]
@@ -20,6 +20,7 @@ install_requires = [
 entry_points = {
     "console_scripts": [
         "backup-full = clit.files:backup_full",
+        "docker-find = clit.docker:docker_find",
         "git-local-prune = clit.git:prune_local_branches",
         "git-vacuum = clit.git:vacuum",
         "pycharm-cli = clit.dev:pycharm_cli",

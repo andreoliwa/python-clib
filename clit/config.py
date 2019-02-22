@@ -1,9 +1,10 @@
 """Configuration helpers."""
 import json
 import os
+from pathlib import Path
 from typing import List
 
-from clit.constants import CONFIG_DIR
+CONFIG_DIR = Path("~/.config/dotfiles/").expanduser()
 
 
 class JsonConfig:

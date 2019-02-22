@@ -12,7 +12,9 @@ import click
 from plumbum import FG
 
 from clit import CONFIG, LOGGER, read_config, save_config
-from clit.constants import SECTION_SYMLINKS_DIRS, SECTION_SYMLINKS_FILES
+
+SECTION_SYMLINKS_FILES = "symlinks/files"
+SECTION_SYMLINKS_DIRS = "symlinks/dirs"
 
 
 @click.command()
