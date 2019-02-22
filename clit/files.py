@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 """Files, symbolic links, operating system utilities."""
 import os
+from argparse import ArgumentTypeError
+from pathlib import Path
 from shlex import split
-from subprocess import call, check_output
-from typing import List, Tuple
+from subprocess import PIPE, run
+from time import sleep
+from typing import List
 
 import click
 import crayons
-from plumbum import FG, RETCODE
+from plumbum import FG
 
 from clit import CONFIG, LOGGER, read_config, save_config
-
-SECTION_SYMLINKS_FILES = "symlinks/files"
-SECTION_SYMLINKS_DIRS = "symlinks/dirs"
-PYCHARM_APP_FULL_PATH = "/Applications/PyCharm.app/Contents/MacOS/pycharm"
+from clit.constants import SECTION_SYMLINKS_DIRS, SECTION_SYMLINKS_FILES
 
 
 @click.command()
@@ -109,25 +109,6 @@ def create_link(key, source_file, raw_link, is_dir):
     message("link created", LOGGER.info)
 
 
-@click.command()
-@click.argument("files", nargs=-1)
-def pycharm_cli(files):
-    """Invoke PyCharm on the command line.
-
-    If a file doesn't exist, call `which` to find out the real location.
-    """
-    full_paths = []
-    for possible_file in files:
-        if os.path.isfile(possible_file):
-            real_file = os.path.abspath(possible_file)
-        else:
-            real_file = check_output(["which", possible_file]).decode().strip()
-        full_paths.append(real_file)
-    command_line = [PYCHARM_APP_FULL_PATH] + full_paths
-    print(crayons.green("Calling PyCharm with {}".format(" ".join(command_line))))
-    call(command_line)
-
-
 def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool = False, kill: bool = False):
     """Synchronize a source directory with a destination."""
     # Import locally, so we get an error only in this function, and not in other functions of this module.
@@ -168,42 +149,57 @@ def backup_full(ctx, dry_run: bool, kill: bool, pictures: bool):
         print(ctx.get_help())
 
 
-@click.command()
-@click.option("--delete", "-d", default=False, is_flag=True, help="Delete pytest directory first")
-@click.option("--failed", "-f", default=False, is_flag=True, help="Run only failed tests")
-@click.option("--count", "-c", default=0, help="Repeat the same test several times")
-@click.option("--reruns", "-r", default=0, help="Re-run a failed test several times")
-@click.argument("class_names_or_args", nargs=-1)
-def pytest_run(delete: bool, failed: bool, count: int, reruns: int, class_names_or_args: Tuple[str]):
-    """Run pytest with some shortcut options."""
-    # Import locally, so we get an error only in this function, and not in other functions of this module.
-    from plumbum.cmd import time as time_cmd, rm
+def shell(command_line, quiet=False, return_lines=False, **kwargs):
+    """Print and run a shell command."""
+    if not quiet:
+        print("$ {}".format(command_line))
+    if return_lines:
+        kwargs.setdefault("stdout", PIPE)
 
-    if delete:
-        print(crayons.green("Removing .pytest directory", bold=True))
-        rm["-rf", ".pytest"] & FG
+    completed_process = run(command_line, shell=True, universal_newlines=True, **kwargs)
+    if not return_lines:
+        return completed_process
 
-    pytest_plus_args = ["pytest", "-vv", "--run-intermittent"]
-    if reruns:
-        pytest_plus_args.extend(["--reruns", str(reruns)])
-    if failed:
-        pytest_plus_args.append("--failed")
+    stdout = completed_process.stdout.strip().strip("\n")
+    return stdout.split("\n") if stdout else []
 
-    if count:
-        pytest_plus_args.extend(["--count", str(count)])
 
-    if class_names_or_args:
-        targets = []
-        for name in class_names_or_args:
-            if "." in name:
-                parts = name.split(".")
-                targets.append("{}.py::{}".format("/".join(parts[0:-1]), parts[-1]))
-            else:
-                # It might be an extra argument, let's just append it
-                targets.append(name)
-        pytest_plus_args.append("-s")
-        pytest_plus_args.extend(targets)
+def shell_find(command_line, **kwargs):
+    """Run a find command using the shell, and return its output as a list."""
+    if not command_line.startswith("find"):
+        command_line = f"find {command_line}"
+    kwargs.setdefault("quiet", True)
+    kwargs.setdefault("check", True)
+    return shell(command_line, return_lines=True, **kwargs)
 
-    print(crayons.green("Running tests: time {}".format(" ".join(pytest_plus_args)), bold=True))
-    rv = time_cmd[pytest_plus_args] & RETCODE(FG=True)
-    exit(rv)
+
+def _check_type(full_path, method, msg):
+    """Check a path, raise an error if it's not valid."""
+    obj = Path(full_path)
+    if not method(obj):
+        raise ArgumentTypeError(f"{full_path} is not a valid existing {msg}")
+    return obj
+
+
+def existing_directory_type(directory):
+    """Convert the string to a Path object, raising an error if it's not a directory. Use with argparse."""
+    return _check_type(directory, Path.is_dir, "directory")
+
+
+def existing_file_type(file):
+    """Convert the string to a Path object, raising an error if it's not a file. Use with argparse."""
+    return _check_type(file, Path.is_file, "file")
+
+
+def wait_for_process(process_name: str) -> None:
+    """Wait for a process to finish.
+
+    https://stackoverflow.com/questions/1058047/wait-for-any-process-to-finish
+    """
+    pid = shell(f"pidof {process_name}", quiet=True, stdout=PIPE).stdout.strip()
+    if not pid:
+        return
+
+    pid_path = Path(f"/proc/{pid}")
+    while pid_path.exists():
+        sleep(0.5)
