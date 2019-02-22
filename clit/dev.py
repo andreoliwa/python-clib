@@ -8,8 +8,9 @@ from typing import Tuple
 
 import click
 from plumbum import FG, RETCODE
+from requests_html import HTMLSession
 
-from clit.constants import PYCHARM_MACOS_APP_PATH
+from clit.constants import PYCHARM_MACOS_APP_PATH, TEST_NAMES_REGEX
 from clit.files import shell
 from clit.ui import prompt
 
@@ -33,13 +34,19 @@ def pycharm_cli(files):
     call(command_line)
 
 
-@click.command()
+@click.group()
+def extra_pytest():
+    """Extra commands for py.test."""
+    pass
+
+
+@extra_pytest.command()
 @click.option("--delete", "-d", default=False, is_flag=True, help="Delete pytest directory first")
 @click.option("--failed", "-f", default=False, is_flag=True, help="Run only failed tests")
 @click.option("--count", "-c", default=0, help="Repeat the same test several times")
 @click.option("--reruns", "-r", default=0, help="Re-run a failed test several times")
 @click.argument("class_names_or_args", nargs=-1)
-def pytest_run(delete: bool, failed: bool, count: int, reruns: int, class_names_or_args: Tuple[str]):
+def run(delete: bool, failed: bool, count: int, reruns: int, class_names_or_args: Tuple[str]):
     """Run pytest with some shortcut options."""
     # Import locally, so we get an error only in this function, and not in other functions of this module.
     from plumbum.cmd import time as time_cmd, rm
@@ -72,6 +79,32 @@ def pytest_run(delete: bool, failed: bool, count: int, reruns: int, class_names_
     click.secho(f"Running tests: time {' '.join(pytest_plus_args)}", fg="green", bold=True)
     rv = time_cmd[pytest_plus_args] & RETCODE(FG=True)
     exit(rv)
+
+
+@extra_pytest.command()
+@click.option("-f", "--result-file", type=click.File())
+@click.option("-j", "--jenkins-url", multiple=True)
+@click.option("-s", "dont_capture", flag_value="-s", help="Don't capture output")
+@click.pass_context
+def results(ctx, result_file, jenkins_url: Tuple[str, ...], dont_capture):
+    """Parse a file with the output of failed tests, then re-run only those failed tests."""
+    if result_file:
+        contents = result_file.read()
+    elif jenkins_url:
+        responses = []
+        for url in set(jenkins_url):
+            request = HTMLSession().get(url, auth=(os.environ["JENKINS_USERNAME"], os.environ["JENKINS_PASSWORD"]))
+            responses.append(request.html.html)
+        contents = "\n".join(responses)
+    else:
+        click.echo(ctx.get_help())
+        return
+
+    all_tests = set(TEST_NAMES_REGEX.findall(contents))
+    expression = " or ".join(all_tests)
+    if not dont_capture:
+        dont_capture = ""
+    shell(f"pytest -vv {dont_capture} -k '{expression}'")
 
 
 class PyPICommands:
@@ -170,8 +203,14 @@ def changelog():
     shell(f"{PyPICommands.CHANGELOG} -u | less")
 
 
-@click.command()
-def poetry_setup_py():
+@click.group()
+def extra_poetry():
+    """Extra commands for poetry."""
+    pass
+
+
+@extra_poetry.command()
+def setup_py():
     """Use poetry to generate a setup.py file from pyproject.toml."""
     shell("poetry build")
     shell("tar -xvzf dist/*.gz --strip-components 1 */setup.py")

@@ -6,17 +6,26 @@ packages = ["clit"]
 
 package_data = {"": ["*"]}
 
-install_requires = ["SQLAlchemy", "argcomplete", "click", "colorlog", "plumbum", "prettyconf", "requests"]
+install_requires = [
+    "SQLAlchemy",
+    "argcomplete",
+    "click",
+    "colorlog",
+    "plumbum",
+    "prettyconf",
+    "requests",
+    "requests-html",
+]
 
 entry_points = {
     "console_scripts": [
         "backup-full = clit.files:backup_full",
         "git-local-prune = clit.git:prune_local_branches",
         "git-vacuum = clit.git:vacuum",
-        "poetry-setup-py = clit.dev:poetry_setup_py",
-        "pycharm-cli = clit.files:pycharm_cli",
+        "pycharm-cli = clit.dev:pycharm_cli",
         "pypi = clit.dev:pypi",
-        "pytest-run = clit.files:pytest_run",
+        "xpoetry = clit.dev:extra_poetry",
+        "xpytest = clit.dev:extra_pytest",
     ]
 }
 

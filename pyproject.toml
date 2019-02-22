@@ -26,10 +26,10 @@ classifiers = [
 backup-full = "clit.files:backup_full"
 git-local-prune = "clit.git:prune_local_branches"
 git-vacuum = "clit.git:vacuum"
-pycharm-cli = "clit.files:pycharm_cli"
-pytest-run = "clit.files:pytest_run"
+pycharm-cli = "clit.dev:pycharm_cli"
+xpytest = "clit.dev:extra_pytest"
 pypi = "clit.dev:pypi"
-poetry-setup-py = "clit.dev:poetry_setup_py"
+xpoetry = "clit.dev:extra_poetry"
 
 [tool.poetry.dependencies]
 python = "^3.6 || ^3.7"
@@ -40,6 +40,7 @@ requests = "*"
 SQLAlchemy = "*"
 plumbum = "*"
 prettyconf = "*"
+requests-html = "*"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
@@ -66,9 +67,9 @@ pylint = "*"
 mypy = "*"
 black = {version = "*", allows-prereleases = true}
 
+[tool.black]
+line-length = 120
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
-[tool.black]
-line-length = 120
