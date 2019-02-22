@@ -6,7 +6,7 @@ from subprocess import PIPE
 from typing import List
 
 from clit.config import JsonConfig
-from clit.files import existing_directory_type, shell, shell_find
+from clit.files import existing_directory_type, existing_file_type, shell, shell_find
 from clit.types import JsonDict
 
 YML_DIRS = JsonConfig("docker-find-yml-dirs.json")
@@ -130,6 +130,71 @@ def docker_find():
     parser_yml.add_argument("yml_file", help="partial name of the desired .yml file")
     parser_yml.add_argument("docker_compose_arg", nargs=argparse.REMAINDER, help="docker-compose arguments")
     parser_yml.set_defaults(chosen_function=yml_command)
+
+    args = parser.parse_args()
+    if not args.chosen_function:
+        parser.print_help()
+        return
+    args.chosen_function(parser, args)
+    return
+
+
+def backup(parser, args):
+    """Backup a Docker volume."""
+    for volume in args.volume_name:
+        # TODO: when piping from stdin, stdout is printed only at the end (buffered)
+        shell(
+            "docker run --rm -i -v /var/lib/docker/volumes:/volumes -v {dir}:/backup busybox "
+            "tar czf /backup/{volume}.tgz /volumes/{volume}".format(dir=args.backup_dir, volume=volume)
+        )
+
+
+def restore(parser, args):
+    """Restore a Docker volume."""
+    tgz_file: Path = args.tgz_file
+    backup_dir = tgz_file.parent
+    new_volume_name = args.volume_name if args.volume_name else tgz_file.stem
+
+    busybox = "docker run --rm -i -v /var/lib/docker:/docker -v {backup_dir}:/backup busybox ".format(
+        backup_dir=backup_dir
+    )
+
+    # Delete the destination directory before restoring
+    shell(busybox + "rm -rf /docker/volumes/{new_volume_name}".format(new_volume_name=new_volume_name))
+
+    # Create the full path
+    shell(busybox + "mkdir /docker/volumes/{new_volume_name}".format(new_volume_name=new_volume_name))
+
+    # Restore the .tgz file in the new empty directory
+    shell(
+        busybox
+        + "tar xzf /backup/{tgz} -C /docker/volumes/{new_volume_name}/ --strip-components 2".format(
+            tgz=tgz_file.name, new_volume_name=new_volume_name
+        )
+    )
+
+
+# TODO: Convert to click
+def docker_volume():
+    """Backup and restore Docker volumes.
+
+    See also https://stackoverflow.com/a/23778599/1391315.
+    """
+    parser = argparse.ArgumentParser(description="backup and restore Docker volumes")
+    parser.set_defaults(chosen_function=None)
+    subparsers = parser.add_subparsers(title="commands")
+
+    parser_backup = subparsers.add_parser("backup", aliases=["b"], help="backup a Docker volume")
+    parser_backup.add_argument("backup_dir", type=existing_directory_type, help="directory to store the backups")
+    parser_backup.add_argument("volume_name", nargs="+", help="Docker volume name")
+    parser_backup.set_defaults(chosen_function=backup)
+
+    parser_restore = subparsers.add_parser("restore", aliases=["r"], help="restore a Docker volume")
+    parser_restore.add_argument(
+        "tgz_file", type=existing_file_type, help="full path of the .tgz file created by the 'backup' command"
+    )
+    parser_restore.add_argument("volume_name", nargs="?", help="volume name (default: basename of .tgz file)")
+    parser_restore.set_defaults(chosen_function=restore)
 
     args = parser.parse_args()
     if not args.chosen_function:
