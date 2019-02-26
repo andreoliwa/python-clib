@@ -1,6 +1,7 @@
 """Database module."""
 import argparse
 from pathlib import Path
+from subprocess import PIPE
 from typing import List, Optional
 
 from clit.docker import DockerContainer
@@ -56,12 +57,12 @@ class PostgreSQLServer(DatabaseServer):
         """Determine which psql executable exists on this machine."""
         super().__init__(*args, **kwargs)
 
-        self.psql = shell("which psql", quiet=True, capture_output=True).stdout
+        self.psql = shell("which psql", quiet=True, return_lines=True)[0]
         if not self.psql:
             self.psql = "psql_docker"
             self.inside_docker = True
 
-        self.pg_dump = shell("which pg_dump", quiet=True, capture_output=True).stdout
+        self.pg_dump = shell("which pg_dump", quiet=True, return_lines=True)[0]
         if not self.pg_dump:
             self.pg_dump = "pg_dump_docker"
             self.inside_docker = True
@@ -77,7 +78,7 @@ class PostgreSQLServer(DatabaseServer):
             f"{self.psql} -c 'SELECT datname FROM pg_database WHERE datistemplate = false' "
             f"--tuples-only {self.docker_uri}",
             quiet=True,
-            capture_output=True,
+            stdout=PIPE,
         )
         if process.returncode:
             print(f"Error while listing databases.\nstdout={process.stdout}\nstderr={process.stderr}")

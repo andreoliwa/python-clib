@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """Main module for clit."""
-import os
 import logging
+import os
 from configparser import ConfigParser
 
 from colorlog import ColoredFormatter
-
 
 __author__ = "W. Augusto Andreoli"
 __email__ = "andreoliwa@gmail.com"
