@@ -3,9 +3,8 @@ import os
 import re
 from pathlib import Path
 from shutil import rmtree
-from subprocess import call, check_output
 from textwrap import dedent
-from typing import Tuple
+from typing import List, Tuple
 
 import click
 from plumbum import FG, RETCODE
@@ -30,16 +29,22 @@ def pycharm_cli(files):
 
     If a file doesn't exist, call `which` to find out the real location.
     """
-    full_paths = []
+    full_paths: List[str] = []
+    errors = False
     for possible_file in files:
-        if os.path.isfile(possible_file):
-            real_file = os.path.abspath(possible_file)
+        path = Path(possible_file).absolute()
+        if path.is_file():
+            full_paths.append(str(path))
         else:
-            real_file = check_output(["which", possible_file]).decode().strip()
-        full_paths.append(real_file)
-    command_line = [PYCHARM_MACOS_APP_PATH] + full_paths
-    click.secho(f"Calling PyCharm with {' '.join(command_line)}", fg="green")
-    call(command_line)
+            which_file = shell(f"which {possible_file}", quiet=True, return_lines=True)
+            if which_file:
+                full_paths.append(which_file[0])
+            else:
+                click.secho(f"File not found on $PATH: {possible_file}", fg="red")
+                errors = True
+    if full_paths:
+        shell(f"{PYCHARM_MACOS_APP_PATH} {' '.join(full_paths)}")
+    exit(1 if errors else 0)
 
 
 @click.group()

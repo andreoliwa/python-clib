@@ -151,7 +151,11 @@ def backup_full(ctx, dry_run: bool, kill: bool, pictures: bool):
 
 
 def shell(command_line, quiet=False, return_lines=False, **kwargs):
-    """Print and run a shell command."""
+    """Print and run a shell command.
+
+    :param quiet: Don't print the command line that will be executed.
+    :param return_lines: Return a list of lines instead of a ``CompletedProcess`` instance.
+    """
     if not quiet:
         click.secho("$ ", fg="magenta", nl=False)
         click.secho(command_line, fg="yellow")
