@@ -119,7 +119,7 @@ class PyPICommands:
     """Commands executed by this helper script."""
 
     # https://github.com/peritus/bumpversion
-    BUMP_VERSION = "bumpversion {part}"
+    BUMP_VERSION = "bumpversion {allow_dirty} {part}"
     BUMP_VERSION_DRY_RUN = f"{BUMP_VERSION} --dry-run --verbose"
 
     # https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli
@@ -130,8 +130,7 @@ class PyPICommands:
     # https://poetry.eustace.io/
     BUILD_POETRY = "poetry build"
 
-    GIT_ADD = "git add ."
-    GIT_COMMIT = "git commit -m'{}'"
+    GIT_ADD_AND_COMMIT = "git add . && git commit -m'{}' --no-verify"
     GIT_PUSH = "git push"
     GIT_TAG = "git tag v{}"
 
@@ -151,10 +150,24 @@ def pypi():
 
 
 @pypi.command()
-@click.option("--part", default="minor", type=click.Choice(["major", "minor", "patch"]))
-def full(part):
+@click.option(
+    "--part",
+    "-p",
+    default="minor",
+    type=click.Choice(["major", "minor", "patch"]),
+    help="Which part of the version number to bump",
+)
+@click.option(
+    "--allow-dirty", "-d", default=False, is_flag=True, type=bool, help="Allow bumpversion to run on a dirty repo"
+)
+@click.pass_context
+def full(ctx, part, allow_dirty: bool):
     """The full process to upload to PyPI (bump version, changelog, package, upload)."""
-    bump_dry_run_cmd = PyPICommands.BUMP_VERSION_DRY_RUN.format(part=part)
+    # Recreate the setup.py
+    ctx.invoke(setup_py)
+
+    allow_dirty_option = "--allow-dirty" if allow_dirty else ""
+    bump_dry_run_cmd = PyPICommands.BUMP_VERSION_DRY_RUN.format(allow_dirty=allow_dirty_option, part=part)
     bump = shell(bump_dry_run_cmd)
     if bump.returncode != 0:
         exit(bump.returncode)
@@ -167,7 +180,7 @@ def full(part):
     print(f"New version: {new_version}\nCommit message: {commit_message}")
     prompt("Were all versions correctly bumped?")
 
-    shell(PyPICommands.BUMP_VERSION.format(part=part))
+    shell(PyPICommands.BUMP_VERSION.format(allow_dirty=allow_dirty_option, part=part))
     shell(f"{PyPICommands.CHANGELOG} -s")
 
     try:
@@ -185,24 +198,28 @@ def full(part):
     prompt("Is the git diff correct?")
 
     prompt(
-        "Last confirmation (point of no return):"
+        "Last confirmation (point of no return):\n"
         + "Changes will be committed, files will be uploaded to PyPI, a GitHub release will be created"
     )
 
-    print("Add files, commit and push")
-    for command in (PyPICommands.GIT_ADD, PyPICommands.GIT_COMMIT.format(commit_message), PyPICommands.GIT_PUSH):
-        shell(command)
+    commands = (
+        ("Add all files and commit (skipping hooks)", PyPICommands.GIT_ADD_AND_COMMIT.format(commit_message)),
+        ("Push", PyPICommands.GIT_PUSH),
+        (
+            "Create the tag but don't push it yet (conventional-github-releaser will do that)",
+            PyPICommands.GIT_TAG.format(new_version),
+        ),
+        ("Upload the files to PyPI via Twine", PyPICommands.TWINE_UPLOAD),
+        ("Create a GitHub release", PyPICommands.GITHUB_RELEASE),
+    )
+    for header, command in commands:
+        while True:
+            click.secho(f"\n>>> {header}", fg="bright_white")
+            if shell(command).returncode == 0:
+                break
+            prompt("Something went wrong, running the same command again.", fg="red")
 
-    print("Create the tag but don't push it yet (conventional-github-releaser will do that)")
-    shell(PyPICommands.GIT_TAG.format(new_version))
-
-    print("Upload the files to PyPI via Twine")
-    shell(PyPICommands.TWINE_UPLOAD)
-
-    print("Create a GitHub release")
-    shell(PyPICommands.GITHUB_RELEASE)
-
-    print(f"The new version {new_version} was uploaded to PyPI")
+    click.secho(f"The new version {new_version} was uploaded to PyPI! ✨ 🍰 ✨", fg="bright_white")
 
 
 @pypi.command()
@@ -220,6 +237,7 @@ def extra_poetry():
 @extra_poetry.command()
 def setup_py():
     """Use poetry to generate a setup.py file from pyproject.toml."""
+    rmtree("./dist")
     shell("poetry build")
     shell("tar -xvzf dist/*.gz --strip-components 1 */setup.py")
     shell("black setup.py")
