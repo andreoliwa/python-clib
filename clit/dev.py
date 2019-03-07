@@ -113,6 +113,11 @@ def results(ctx, result_file, jenkins_url: Tuple[str, ...], dont_capture):
         click.echo(ctx.get_help())
         return
 
+    match = re.search(r"<title>(?P<error>.+Invalid password.+)</title>", contents)
+    if match:
+        click.secho(match.group("error"), fg="red")
+        exit(1)
+
     all_tests = set(TEST_NAMES_REGEX.findall(contents))
     expression = " or ".join(all_tests)
     if not dont_capture:
