@@ -184,8 +184,11 @@ def pypi():
 @click.option(
     "--allow-dirty", "-d", default=False, is_flag=True, type=bool, help="Allow bumpversion to run on a dirty repo"
 )
+@click.option(
+    "--github-only", "-g", default=False, is_flag=True, type=bool, help="Skip PyPI and publish only to GitHub"
+)
 @click.pass_context
-def full(ctx, part, allow_dirty: bool):
+def full(ctx, part, allow_dirty: bool, github_only: bool):
     """The full process to upload to PyPI (bump version, changelog, package, upload)."""
     # Recreate the setup.py
     ctx.invoke(setup_py)
@@ -222,7 +225,7 @@ def full(ctx, part, allow_dirty: bool):
         + "Changes will be committed, files will be uploaded to PyPI, a GitHub release will be created"
     )
 
-    commands = (
+    commands = [
         ("Add all files and commit (skipping hooks)", PyPICommands.GIT_ADD_AND_COMMIT.format(commit_message)),
         ("Push", PyPICommands.GIT_PUSH),
         (
@@ -230,9 +233,10 @@ def full(ctx, part, allow_dirty: bool):
             PyPICommands.GIT_TAG.format(new_version),
         ),
         ("Upload the files to TestPyPI via Twine", PyPICommands.TWINE_UPLOAD.format(repo="-r testpypi")),
-        ("Upload the files to PyPI via Twine", PyPICommands.TWINE_UPLOAD.format(repo="")),
-        ("Create a GitHub release", PyPICommands.GITHUB_RELEASE),
-    )
+    ]
+    if not github_only:
+        commands.append(("Upload the files to PyPI via Twine", PyPICommands.TWINE_UPLOAD.format(repo="")))
+    commands.append(("Create a GitHub release", PyPICommands.GITHUB_RELEASE))
     for header, command in commands:
         while True:
             click.secho(f"\n>>> {header}", fg="bright_white")
