@@ -21,7 +21,7 @@ classifiers = [
 
 # TODO This is still not working properly; the scripts are created but not added to the PATH. Temporary workaround:
 # Every time the scripts below change, run:
-# poetry run generate-setup-py
+# xpoetry setup-py
 [tool.poetry.scripts]
 backup-full = "clit.files:backup_full"
 docker-find = "clit.docker:docker_find"
@@ -63,7 +63,7 @@ flake8-mypy = "*"
 flake8-polyfill = "*"
 flake8-pytest = "*"
 flake8-quotes = "*"
-pre-commit = "*"
+pre-commit = {version = "*", allows-prereleases = true}
 ipython = "*"
 ipdb = "*"
 pylint = "*"
