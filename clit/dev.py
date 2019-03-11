@@ -201,7 +201,7 @@ def full(ctx, part, allow_dirty: bool):
     )
     new_version = chosen_lines[0].strip("'")
     commit_message = chosen_lines[1].strip("'")
-    print(f"New version: {new_version}\nCommit message: {commit_message}")
+    click.echo(f"New version: {new_version}\nCommit message: {commit_message}")
     prompt("Were all versions correctly bumped?")
 
     shell(PyPICommands.BUMP_VERSION.format(allow_dirty=allow_dirty_option, part=part))
