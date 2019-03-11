@@ -147,10 +147,24 @@ class PyPICommands:
     # https://github.com/pypa/twine
     # I tried using "poetry publish -u $TWINE_USERNAME -p $TWINE_PASSWORD"; the command didn't fail, but nothing was uploaded
     # I also tried setting $TWINE_USERNAME and $TWINE_PASSWORD on the environment, but then "twine upload" didn't work for some reason.
-    TWINE_UPLOAD = "twine upload dist/*"
+    TWINE_UPLOAD = "twine upload {repo} dist/*"
 
     # https://www.npmjs.com/package/conventional-github-releaser
     GITHUB_RELEASE = "conventional-github-releaser -p angular -v"
+
+
+def remove_previous_builds() -> bool:
+    """Remove previous builds under the /dist directory."""
+    dist_dir = (Path(os.curdir) / "dist").resolve()
+    if not dist_dir.exists():
+        return False
+
+    click.echo(f"Removing previous builds on {dist_dir}")
+    try:
+        rmtree(str(dist_dir))
+    except OSError:
+        return False
+    return True
 
 
 @click.group()
@@ -193,12 +207,7 @@ def full(ctx, part, allow_dirty: bool):
     shell(PyPICommands.BUMP_VERSION.format(allow_dirty=allow_dirty_option, part=part))
     shell(f"{PyPICommands.CHANGELOG} -s")
 
-    try:
-        dist_dir = (Path(os.curdir) / "dist").resolve()
-        print(f"Removing previous builds on {dist_dir}")
-        rmtree(str(dist_dir))
-    except OSError:
-        pass
+    remove_previous_builds()
 
     shell(PyPICommands.BUILD_POETRY)
     shell("ls -l dist")
@@ -219,7 +228,8 @@ def full(ctx, part, allow_dirty: bool):
             "Create the tag but don't push it yet (conventional-github-releaser will do that)",
             PyPICommands.GIT_TAG.format(new_version),
         ),
-        ("Upload the files to PyPI via Twine", PyPICommands.TWINE_UPLOAD),
+        ("Upload the files to TestPyPI via Twine", PyPICommands.TWINE_UPLOAD.format(repo="-r testpypi")),
+        ("Upload the files to PyPI via Twine", PyPICommands.TWINE_UPLOAD.format(repo="")),
         ("Create a GitHub release", PyPICommands.GITHUB_RELEASE),
     )
     for header, command in commands:
@@ -247,7 +257,7 @@ def extra_poetry():
 @extra_poetry.command()
 def setup_py():
     """Use poetry to generate a setup.py file from pyproject.toml."""
-    rmtree("./dist")
+    remove_previous_builds()
     shell("poetry build")
     shell("tar -xvzf dist/*.gz --strip-components 1 */setup.py")
     shell("black setup.py")
