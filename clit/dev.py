@@ -220,9 +220,10 @@ def full(ctx, part, allow_dirty: bool, github_only: bool):
     shell("git diff")
     prompt("Is the git diff correct?")
 
+    upload_message = "GitHub only" if github_only else "PyPI"
     prompt(
         "Last confirmation (point of no return):\n"
-        + "Changes will be committed, files will be uploaded to PyPI, a GitHub release will be created"
+        + f"Changes will be committed, files will be uploaded to {upload_message}, a GitHub release will be created"
     )
 
     commands = [
@@ -232,7 +233,7 @@ def full(ctx, part, allow_dirty: bool, github_only: bool):
             "Create the tag but don't push it yet (conventional-github-releaser will do that)",
             PyPICommands.GIT_TAG.format(new_version),
         ),
-        ("Upload the files to TestPyPI via Twine", PyPICommands.TWINE_UPLOAD.format(repo="-r testpypi")),
+        ("Test upload the files to TestPyPI via Twine", PyPICommands.TWINE_UPLOAD.format(repo="-r testpypi")),
     ]
     if not github_only:
         commands.append(("Upload the files to PyPI via Twine", PyPICommands.TWINE_UPLOAD.format(repo="")))
@@ -244,7 +245,7 @@ def full(ctx, part, allow_dirty: bool, github_only: bool):
                 break
             prompt("Something went wrong, running the same command again.", fg="red")
 
-    click.secho(f"The new version {new_version} was uploaded to PyPI! ✨ 🍰 ✨", fg="bright_white")
+    click.secho(f"The new version {new_version} was uploaded to {upload_message}! ✨ 🍰 ✨", fg="bright_white")
 
 
 @pypi.command()
