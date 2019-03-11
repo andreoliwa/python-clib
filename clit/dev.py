@@ -197,12 +197,13 @@ def full(ctx, part, allow_dirty: bool):
         exit(bump.returncode)
 
     chosen_lines = shell(
-        f'{bump_dry_run_cmd} 2>&1 | rg -e "would.+bump" -e "new version" | rg -o "\'(.+)\'"', return_lines=True
+        f'{bump_dry_run_cmd} 2>&1 | rg -e "would commit to git.+bump" -e "new version" | rg -o "\'(.+)\'"',
+        return_lines=True,
     )
     new_version = chosen_lines[0].strip("'")
     commit_message = chosen_lines[1].strip("'")
     click.echo(f"New version: {new_version}\nCommit message: {commit_message}")
-    prompt("Were all versions correctly bumped?")
+    prompt("Were all versions correctly displayed?")
 
     shell(PyPICommands.BUMP_VERSION.format(allow_dirty=allow_dirty_option, part=part))
     shell(f"{PyPICommands.CHANGELOG} -s")
