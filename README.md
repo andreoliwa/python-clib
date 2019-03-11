@@ -6,7 +6,15 @@ Python CLI tools and scripts to help in everyday life.
 
 Simply install from GitHub on any virtualenv you like, or globally:
 
-    pip install https://github.com/andreoliwa/python-clit.git
+    pip install -e git+https://github.com/andreoliwa/python-clit.git#egg=clit
+
+You can clone the repo locally and then install it:
+
+    cd ~/Code
+    git clone https://github.com/andreoliwa/python-clit.git
+    pyenv activate my_tools
+    pip install -e ~/Code/python-clit/
+    pyenv deactivate
 
 This project is not on PyPI because:
 
