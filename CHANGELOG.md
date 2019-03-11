@@ -1,3 +1,31 @@
+<a name="0.10.0"></a>
+# [0.10.0](https://github.com/andreoliwa/python-clit/compare/0.7.0...v0.10.0) (2019-03-11)
+
+
+### Bug Fixes
+
+* get correct Git commit message from bumpversion ([7d69b79](https://github.com/andreoliwa/python-clit/commit/7d69b79))
+* **pycharm-cli:** an error was being raised when opening files ([6e81b31](https://github.com/andreoliwa/python-clit/commit/6e81b31))
+* **xpytest:** treat invalid password on Jenkins ([8a97c71](https://github.com/andreoliwa/python-clit/commit/8a97c71))
+* error when running xpostgres backup ([d574f2b](https://github.com/andreoliwa/python-clit/commit/d574f2b))
+
+
+### Features
+
+* **pypi:** allow dirty workspace, recreat setup.py, check return codes ([34f18e8](https://github.com/andreoliwa/python-clit/commit/34f18e8))
+* **pypi:** flag to skip PyPI and publish only to GitHub ([68dca29](https://github.com/andreoliwa/python-clit/commit/68dca29))
+* **pypi:** upload to test server, remove previous builds ([f95caf8](https://github.com/andreoliwa/python-clit/commit/f95caf8))
+* add docker-find script ([c54c686](https://github.com/andreoliwa/python-clit/commit/c54c686))
+* add docker-volume script ([4b820a2](https://github.com/andreoliwa/python-clit/commit/4b820a2))
+* add new functions and classes from dotfiles ([86648da](https://github.com/andreoliwa/python-clit/commit/86648da))
+* add pypi script ([3ec86a6](https://github.com/andreoliwa/python-clit/commit/3ec86a6))
+* add xpostgres script ([5dd7350](https://github.com/andreoliwa/python-clit/commit/5dd7350))
+* add xpytest script ([9ce3b43](https://github.com/andreoliwa/python-clit/commit/9ce3b43))
+* colored prompt ([56249be](https://github.com/andreoliwa/python-clit/commit/56249be))
+* use poetry to generate a setup.py file from pyproject.toml ([1154a3c](https://github.com/andreoliwa/python-clit/commit/1154a3c))
+
+
+
 <a name="0.7.3"></a>
 
 # 0.7.3 (2015-04-02)

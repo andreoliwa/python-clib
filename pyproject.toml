@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "clit"
-version = "0.9.0"
+version = "0.10.0"
 description = "Python CLI tools and scripts to help in everyday life"
 authors = ["W. Augusto Andreoli <andreoliwa@gmail.com>"]
 license = "MIT"
