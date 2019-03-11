@@ -119,7 +119,7 @@ def restore(parser, args):
 
 
 # TODO: Convert to click
-def extra_postgres():
+def xpostgres():
     """Extra PostgreSQL tools like backup, restore, user creation, etc."""
     parser = argparse.ArgumentParser(description="PostgreSQL helper tools")
     parser.add_argument("server_uri", help="database server URI (postgresql://user:password@server:port)")

@@ -26,13 +26,11 @@ classifiers = [
 backup-full = "clit.files:backup_full"
 docker-find = "clit.docker:docker_find"
 docker-volume = "clit.docker:docker_volume"
-git-local-prune = "clit.git:prune_local_branches"
-git-vacuum = "clit.git:vacuum"
 pycharm-cli = "clit.dev:pycharm_cli"
 pypi = "clit.dev:pypi"
-xpoetry = "clit.dev:extra_poetry"
-xpostgres = "clit.db:extra_postgres"
-xpytest = "clit.dev:extra_pytest"
+xpoetry = "clit.dev:xpoetry"
+xpostgres = "clit.db:xpostgres"
+xpytest = "clit.dev:xpytest"
 
 [tool.poetry.dependencies]
 python = "^3.6 || ^3.7"

@@ -48,12 +48,12 @@ def pycharm_cli(files):
 
 
 @click.group()
-def extra_pytest():
+def xpytest():
     """Extra commands for py.test."""
     pass
 
 
-@extra_pytest.command()
+@xpytest.command()
 @click.option("--delete", "-d", default=False, is_flag=True, help="Delete pytest directory first")
 @click.option("--failed", "-f", default=False, is_flag=True, help="Run only failed tests")
 @click.option("--count", "-c", default=0, help="Repeat the same test several times")
@@ -94,7 +94,7 @@ def run(delete: bool, failed: bool, count: int, reruns: int, class_names_or_args
     exit(rv)
 
 
-@extra_pytest.command()
+@xpytest.command()
 @click.option("-f", "--result-file", type=click.File())
 @click.option("-j", "--jenkins-url", multiple=True)
 @click.option("-s", "dont_capture", flag_value="-s", help="Don't capture output")
@@ -249,12 +249,12 @@ def changelog():
 
 
 @click.group()
-def extra_poetry():
+def xpoetry():
     """Extra commands for poetry."""
     pass
 
 
-@extra_poetry.command()
+@xpoetry.command()
 def setup_py():
     """Use poetry to generate a setup.py file from pyproject.toml."""
     remove_previous_builds()
