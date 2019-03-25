@@ -228,6 +228,7 @@ class Publisher:
 
         prompt(f"Is the {diff_command} correct?")
 
+        shell(f"{Publisher.TOOL_GIT} status", dry_run=self.dry_run, header="Show the list of changed files")
         prompt(
             "Last confirmation (point of no return):\n"
             + f"Changes will be committed, files will be uploaded, a GitHub release will be created"
