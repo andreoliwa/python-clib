@@ -11,7 +11,7 @@ from typing import List
 import click
 from plumbum import FG
 
-from clit import CONFIG, LOGGER, read_config, save_config
+from clit import CONFIG, DRY_RUN_OPTION, LOGGER, read_config, save_config
 
 SECTION_SYMLINKS_FILES = "symlinks/files"
 SECTION_SYMLINKS_DIRS = "symlinks/dirs"
@@ -134,7 +134,7 @@ def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool 
 
 
 @click.command()
-@click.option("--dry-run", "-n", default=False, is_flag=True, help="Dry-run")
+@DRY_RUN_OPTION
 @click.option("--kill", "-k", default=False, is_flag=True, help="Kill files when using rsync (--del)")
 @click.option("--pictures", "-p", default=False, is_flag=True, help="Backup pictures")
 @click.pass_context
@@ -150,19 +150,37 @@ def backup_full(ctx, dry_run: bool, kill: bool, pictures: bool):
         print(ctx.get_help())
 
 
-def shell(command_line, quiet=False, return_lines=False, **kwargs):
+def shell(
+    command_line,
+    quiet=False,
+    exit_on_failure: bool = False,
+    return_lines=False,
+    dry_run=False,
+    header: str = "",
+    **kwargs,
+):
     """Print and run a shell command.
 
     :param quiet: Don't print the command line that will be executed.
+    :param exit_on_failure: Exit if the command failed (return code is not zero).
     :param return_lines: Return a list of lines instead of a ``CompletedProcess`` instance.
+    :param dry_run: Only print the command that would be executed, and return.
+    :param header: Print a header before the command.
     """
-    if not quiet:
+    if not quiet or dry_run:
+        if header:
+            click.secho(f"\n# {header}", fg="bright_white")
         click.secho("$ ", fg="magenta", nl=False)
         click.secho(command_line, fg="yellow")
+        if dry_run:
+            return
     if return_lines:
         kwargs.setdefault("stdout", PIPE)
 
     completed_process = run(command_line, shell=True, universal_newlines=True, **kwargs)
+    if exit_on_failure and completed_process.returncode != 0:
+        exit(completed_process.returncode)
+
     if not return_lines:
         return completed_process
 

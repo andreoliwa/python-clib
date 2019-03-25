@@ -4,6 +4,7 @@ import logging
 import os
 from configparser import ConfigParser
 
+import click
 from colorlog import ColoredFormatter
 
 __author__ = "W. Augusto Andreoli"
@@ -40,6 +41,10 @@ if not LOGGER.hasHandlers():
     LOGGER.addHandler(CHANNEL)
 
 TIME_FORMAT = "%H:%M:%S"
+
+DRY_RUN_OPTION = click.option(
+    "--dry-run", "-n", default=False, is_flag=True, help="Only show what would be done, without actually doing it"
+)
 
 
 def read_config(section_name, key_name, default=None):

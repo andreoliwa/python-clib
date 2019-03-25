@@ -4,17 +4,19 @@ Python CLI tools and scripts to help in everyday life.
 
 ## Installation
 
-Simply install from GitHub on any virtualenv you like, or globally:
+First, [install `pipx`](https://github.com/pipxproject/pipx#install-pipx).
 
-    pip install -e git+https://github.com/andreoliwa/python-clit.git#egg=clit
+Then install `clit` in an isolated environment: 
+
+    pipx install --spec git+https://github.com/andreoliwa/python-clit clit
+
+## Development
 
 You can clone the repo locally and then install it:
 
     cd ~/Code
     git clone https://github.com/andreoliwa/python-clit.git
-    pyenv activate my_tools
-    pip install -e ~/Code/python-clit/
-    pyenv deactivate
+    pipx install -e --spec ~/Code/python-clit/ clit
 
 This project is not on PyPI because:
 
