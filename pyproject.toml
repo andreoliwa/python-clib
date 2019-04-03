@@ -67,6 +67,7 @@ ipdb = "*"
 pylint = "*"
 mypy = "*"
 black = {version = "*", allows-prereleases = true}
+bumpversion = "^0.5.3"
 
 [tool.black]
 line-length = 120
