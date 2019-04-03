@@ -21,6 +21,7 @@ class Publisher:
     TOOL_CONVENTIONAL_CHANGELOG = "conventional-changelog"
     TOOL_POETRY = "poetry"
     TOOL_GIT = "git"
+    TOOL_HUB = "hub"
     TOOL_TWINE = "twine"
     TOOL_CONVENTIONAL_GITHUB_RELEASER = "conventional-github-releaser"
 
@@ -32,6 +33,7 @@ class Publisher:
         ),
         TOOL_POETRY: "Install from https://github.com/sdispater/poetry#installation",
         TOOL_GIT: "Install using your OS package tools",
+        TOOL_HUB: "Install from https://github.com/github/hub#installation",
         TOOL_TWINE: "Install from https://github.com/pypa/twine#installation",
         TOOL_CONVENTIONAL_GITHUB_RELEASER: (
             "Install from https://github.com/conventional-changelog/releaser-tools/tree"
@@ -47,36 +49,35 @@ class Publisher:
     }
 
     # https://github.com/peritus/bumpversion
-    BUMP_VERSION = TOOL_BUMPVERSION + " {allow_dirty} {part}"
-    BUMP_VERSION_SIMPLE_CHECK = f"{BUMP_VERSION} --dry-run"
-    BUMP_VERSION_VERBOSE = f"{BUMP_VERSION_SIMPLE_CHECK} --verbose 2>&1"
-    BUMP_VERSION_VERBOSE_FILES = f"{BUMP_VERSION_VERBOSE} | grep -i -E -e '^would'"
-    BUMP_VERSION_GREP = (
-        f'{BUMP_VERSION_VERBOSE} | grep -i -E -e "would commit to git.+bump" -e "^new version" | grep -E -o "\'(.+)\'"'
-    )
+    CMD_BUMP_VERSION = TOOL_BUMPVERSION + " {allow_dirty} {part}"
+    CMD_BUMP_VERSION_SIMPLE_CHECK = f"{CMD_BUMP_VERSION} --dry-run"
+    CMD_BUMP_VERSION_VERBOSE = f"{CMD_BUMP_VERSION_SIMPLE_CHECK} --verbose 2>&1"
+    CMD_BUMP_VERSION_VERBOSE_FILES = f"{CMD_BUMP_VERSION_VERBOSE} | grep -i -E -e '^would'"
+    CMD_BUMP_VERSION_GREP = f'{CMD_BUMP_VERSION_VERBOSE} | grep -i -E -e "would commit to git.+bump" -e "^new version" | grep -E -o "\'(.+)\'"'
 
     # https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli
-    CHANGELOG = f"{TOOL_CONVENTIONAL_CHANGELOG} -i CHANGELOG.md -p angular"
+    CMD_CHANGELOG = f"{TOOL_CONVENTIONAL_CHANGELOG} -i CHANGELOG.md -p angular"
 
-    BUILD_SETUP_PY = "python setup.py sdist bdist_wheel --universal"
+    CMD_BUILD_SETUP_PY = "python setup.py sdist bdist_wheel --universal"
 
     # https://poetry.eustace.io/
-    POETRY_BUILD = f"{TOOL_POETRY} build"
+    CMD_POETRY_BUILD = f"{TOOL_POETRY} build"
 
-    GIT_ADD_AND_COMMIT = TOOL_GIT + " add . && git commit -m'{}' --no-verify"
-    GIT_PUSH = f"{TOOL_GIT} push"
-    GIT_TAG = TOOL_GIT + " tag v{}"
+    CMD_GIT_ADD_AND_COMMIT = TOOL_GIT + " add . && git commit -m'{}' --no-verify"
+    CMD_GIT_PUSH = f"{TOOL_GIT} push"
+    CMD_GIT_CHECKOUT_MASTER = f"echo {TOOL_GIT} checkout master && echo {TOOL_GIT} pull"
 
     # https://github.com/pypa/twine
     # I tried using "poetry publish -u $TWINE_USERNAME -p $TWINE_PASSWORD"; the command didn't fail,
     #   but nothing was uploaded
     # I also tried setting $TWINE_USERNAME and $TWINE_PASSWORD on the environment,
     #   but then "twine upload" didn't work for some reason.
-    TWINE_UPLOAD = TOOL_TWINE + " upload {repo} dist/*"
+    CMD_TWINE_UPLOAD = TOOL_TWINE + " upload {repo} dist/*"
 
     # https://www.npmjs.com/package/conventional-github-releaser
-    GITHUB_RELEASE = TOOL_CONVENTIONAL_GITHUB_RELEASER + " -p angular -v --token {}"
-    GITHUB_RELEASE_ENVVAR = "CONVENTIONAL_GITHUB_RELEASER_TOKEN"
+    CMD_GITHUB_RELEASE = TOOL_CONVENTIONAL_GITHUB_RELEASER + " -p angular -v --token {}"
+    CMD_MANUAL_GITHUB_RELEASE = f"echo {TOOL_HUB} browse"
+    CMD_GITHUB_RELEASE_ENVVAR = "CONVENTIONAL_GITHUB_RELEASER_TOKEN"
 
     def __init__(self, dry_run: bool):
         self.dry_run = dry_run
@@ -113,7 +114,7 @@ class Publisher:
             "-t",
             help=(
                 f"GitHub access token used by {cls.TOOL_CONVENTIONAL_GITHUB_RELEASER}. If not defined, will use the value"
-                + f" from the ${cls.GITHUB_RELEASE_ENVVAR} environment variable"
+                + f" from the ${cls.CMD_GITHUB_RELEASE_ENVVAR} environment variable"
             ),
         )
 
@@ -136,8 +137,8 @@ class Publisher:
             self.github_access_token = github_access_token
         else:
             error_message = "Missing access token"
-            if self.GITHUB_RELEASE_ENVVAR in os.environ:
-                variable = self.GITHUB_RELEASE_ENVVAR
+            if self.CMD_GITHUB_RELEASE_ENVVAR in os.environ:
+                variable = self.CMD_GITHUB_RELEASE_ENVVAR
             else:
                 token_keys = {k for k in os.environ.keys() if "github_access_token".casefold() in k.casefold()}
                 if len(token_keys) == 1:
@@ -152,7 +153,7 @@ class Publisher:
             else:
                 click.secho(f"{error_message}. ", fg="bright_red", nl=False)
                 click.echo(
-                    f"Set the variable ${self.GITHUB_RELEASE_ENVVAR} or use"
+                    f"Set the variable ${self.CMD_GITHUB_RELEASE_ENVVAR} or use"
                     + " --github-access-token to define a GitHub access token"
                 )
                 all_ok = False
@@ -174,27 +175,27 @@ class Publisher:
     def check_bumped_version(self, part: str, allow_dirty: bool) -> Tuple[str, str]:
         """Check the version that will be bumped."""
         shell(
-            self._bump(self.BUMP_VERSION_SIMPLE_CHECK, part, allow_dirty),
+            self._bump(self.CMD_BUMP_VERSION_SIMPLE_CHECK, part, allow_dirty),
             exit_on_failure=True,
             header="Check the version that will be bumped",
         )
 
-        bump_cmd = self._bump(self.BUMP_VERSION_VERBOSE_FILES, part, allow_dirty)
+        bump_cmd = self._bump(self.CMD_BUMP_VERSION_VERBOSE_FILES, part, allow_dirty)
         shell(bump_cmd, dry_run=self.dry_run, header=f"Display what files would be changed", exit_on_failure=True)
         if not self.dry_run:
-            chosen_lines = shell(self._bump(self.BUMP_VERSION_GREP, part, allow_dirty), return_lines=True)
+            chosen_lines = shell(self._bump(self.CMD_BUMP_VERSION_GREP, part, allow_dirty), return_lines=True)
             new_version = chosen_lines[0].strip("'")
-            commit_message = chosen_lines[1].strip("'")
+            commit_message = chosen_lines[1].strip("'").lower()
             click.echo(f"New version: {new_version}\nCommit message: {commit_message}")
             prompt("Were all versions correctly displayed?")
         else:
-            commit_message = "Bump version from X to Y"
+            commit_message = "bump version from X to Y"
             new_version = "<new version here>"
-        return commit_message, new_version
+        return f"build: {commit_message}", new_version
 
     def actually_bump_version(self, part: str, allow_dirty: bool) -> None:
         """Actually bump the version."""
-        shell(self._bump(self.BUMP_VERSION, part, allow_dirty), dry_run=self.dry_run, header=f"Bump versions")
+        shell(self._bump(self.CMD_BUMP_VERSION, part, allow_dirty), dry_run=self.dry_run, header=f"Bump versions")
 
     def recreate_setup_py(self, ctx) -> None:
         """Recreate the setup.py if it exists."""
@@ -206,14 +207,16 @@ class Publisher:
 
     def generate_changelog(self) -> None:
         """Generate the changelog."""
-        shell(f"{Publisher.CHANGELOG} -s", dry_run=self.dry_run, header="Generate the changelog")
+        shell(f"{Publisher.CMD_CHANGELOG} -s", dry_run=self.dry_run, header="Generate the changelog")
 
     def build_with_poetry(self) -> None:
         """Build the project with poetry."""
         if not self.dry_run:
             remove_previous_builds()
 
-        shell(Publisher.POETRY_BUILD, dry_run=self.dry_run, header=f"Build the project with {Publisher.TOOL_POETRY}")
+        shell(
+            Publisher.CMD_POETRY_BUILD, dry_run=self.dry_run, header=f"Build the project with {Publisher.TOOL_POETRY}"
+        )
 
         if not self.dry_run:
             shell("ls -l dist")
@@ -235,28 +238,60 @@ class Publisher:
         )
 
     @classmethod
-    def commit_push_tag(cls, commit_message: str, new_version: str) -> List[HeaderCommand]:
+    def commit_push_tag(cls, commit_message: str, new_version: str, manual_release: bool) -> List[HeaderCommand]:
         """Prepare the commands to commit, push and tag."""
-        return [
-            ("Add all files and commit (skipping hooks)", Publisher.GIT_ADD_AND_COMMIT.format(commit_message)),
-            ("Push", Publisher.GIT_PUSH),
-            (
-                f"Create the tag but don't push it yet ({Publisher.TOOL_CONVENTIONAL_GITHUB_RELEASER} will do that)",
-                Publisher.GIT_TAG.format(new_version),
-            ),
+        commands = [
+            ("Add all files and commit (skipping hooks)", Publisher.CMD_GIT_ADD_AND_COMMIT.format(commit_message)),
+            ("Push", Publisher.CMD_GIT_PUSH),
         ]
+        if manual_release:
+            commands.extend(
+                [
+                    (
+                        "Approve the pull request on GitHub, then return here and run the following commands",
+                        Publisher.CMD_GIT_CHECKOUT_MASTER,
+                    ),
+                    ("Create the tag manually", cls.cmd_tag(new_version, echo=True)),
+                    ("Push the tags manually", cls.cmd_push_tags()),
+                ]
+            )
+        else:
+            commands.append(
+                (
+                    f"Create the tag but don't push it yet ({Publisher.TOOL_CONVENTIONAL_GITHUB_RELEASER} will do that)",
+                    cls.cmd_tag(new_version),
+                )
+            )
+        return commands
+
+    @classmethod
+    def cmd_tag(cls, version: str, echo=False) -> str:
+        """Command to create a Git tag."""
+        return f"{'echo ' if echo else ''}{cls.TOOL_GIT} tag v{version}"
+
+    @classmethod
+    def cmd_push_tags(cls) -> str:
+        """Command to push tags."""
+        return f"echo {cls.TOOL_GIT} push --tags"
 
     @classmethod
     def upload_pypi(cls) -> List[HeaderCommand]:
         """Prepare commands to upload to PyPI."""
         return [
-            ("Test upload the files to TestPyPI via Twine", Publisher.TWINE_UPLOAD.format(repo="-r testpypi")),
-            ("Upload the files to PyPI via Twine", Publisher.TWINE_UPLOAD.format(repo="")),
+            ("Test upload the files to TestPyPI via Twine", Publisher.CMD_TWINE_UPLOAD.format(repo="-r testpypi")),
+            ("Upload the files to PyPI via Twine", Publisher.CMD_TWINE_UPLOAD.format(repo="")),
         ]
 
-    def release(self) -> List[HeaderCommand]:
+    def release(self, manual_release) -> List[HeaderCommand]:
         """Prepare release commands."""
-        return [("Create a GitHub release", Publisher.GITHUB_RELEASE.format(self.github_access_token))]
+        if manual_release:
+            return [
+                (
+                    "Open GitHub and create a GitHub release manually, copying the content from CHANGELOG.md",
+                    Publisher.CMD_MANUAL_GITHUB_RELEASE,
+                )
+            ]
+        return [("Create a GitHub release", Publisher.CMD_GITHUB_RELEASE.format(self.github_access_token))]
 
     def run_commands(self, commands: List[HeaderCommand]):
         """Run a list of commands."""
@@ -273,7 +308,15 @@ class Publisher:
             return
         click.secho(f"The new version {new_version} was uploaded to {upload_destination}! ✨ 🍰 ✨", fg="bright_white")
 
-    def publish(self, pypi: bool, ctx, part: str, allow_dirty: bool, github_access_token: str = None):
+    def publish(
+        self,
+        pypi: bool,
+        ctx,
+        part: str,
+        allow_dirty: bool,
+        github_access_token: str = None,
+        manual_release: bool = False,
+    ):
         """Publish a package."""
         self.check_tools(github_access_token)
         commit_message, new_version = self.check_bumped_version(part, allow_dirty)
@@ -283,10 +326,10 @@ class Publisher:
         self.build_with_poetry()
         self.show_diff()
 
-        commands = self.commit_push_tag(commit_message, new_version)
+        commands = self.commit_push_tag(commit_message, new_version, manual_release)
         if pypi:
             commands.extend(self.upload_pypi())
-        commands.extend(self.release())
+        commands.extend(self.release(manual_release))
 
         self.run_commands(commands)
         self.success(new_version, "PyPI" if pypi else "GitHub")
@@ -313,9 +356,10 @@ def pypub():
 
 
 @pypub.command()
-def check():
+@Publisher.github_access_token_option()
+def check(github_access_token: str = None):
     """Check if all needed tools and files are present."""
-    Publisher(False).check_tools()
+    Publisher(False).check_tools(github_access_token)
 
 
 @pypub.command()
@@ -349,16 +393,26 @@ def pypi(ctx, dry_run: bool, part: str, allow_dirty: bool, github_access_token: 
 @Publisher.part_option()
 @Publisher.allow_dirty_option()
 @Publisher.github_access_token_option()
+@click.option(
+    "--manual-release",
+    "-r",
+    default=False,
+    is_flag=True,
+    type=bool,
+    help=f"Run commands up until tagging. Tag, merge, create the release: all have to be done manually",
+)
 @click.pass_context
-def github(ctx, dry_run: bool, part: str, allow_dirty: bool, github_access_token: str = None):
+def github(
+    ctx, dry_run: bool, part: str, allow_dirty: bool, github_access_token: str = None, manual_release: bool = False
+):
     """Release to GitHub only (bump version, changelog, package, upload)."""
-    Publisher(dry_run).publish(False, ctx, part, allow_dirty, github_access_token)
+    Publisher(dry_run).publish(False, ctx, part, allow_dirty, github_access_token, manual_release)
 
 
 @pypub.command()
 def changelog():
     """Preview the changelog."""
-    shell(f"{Publisher.CHANGELOG} -u | less")
+    shell(f"{Publisher.CMD_CHANGELOG} -u | less")
 
 
 @click.group()
@@ -381,8 +435,15 @@ def setup_py():
         1,
         dedent(
             '''
-        """NOTICE: This file was generated automatically by the command: xpoetry setup-py."""
-    '''
+            """
+            Setup for this package.
+
+            .. note::
+
+                This file was generated automatically by ``xpoetry setup-py``.
+                A ``setup.py`` file is needed to install this project in editable mode (``pip install -e /path/to/project``).
+            """
+            '''
         ).strip(),
     )
 
