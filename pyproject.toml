@@ -68,6 +68,7 @@ pylint = "*"
 mypy = "*"
 black = {version = "*", allows-prereleases = true}
 bumpversion = "^0.5.3"
+twine = "^1.13"
 
 [tool.black]
 line-length = 120
