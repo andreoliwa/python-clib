@@ -1,8 +1,8 @@
 # python-clit
 
-[![Travis CI](https://travis-ci.com/andreoliwa/flake8-nitpick.svg?branch=master)](https://travis-ci.com/andreoliwa/flake8-nitpick)
+[![Travis CI](https://travis-ci.com/andreoliwa/python-clit.svg?branch=master)](https://travis-ci.com/andreoliwa/python-clit)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
-[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=andreoliwa/flake8-nitpick)](https://dependabot.com)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=andreoliwa/python-clit)](https://dependabot.com)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 Python CLI tools and scripts to help in everyday life.
