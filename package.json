@@ -4,5 +4,25 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/andreoliwa/python-clit.git"
+  },
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
+      [
+        "@semantic-release/exec",
+        {
+          "prepareCmd": "bumpversion --allow-dirty --no-commit --no-tag --new-version ${nextRelease.version} patch && rm -rf dist/ && poetry build && twine upload --username andreoliwa --password $TWINE_TEST_PASSWORD -r testpypi dist/*"
+        }
+      ],
+      "@semantic-release/github",
+      "@semantic-release/git"
+    ]
   }
 }

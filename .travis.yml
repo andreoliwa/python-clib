@@ -1,17 +1,34 @@
-# Config file for automatic testing at travis-ci.org
-
+# https://docs.travis-ci.com/user/reference/xenial/
+dist: xenial
+cache:
+  npm: true
+  directories:
+    - $HOME/.cache/pip
+# https://docs.travis-ci.com/user/languages/python/
 language: python
-
-# TODO update this whole file
-#python:
-#  - "3.4"
-#  - "3.3"
-#  - "2.7"
-#  - "2.6"
-#  - "pypy"
-
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-#install: pip install -r requirements.txt
-
-# command to run tests
-#script: pytest
+python:
+  - "3.6"
+  - "3.7"
+script:
+  # Run some of the pre-commit hooks on Travis.
+  # Running "pre-commit run --all-files" checks more files than expected;
+  # e.g. it doesn't respect flake8's exclude config on setup.cfg.
+  - black --check .
+  - flake8
+install:
+  - npm install -g semantic-release@15 @semantic-release/changelog @semantic-release/git @semantic-release/exec
+  - pip install -U poetry
+  - poetry install
+stages:
+  - name: release
+    if: branch = master
+jobs:
+  include:
+    # Define the release stage that runs semantic-release
+    # https://github.com/semantic-release/semantic-release/blob/master/docs/recipes/travis.md
+    - stage: release
+      script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script: semantic-release
