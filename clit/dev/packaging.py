@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Packaging tools to publish projects on PyPI and GitHub."""
 import os
 from pathlib import Path

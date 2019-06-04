@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Database module."""
 import argparse
 from pathlib import Path

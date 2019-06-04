@@ -11,7 +11,7 @@ Python CLI tools and scripts to help in everyday life.
 
 First, [install `pipx`](https://github.com/pipxproject/pipx#install-pipx).
 
-Then install `clit` in an isolated environment: 
+Then install `clit` in an isolated environment:
 
     pipx install --spec git+https://github.com/andreoliwa/python-clit clit
 

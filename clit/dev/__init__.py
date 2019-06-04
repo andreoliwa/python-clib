@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Development helpers."""
 import os
 import re

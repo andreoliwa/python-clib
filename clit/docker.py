@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Docker module."""
 import argparse
 import json

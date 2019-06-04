@@ -1,24 +1,25 @@
 # https://docs.travis-ci.com/user/reference/xenial/
 dist: xenial
+env:
+  global:
+    - PRE_COMMIT_HOME=$HOME/.cache/pre-commit
 cache:
   npm: true
   directories:
     - $HOME/.cache/pip
+    - $PRE_COMMIT_HOME
 # https://docs.travis-ci.com/user/languages/python/
 language: python
 python:
   - "3.6"
   - "3.7"
 script:
-  # Run some of the pre-commit hooks on Travis.
-  # Running "pre-commit run --all-files" checks more files than expected;
-  # e.g. it doesn't respect flake8's exclude config on setup.cfg.
-  - black --check .
-  - flake8
+  # Run all pre-commit hooks on Travis.
+  - pre-commit run --all-files
 install:
   - npm install -g semantic-release@15 @semantic-release/changelog @semantic-release/git @semantic-release/exec
-  - pip install -U poetry
-  - poetry install
+  - pip install -U poetry pre-commit bumpversion twine
+  - poetry install --no-ansi --no-interaction
 stages:
   - name: release
     if: branch = master

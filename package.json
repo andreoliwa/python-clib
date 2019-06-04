@@ -22,7 +22,19 @@
         }
       ],
       "@semantic-release/github",
-      "@semantic-release/git"
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "setup.cfg",
+            "clit/__version__.py",
+            "pyproject.toml",
+            "package.json",
+            "setup.py",
+            "CHANGELOG.md"
+          ]
+        }
+      ]
     ]
   }
 }
