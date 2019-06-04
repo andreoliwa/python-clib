@@ -1,3 +1,13 @@
+# [0.11.0](https://github.com/andreoliwa/python-clit/compare/v0.10.0...v0.11.0) (2019-04-03)
+
+
+### Features
+
+* **pypi:** improve upload messages ([106fa43](https://github.com/andreoliwa/python-clit/commit/106fa43))
+* **pypub:** add option to create a manual release on GitHub ([baa219b](https://github.com/andreoliwa/python-clit/commit/baa219b))
+* **pypub:** display git status of files ([763f8f7](https://github.com/andreoliwa/python-clit/commit/763f8f7))
+* **pypub:** improvements to GitHub and PyPI upload process ([e4e2528](https://github.com/andreoliwa/python-clit/commit/e4e2528))
+
 <a name="0.10.0"></a>
 # [0.10.0](https://github.com/andreoliwa/python-clit/compare/0.7.0...v0.10.0) (2019-03-11)
 
