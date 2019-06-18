@@ -33,7 +33,7 @@ xpostgres = "clit.db:xpostgres"
 xpytest = "clit.dev:xpytest"
 
 [tool.poetry.dependencies]
-python = "^3.6 || ^3.7"
+python = "^3.7"
 argcomplete = "*"
 click = "*"
 colorlog = "*"
