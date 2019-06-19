@@ -78,3 +78,15 @@ dist: clean
 
 install: clean
 	python setup.py install
+
+
+update:
+	clear
+	pre-commit autoupdate
+	pre-commit gc
+	poetry update
+
+dev:
+	clear
+	pre-commit run --all-files
+	# pytest
