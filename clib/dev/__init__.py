@@ -46,12 +46,12 @@ def pycharm_cli(files):
 
 
 @click.group()
-def xpytest():
+def pytestx():
     """Extra commands for py.test."""
     pass
 
 
-@xpytest.command()
+@pytestx.command()
 @click.option("--delete", "-d", default=False, is_flag=True, help="Delete pytest directory first")
 @click.option("--failed", "-f", default=False, is_flag=True, help="Run only failed tests")
 @click.option("--count", "-c", default=0, help="Repeat the same test several times")
@@ -92,7 +92,7 @@ def run(delete: bool, failed: bool, count: int, reruns: int, class_names_or_args
     exit(rv)
 
 
-@xpytest.command()
+@pytestx.command()
 @click.option("-f", "--result-file", type=click.File())
 @click.option("-j", "--jenkins-url", multiple=True)
 @click.option("-s", "dont_capture", flag_value="-s", help="Don't capture output")

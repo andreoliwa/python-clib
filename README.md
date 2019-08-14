@@ -38,9 +38,9 @@ This project is not on PyPI because:
 [docker-volume](#docker-volume) |
 [pycharm-cli](#pycharm-cli) |
 [pypi](#pypi) |
-[xpoetry](#xpoetry) |
-[xpostgres](#xpostgres) |
-[xpytest](#xpytest)
+[poetryx](#poetryx) |
+[postgresx](#postgresx) |
+[pytestx](#pytestx)
 
 ## backup-full
 
@@ -202,10 +202,10 @@ This project is not on PyPI because:
       -d, --allow-dirty               Allow bumpversion to run on a dirty repo
       --help                          Show this message and exit.
 
-## xpoetry
+## poetryx
 
-    $ xpoetry --help
-    Usage: xpoetry [OPTIONS] COMMAND [ARGS]...
+    $ poetryx --help
+    Usage: poetryx [OPTIONS] COMMAND [ARGS]...
 
       Extra commands for poetry.
 
@@ -217,37 +217,18 @@ This project is not on PyPI because:
 
 ---
 
-    $ xpoetry setup-py --help
-    Usage: xpoetry setup-py [OPTIONS]
+    $ poetryx setup-py --help
+    Usage: poetryx setup-py [OPTIONS]
 
       Use poetry to generate a setup.py file from pyproject.toml.
 
     Options:
       --help  Show this message and exit.
 
-## xpostgres
+## postgresx
 
-    $ xpostgres --help
-    usage: xpostgres [-h] server_uri {backup,restore} ...
-
-    PostgreSQL helper tools
-
-    positional arguments:
-      server_uri        database server URI
-                        (postgresql://user:password@server:port)
-
-    optional arguments:
-      -h, --help        show this help message and exit
-
-    commands:
-      {backup,restore}
-        backup          backup a PostgreSQL database to a SQL file
-        restore         restore a PostgreSQL database from a SQL file
-
----
-
-    $ xpostgres backup --help
-    usage: xpostgres [-h] server_uri {backup,restore} ...
+    $ postgresx --help
+    usage: postgresx [-h] server_uri {backup,restore} ...
 
     PostgreSQL helper tools
 
@@ -265,8 +246,8 @@ This project is not on PyPI because:
 
 ---
 
-    $ xpostgres restore --help
-    usage: xpostgres [-h] server_uri {backup,restore} ...
+    $ postgresx backup --help
+    usage: postgresx [-h] server_uri {backup,restore} ...
 
     PostgreSQL helper tools
 
@@ -282,10 +263,29 @@ This project is not on PyPI because:
         backup          backup a PostgreSQL database to a SQL file
         restore         restore a PostgreSQL database from a SQL file
 
-## xpytest
+---
 
-    $ xpytest --help
-    Usage: xpytest [OPTIONS] COMMAND [ARGS]...
+    $ postgresx restore --help
+    usage: postgresx [-h] server_uri {backup,restore} ...
+
+    PostgreSQL helper tools
+
+    positional arguments:
+      server_uri        database server URI
+                        (postgresql://user:password@server:port)
+
+    optional arguments:
+      -h, --help        show this help message and exit
+
+    commands:
+      {backup,restore}
+        backup          backup a PostgreSQL database to a SQL file
+        restore         restore a PostgreSQL database from a SQL file
+
+## pytestx
+
+    $ pytestx --help
+    Usage: pytestx [OPTIONS] COMMAND [ARGS]...
 
       Extra commands for py.test.
 
@@ -298,8 +298,8 @@ This project is not on PyPI because:
 
 ---
 
-    $ xpytest results --help
-    Usage: xpytest results [OPTIONS]
+    $ pytestx results --help
+    Usage: pytestx results [OPTIONS]
 
       Parse a file with the output of failed tests, then re-run only those
       failed tests.
@@ -312,8 +312,8 @@ This project is not on PyPI because:
 
 ---
 
-    $ xpytest run --help
-    Usage: xpytest run [OPTIONS] [CLASS_NAMES_OR_ARGS]...
+    $ pytestx run --help
+    Usage: pytestx run [OPTIONS] [CLASS_NAMES_OR_ARGS]...
 
       Run pytest with some shortcut options.
 

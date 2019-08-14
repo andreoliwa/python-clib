@@ -15,8 +15,8 @@
 
 -   get correct Git commit message from bumpversion ([7d69b79](https://github.com/andreoliwa/python-clib/commit/7d69b79))
 -   **pycharm-cli:** an error was being raised when opening files ([6e81b31](https://github.com/andreoliwa/python-clib/commit/6e81b31))
--   **xpytest:** treat invalid password on Jenkins ([8a97c71](https://github.com/andreoliwa/python-clib/commit/8a97c71))
--   error when running xpostgres backup ([d574f2b](https://github.com/andreoliwa/python-clib/commit/d574f2b))
+-   **pytestx:** treat invalid password on Jenkins ([8a97c71](https://github.com/andreoliwa/python-clib/commit/8a97c71))
+-   error when running postgresx backup ([d574f2b](https://github.com/andreoliwa/python-clib/commit/d574f2b))
 
 ### Features
 
@@ -27,8 +27,8 @@
 -   add docker-volume script ([4b820a2](https://github.com/andreoliwa/python-clib/commit/4b820a2))
 -   add new functions and classes from dotfiles ([86648da](https://github.com/andreoliwa/python-clib/commit/86648da))
 -   add pypi script ([3ec86a6](https://github.com/andreoliwa/python-clib/commit/3ec86a6))
--   add xpostgres script ([5dd7350](https://github.com/andreoliwa/python-clib/commit/5dd7350))
--   add xpytest script ([9ce3b43](https://github.com/andreoliwa/python-clib/commit/9ce3b43))
+-   add postgresx script ([5dd7350](https://github.com/andreoliwa/python-clib/commit/5dd7350))
+-   add pytestx script ([9ce3b43](https://github.com/andreoliwa/python-clib/commit/9ce3b43))
 -   colored prompt ([56249be](https://github.com/andreoliwa/python-clib/commit/56249be))
 -   use poetry to generate a setup.py file from pyproject.toml ([1154a3c](https://github.com/andreoliwa/python-clib/commit/1154a3c))
 

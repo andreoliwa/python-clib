@@ -120,7 +120,7 @@ def restore(parser, args):
 
 
 # TODO: Convert to click
-def xpostgres():
+def postgresx():
     """Extra PostgreSQL tools like backup, restore, user creation, etc."""
     parser = argparse.ArgumentParser(description="PostgreSQL helper tools")
     parser.add_argument("server_uri", help="database server URI (postgresql://user:password@server:port)")
@@ -139,7 +139,7 @@ def xpostgres():
     parser_restore.set_defaults(chosen_function=restore)
 
     # TODO Subcommand create-user new-user-name or alias user new-user-name to create a new user
-    # TODO xpostgres user myuser [mypass]
+    # TODO postgresx user myuser [mypass]
 
     args = parser.parse_args()
     if not args.chosen_function:

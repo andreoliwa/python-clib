@@ -21,16 +21,16 @@ classifiers = [
 
 # TODO This is still not working properly; the scripts are created but not added to the PATH. Temporary workaround:
 # Every time the scripts below change, run:
-# xpoetry setup-py
+# poetryx setup-py
 [tool.poetry.scripts]
 backup-full = "clib.files:backup_full"
 docker-find = "clib.docker:docker_find"
 docker-volume = "clib.docker:docker_volume"
 pycharm-cli = "clib.dev:pycharm_cli"
 pypub = "clib.dev.packaging:pypub"
-xpoetry = "clib.dev.packaging:xpoetry"
-xpostgres = "clib.db:xpostgres"
-xpytest = "clib.dev:xpytest"
+poetryx = "clib.dev.packaging:poetryx"
+postgresx = "clib.db:postgresx"
+pytestx = "clib.dev:pytestx"
 
 [tool.poetry.dependencies]
 python = "^3.7"

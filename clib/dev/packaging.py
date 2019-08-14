@@ -203,7 +203,7 @@ class Publisher:
         """Recreate the setup.py if it exists."""
         if Path("setup.py").exists():
             if self.dry_run:
-                shell("xpoetry setup-py", dry_run=True, header="Regenerate setup.py from pyproject.toml")
+                shell("poetryx setup-py", dry_run=True, header="Regenerate setup.py from pyproject.toml")
             else:
                 ctx.invoke(setup_py)
 
@@ -418,12 +418,12 @@ def changelog():
 
 
 @click.group()
-def xpoetry():
+def poetryx():
     """Extra commands for poetry."""
     pass
 
 
-@xpoetry.command()
+@poetryx.command()
 def setup_py():
     """Use poetry to generate a setup.py file from pyproject.toml."""
     remove_previous_builds()
@@ -443,7 +443,7 @@ def setup_py():
 
             .. note::
 
-                This file was generated automatically by ``xpoetry setup-py``.
+                This file was generated automatically by ``poetryx setup-py``.
                 A ``setup.py`` file is needed to install this project in editable mode (``pip install -e /path/to/project``).
             """
             # pylint: disable=line-too-long
