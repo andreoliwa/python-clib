@@ -11,7 +11,7 @@ from typing import List
 import click
 from plumbum import FG
 
-from clit import CONFIG, DRY_RUN_OPTION, LOGGER, read_config, save_config
+from clib import CONFIG, DRY_RUN_OPTION, LOGGER, read_config, save_config
 
 SECTION_SYMLINKS_FILES = "symlinks/files"
 SECTION_SYMLINKS_DIRS = "symlinks/dirs"
@@ -114,7 +114,7 @@ def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool 
     """Synchronize a source directory with a destination."""
     # Import locally, so we get an error only in this function, and not in other functions of this module.
     from plumbum.cmd import rsync
-    from clit.environments import RSYNC_EXCLUDE
+    from clib.environments import RSYNC_EXCLUDE
 
     for dest_dir in destination_dirs:
         for src_dir in source_dirs:
@@ -142,7 +142,7 @@ def backup_full(ctx, dry_run: bool, kill: bool, pictures: bool):
     """Perform all backups in a single script."""
     if pictures:
         click.secho("Pictures backup", bold=True, fg="green")
-        from clit.environments import PICTURE_DIRS, BACKUP_DIRS
+        from clib.environments import PICTURE_DIRS, BACKUP_DIRS
 
         sync_dir(PICTURE_DIRS, BACKUP_DIRS, dry_run, kill)
     else:

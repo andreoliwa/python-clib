@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-clit documentation build configuration file, created by sphinx-quickstart on Tue Jul  9 22:26:36 2013.
+clib documentation build configuration file, created by sphinx-quickstart on Tue Jul  9 22:26:36 2013.
 
 This file is execfile()d with the current directory set to its
 containing dir.
@@ -16,7 +16,7 @@ import os
 import sys
 from typing import Dict
 
-from clit import __version__ as version_module
+from clib import __version__ as version_module
 
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory is
@@ -56,7 +56,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"clit"
+project = u"clib"
 copyright = u"2015, W. Augusto Andreoli"
 
 # The version info for the project you're documenting, acts as replacement
@@ -190,7 +190,7 @@ html_static_path = ["_static"]
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "clitdoc"
+htmlhelp_basename = "clibdoc"
 
 
 # -- Options for LaTeX output ------------------------------------------
@@ -207,7 +207,7 @@ latex_elements: Dict[str, str] = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass
 # [howto/manual]).
-latex_documents = [("index", "clit.tex", u"clit Documentation", u"W. Augusto Andreoli", "manual")]
+latex_documents = [("index", "clib.tex", u"clib Documentation", u"W. Augusto Andreoli", "manual")]
 
 # The name of an image file (relative to this directory) to place at
 # the top of the title page.
@@ -234,7 +234,7 @@ latex_documents = [("index", "clit.tex", u"clit Documentation", u"W. Augusto And
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [("index", "clit", u"clit Documentation", [u"W. Augusto Andreoli"], 1)]
+man_pages = [("index", "clib", u"clib Documentation", [u"W. Augusto Andreoli"], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -248,10 +248,10 @@ man_pages = [("index", "clit", u"clit Documentation", [u"W. Augusto Andreoli"], 
 texinfo_documents = [
     (
         "index",
-        "clit",
-        u"clit Documentation",
+        "clib",
+        u"clib Documentation",
         u"W. Augusto Andreoli",
-        "clit",
+        "clib",
         "One line description of project.",
         "Miscellaneous",
     )

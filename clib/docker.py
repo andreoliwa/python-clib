@@ -6,9 +6,9 @@ from pathlib import Path
 from subprocess import PIPE
 from typing import List
 
-from clit.config import JsonConfig
-from clit.files import existing_directory_type, existing_file_type, shell, shell_find
-from clit.types import JsonDict
+from clib.config import JsonConfig
+from clib.files import existing_directory_type, existing_file_type, shell, shell_find
+from clib.types import JsonDict
 
 YML_DIRS = JsonConfig("docker-find-yml-dirs.json")
 YML_FILES = JsonConfig("docker-find-yml-files.json")

@@ -5,8 +5,8 @@ from pathlib import Path
 from subprocess import PIPE
 from typing import List, Optional
 
-from clit.docker import DockerContainer
-from clit.files import existing_directory_type, existing_file_type, shell
+from clib.docker import DockerContainer
+from clib.files import existing_directory_type, existing_file_type, shell
 
 POSTGRES_DOCKER_CONTAINER_NAME = "postgres10"
 

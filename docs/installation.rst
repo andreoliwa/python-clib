@@ -4,9 +4,9 @@ Installation
 
 At the command line::
 
-    $ easy_install clit
+    $ easy_install clib
 
 Or, if you have virtualenvwrapper installed::
 
-    $ mkvirtualenv clit
-    $ pip install clit
+    $ mkvirtualenv clib
+    $ pip install clib

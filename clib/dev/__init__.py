@@ -9,7 +9,7 @@ import click
 from plumbum import FG, RETCODE
 from requests_html import HTMLSession
 
-from clit.files import shell
+from clib.files import shell
 
 # Possible formats for tests:
 # ___ test_name ___

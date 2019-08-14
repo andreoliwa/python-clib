@@ -39,7 +39,7 @@ clean-test:
 	rm -fr htmlcov/
 
 fix-isort:
-	isort --recursive *.py clit tests
+	isort --recursive *.py clib tests
 
 lint:
 	python setup.py flake8
@@ -55,14 +55,14 @@ test-all:
 	tox
 
 coverage:
-	py.test --cov=clit --cov-report=term --cov-report=html
+	py.test --cov=clib --cov-report=term --cov-report=html
 	xdg-open htmlcov/index.html
 
 docs:
-	rm -f docs/clit.rst
+	rm -f docs/clib.rst
 	rm -f docs/modules.rst
 	mkdir -p docs/_static
-	sphinx-apidoc -o docs/ clit
+	sphinx-apidoc -o docs/ clib
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	xdg-open docs/_build/html/index.html

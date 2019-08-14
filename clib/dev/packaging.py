@@ -9,9 +9,9 @@ from typing import List, Optional, Tuple
 
 import click
 
-from clit import DRY_RUN_OPTION
-from clit.files import shell
-from clit.ui import prompt
+from clib import DRY_RUN_OPTION
+from clib.files import shell
+from clib.ui import prompt
 
 HeaderCommand = Tuple[str, str]
 

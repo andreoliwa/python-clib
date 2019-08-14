@@ -1,40 +1,36 @@
-# [0.11.0](https://github.com/andreoliwa/python-clit/compare/v0.10.0...v0.11.0) (2019-04-03)
-
+# [0.11.0](https://github.com/andreoliwa/python-clib/compare/v0.10.0...v0.11.0) (2019-04-03)
 
 ### Features
 
-* **pypi:** improve upload messages ([106fa43](https://github.com/andreoliwa/python-clit/commit/106fa43))
-* **pypub:** add option to create a manual release on GitHub ([baa219b](https://github.com/andreoliwa/python-clit/commit/baa219b))
-* **pypub:** display git status of files ([763f8f7](https://github.com/andreoliwa/python-clit/commit/763f8f7))
-* **pypub:** improvements to GitHub and PyPI upload process ([e4e2528](https://github.com/andreoliwa/python-clit/commit/e4e2528))
+-   **pypi:** improve upload messages ([106fa43](https://github.com/andreoliwa/python-clib/commit/106fa43))
+-   **pypub:** add option to create a manual release on GitHub ([baa219b](https://github.com/andreoliwa/python-clib/commit/baa219b))
+-   **pypub:** display git status of files ([763f8f7](https://github.com/andreoliwa/python-clib/commit/763f8f7))
+-   **pypub:** improvements to GitHub and PyPI upload process ([e4e2528](https://github.com/andreoliwa/python-clib/commit/e4e2528))
 
 <a name="0.10.0"></a>
-# [0.10.0](https://github.com/andreoliwa/python-clit/compare/0.7.0...v0.10.0) (2019-03-11)
 
+# [0.10.0](https://github.com/andreoliwa/python-clib/compare/0.7.0...v0.10.0) (2019-03-11)
 
 ### Bug Fixes
 
-* get correct Git commit message from bumpversion ([7d69b79](https://github.com/andreoliwa/python-clit/commit/7d69b79))
-* **pycharm-cli:** an error was being raised when opening files ([6e81b31](https://github.com/andreoliwa/python-clit/commit/6e81b31))
-* **xpytest:** treat invalid password on Jenkins ([8a97c71](https://github.com/andreoliwa/python-clit/commit/8a97c71))
-* error when running xpostgres backup ([d574f2b](https://github.com/andreoliwa/python-clit/commit/d574f2b))
-
+-   get correct Git commit message from bumpversion ([7d69b79](https://github.com/andreoliwa/python-clib/commit/7d69b79))
+-   **pycharm-cli:** an error was being raised when opening files ([6e81b31](https://github.com/andreoliwa/python-clib/commit/6e81b31))
+-   **xpytest:** treat invalid password on Jenkins ([8a97c71](https://github.com/andreoliwa/python-clib/commit/8a97c71))
+-   error when running xpostgres backup ([d574f2b](https://github.com/andreoliwa/python-clib/commit/d574f2b))
 
 ### Features
 
-* **pypi:** allow dirty workspace, recreat setup.py, check return codes ([34f18e8](https://github.com/andreoliwa/python-clit/commit/34f18e8))
-* **pypi:** flag to skip PyPI and publish only to GitHub ([68dca29](https://github.com/andreoliwa/python-clit/commit/68dca29))
-* **pypi:** upload to test server, remove previous builds ([f95caf8](https://github.com/andreoliwa/python-clit/commit/f95caf8))
-* add docker-find script ([c54c686](https://github.com/andreoliwa/python-clit/commit/c54c686))
-* add docker-volume script ([4b820a2](https://github.com/andreoliwa/python-clit/commit/4b820a2))
-* add new functions and classes from dotfiles ([86648da](https://github.com/andreoliwa/python-clit/commit/86648da))
-* add pypi script ([3ec86a6](https://github.com/andreoliwa/python-clit/commit/3ec86a6))
-* add xpostgres script ([5dd7350](https://github.com/andreoliwa/python-clit/commit/5dd7350))
-* add xpytest script ([9ce3b43](https://github.com/andreoliwa/python-clit/commit/9ce3b43))
-* colored prompt ([56249be](https://github.com/andreoliwa/python-clit/commit/56249be))
-* use poetry to generate a setup.py file from pyproject.toml ([1154a3c](https://github.com/andreoliwa/python-clit/commit/1154a3c))
-
-
+-   **pypi:** allow dirty workspace, recreat setup.py, check return codes ([34f18e8](https://github.com/andreoliwa/python-clib/commit/34f18e8))
+-   **pypi:** flag to skip PyPI and publish only to GitHub ([68dca29](https://github.com/andreoliwa/python-clib/commit/68dca29))
+-   **pypi:** upload to test server, remove previous builds ([f95caf8](https://github.com/andreoliwa/python-clib/commit/f95caf8))
+-   add docker-find script ([c54c686](https://github.com/andreoliwa/python-clib/commit/c54c686))
+-   add docker-volume script ([4b820a2](https://github.com/andreoliwa/python-clib/commit/4b820a2))
+-   add new functions and classes from dotfiles ([86648da](https://github.com/andreoliwa/python-clib/commit/86648da))
+-   add pypi script ([3ec86a6](https://github.com/andreoliwa/python-clib/commit/3ec86a6))
+-   add xpostgres script ([5dd7350](https://github.com/andreoliwa/python-clib/commit/5dd7350))
+-   add xpytest script ([9ce3b43](https://github.com/andreoliwa/python-clib/commit/9ce3b43))
+-   colored prompt ([56249be](https://github.com/andreoliwa/python-clib/commit/56249be))
+-   use poetry to generate a setup.py file from pyproject.toml ([1154a3c](https://github.com/andreoliwa/python-clib/commit/1154a3c))
 
 <a name="0.7.3"></a>
 

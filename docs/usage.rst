@@ -2,6 +2,6 @@
 Usage
 ========
 
-To use clit in a project::
+To use clib in a project::
 
-    import clit
+    import clib

@@ -1,35 +1,35 @@
-# python-clit
+# python-clib
 
-[![Travis CI](https://travis-ci.com/andreoliwa/python-clit.svg?branch=master)](https://travis-ci.com/andreoliwa/python-clit)
+[![Travis CI](https://travis-ci.com/andreoliwa/python-clib.svg?branch=master)](https://travis-ci.com/andreoliwa/python-clib)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
-[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=andreoliwa/python-clit)](https://dependabot.com)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=andreoliwa/python-clib)](https://dependabot.com)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-Python CLI tools and scripts to help in everyday life.
+Python CLI library, tools and scripts to help in everyday life.
 
 ## Installation
 
 First, [install `pipx`](https://github.com/pipxproject/pipx#install-pipx).
 
-Then install `clit` in an isolated environment:
+Then install `clib` in an isolated environment:
 
-    pipx install --spec git+https://github.com/andreoliwa/python-clit clit
+    pipx install --spec git+https://github.com/andreoliwa/python-clib clib
 
 ## Development
 
 You can clone the repo locally and then install it:
 
     cd ~/Code
-    git clone https://github.com/andreoliwa/python-clit.git
-    pipx install -e --spec ~/Code/python-clit/ clit
+    git clone https://github.com/andreoliwa/python-clib.git
+    pipx install -e --spec ~/Code/python-clib/ clib
 
 This project is not on PyPI because:
 
-- it's not that generic;
-- from the beginning, it was not built as a package to be published (it would need some adptations);
-- the code is not super clean;
-- it doesn't have proper tests;
-- etc.
+-   it's not that generic;
+-   from the beginning, it was not built as a package to be published (it would need some adptations);
+-   the code is not super clean;
+-   it doesn't have proper tests;
+-   etc.
 
 # Available commands
 

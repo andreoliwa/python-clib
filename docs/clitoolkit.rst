@@ -1,37 +1,37 @@
-clit package
+clib package
 ==================
 
 Submodules
 ----------
 
-clit.database module
+clib.database module
 --------------------------
 
-.. automodule:: clit.database
+.. automodule:: clib.database
     :members:
     :undoc-members:
     :show-inheritance:
 
-clit.files module
+clib.files module
 -----------------------
 
-.. automodule:: clit.files
+.. automodule:: clib.files
     :members:
     :undoc-members:
     :show-inheritance:
 
-clit.git module
+clib.git module
 ---------------------
 
-.. automodule:: clit.git
+.. automodule:: clib.git
     :members:
     :undoc-members:
     :show-inheritance:
 
-clit.media module
+clib.media module
 -----------------------
 
-.. automodule:: clit.media
+.. automodule:: clib.media
     :members:
     :undoc-members:
     :show-inheritance:
@@ -40,7 +40,7 @@ clit.media module
 Module contents
 ---------------
 
-.. automodule:: clit
+.. automodule:: clib
     :members:
     :undoc-members:
     :show-inheritance:

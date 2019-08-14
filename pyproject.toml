@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "clit"
+name = "clib"
 version = "0.10.0"
-description = "Python CLI tools and scripts to help in everyday life"
+description = "Python CLI library, tools and scripts to help in everyday life"
 authors = ["W. Augusto Andreoli <andreoliwa@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/andreoliwa/python-clit"
+repository = "https://github.com/andreoliwa/python-clib"
 keywords = ["python3", "cli"]
 # Trove classifiers
 # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
@@ -23,14 +23,14 @@ classifiers = [
 # Every time the scripts below change, run:
 # xpoetry setup-py
 [tool.poetry.scripts]
-backup-full = "clit.files:backup_full"
-docker-find = "clit.docker:docker_find"
-docker-volume = "clit.docker:docker_volume"
-pycharm-cli = "clit.dev:pycharm_cli"
-pypub = "clit.dev.packaging:pypub"
-xpoetry = "clit.dev.packaging:xpoetry"
-xpostgres = "clit.db:xpostgres"
-xpytest = "clit.dev:xpytest"
+backup-full = "clib.files:backup_full"
+docker-find = "clib.docker:docker_find"
+docker-volume = "clib.docker:docker_volume"
+pycharm-cli = "clib.dev:pycharm_cli"
+pypub = "clib.dev.packaging:pypub"
+xpoetry = "clib.dev.packaging:xpoetry"
+xpostgres = "clib.db:xpostgres"
+xpytest = "clib.dev:xpytest"
 
 [tool.poetry.dependencies]
 python = "^3.7"

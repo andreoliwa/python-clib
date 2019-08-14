@@ -7,7 +7,7 @@ from subprocess import PIPE, CalledProcessError
 
 import click
 
-from clit.files import shell
+from clib.files import shell
 
 
 def notify(title, message):
