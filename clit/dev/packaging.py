@@ -446,6 +446,7 @@ def setup_py():
                 This file was generated automatically by ``xpoetry setup-py``.
                 A ``setup.py`` file is needed to install this project in editable mode (``pip install -e /path/to/project``).
             """
+            # pylint: disable=line-too-long
             '''
         ).strip(),
     )
