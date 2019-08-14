@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Packaging tools to publish projects on PyPI and GitHub."""
 import os
+import sys
 from pathlib import Path
 from shutil import rmtree
 from textwrap import dedent
@@ -427,7 +428,8 @@ def setup_py():
     """Use poetry to generate a setup.py file from pyproject.toml."""
     remove_previous_builds()
     shell("poetry build")
-    shell("tar -xvzf dist/*.gz --strip-components 1 */setup.py")
+    extra_args = " --wildcards" if sys.platform == "linux" else ""
+    shell(f"tar -xvzf dist/*.gz{extra_args} --strip-components 1 */setup.py")
     shell("black setup.py")
 
     setup_py_path: Path = Path.cwd() / "setup.py"
