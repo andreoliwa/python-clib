@@ -445,6 +445,8 @@ def setup_py():
 
                 This file was generated automatically by ``poetryx setup-py``.
                 A ``setup.py`` file is needed to install this project in editable mode (``pip install -e /path/to/project``).
+
+                `See this and other utilities from the clib package <https://github.com/andreoliwa/python-clib#poetryx>`_.
             """
             # pylint: disable=line-too-long
             '''
