@@ -227,3 +227,33 @@ def wait_for_process(process_name: str) -> None:
     pid_path = Path(f"/proc/{pid}")
     while pid_path.exists():
         sleep(0.5)
+
+
+@click.command()
+@DRY_RUN_OPTION
+@click.argument("directories", nargs=-1, required=True, type=click.Path(exists=True), metavar="[DIR1 [DIR2]...]")
+def rm_broken_symlinks(dry_run: bool, directories):
+    """Remove broken symlinks from directories (asks for confirmation)."""
+    if dry_run:
+        click.secho("[DRY-RUN]", fg="cyan")
+
+    clean_dirs = [dir_str.rstrip("/") for dir_str in directories]
+    base_command = "find {dir} -type l ! -exec test -e {{}} \; -print{extra}"
+
+    all_broken_links = []
+    for clean_dir in clean_dirs:
+        broken_links = shell_find(base_command.format(dir=clean_dir, extra=""), quiet=False)
+        all_broken_links.extend(broken_links)
+        for file in broken_links:
+            click.echo(file)
+    if not all_broken_links:
+        click.secho("There are no broken links to be removed", fg="green")
+        exit(0)
+    if dry_run:
+        exit(0)
+
+    click.confirm("These broken links will be removed. Continue?", default=False, abort=True)
+
+    for clean_dir in clean_dirs:
+        click.secho(f"Removing broken symlinks in {click.format_filename(clean_dir)}...", fg="green")
+        shell(base_command.format(dir=clean_dir, extra=" -delete"))
