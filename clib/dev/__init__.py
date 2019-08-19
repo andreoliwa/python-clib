@@ -18,11 +18,18 @@ from clib.files import shell
 TEST_NAMES_REGEX = re.compile(r"___ .*(test[^\[\] ]+)[\[\]A-Za-z]* ___")
 
 PYCHARM_MACOS_APP_PATH = Path("/Applications/PyCharm.app/Contents/MacOS/pycharm")
+LIBRARY_LOGS_DIR = Path.home() / "Library/Logs"
 
 
-@click.command()
+@click.group()
+def pycharmx():
+    """Extra commands for PyCharm."""
+    pass
+
+
+@pycharmx.command()
 @click.argument("files", nargs=-1)
-def pycharm_cli(files):
+def open(files):
     """Invoke PyCharm on the command line.
 
     If a file doesn't exist, call `which` to find out the real location.
@@ -43,6 +50,20 @@ def pycharm_cli(files):
     if full_paths:
         shell(f"{PYCHARM_MACOS_APP_PATH} {' '.join(full_paths)}")
     exit(1 if errors else 0)
+
+
+@pycharmx.command()
+def logs():
+    """Tail the logs on PyCharm's latest version."""
+    all_versions = sorted(LIBRARY_LOGS_DIR.glob("PyCharm20*"), reverse=True)
+    if not all_versions:
+        click.echo(f"No PyCharm logs found on {str(LIBRARY_LOGS_DIR)}")
+        exit(0)
+
+    log_dir = LIBRARY_LOGS_DIR / all_versions[0]
+    from pprint import pprint
+
+    shell(f"tail -f {str(log_dir)}/*.log")
 
 
 @click.group()

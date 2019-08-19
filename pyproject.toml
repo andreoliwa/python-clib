@@ -19,17 +19,28 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
 ]
 
-# TODO This is still not working properly; the scripts are created but not added to the PATH. Temporary workaround:
-# Every time the scripts below change, run:
-# poetryx setup-py
+[dummy.clib]
+# TODO tool.poetry.scripts are still not working properly; the scripts are created but not added to the PATH. Temporary workaround:
+# Every time the scripts below change, run the following commands:
+commands = """
+cd
+z clib
+poetry update
+poetry run poetryx setup-py
+pyclean_dist
+cd
+pipx uninstall clib
+pipx install -e --spec ~/Code/python-clib/ clib
+"""
+
 [tool.poetry.scripts]
 backup-full = "clib.files:backup_full"
 docker-find = "clib.docker:docker_find"
 docker-volume = "clib.docker:docker_volume"
-pycharm-cli = "clib.dev:pycharm_cli"
-pypub = "clib.dev.packaging:pypub"
 poetryx = "clib.dev.packaging:poetryx"
 postgresx = "clib.db:postgresx"
+pycharmx = "clib.dev:pycharmx"
+pypub = "clib.dev.packaging:pypub"
 pytestx = "clib.dev:pytestx"
 rm-broken-symlinks = "clib.files:rm_broken_symlinks"
 
