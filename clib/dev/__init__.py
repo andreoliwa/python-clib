@@ -61,8 +61,6 @@ def logs():
         exit(0)
 
     log_dir = LIBRARY_LOGS_DIR / all_versions[0]
-    from pprint import pprint
-
     shell(f"tail -f {str(log_dir)}/*.log")
 
 

@@ -1,3 +1,6 @@
+[tool.nitpick]
+style = ["https://raw.githubusercontent.com/andreoliwa/nitpick/develop/nitpick-style.toml"]
+
 [tool.poetry]
 name = "clib"
 version = "0.10.0"
@@ -19,20 +22,6 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
 ]
 
-[dummy.clib]
-# TODO tool.poetry.scripts are still not working properly; the scripts are created but not added to the PATH. Temporary workaround:
-# Every time the scripts below change, run the following commands:
-commands = """
-cd
-z clib
-poetry update
-poetry run poetryx setup-py
-pyclean_dist
-cd
-pipx uninstall clib
-pipx install -e --spec ~/Code/python-clib/ clib
-"""
-
 [tool.poetry.scripts]
 backup-full = "clib.files:backup_full"
 docker-find = "clib.docker:docker_find"
@@ -43,6 +32,7 @@ pycharmx = "clib.dev:pycharmx"
 pypub = "clib.dev.packaging:pypub"
 pytestx = "clib.dev:pytestx"
 rm-broken-symlinks = "clib.files:rm_broken_symlinks"
+rename-slugify = "clib.files:rename_slugify"
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -54,6 +44,8 @@ SQLAlchemy = "*"
 plumbum = "*"
 prettyconf = "*"
 requests-html = "*"
+pendulum = "*"
+python-slugify = "*"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
@@ -68,6 +60,16 @@ pylint = "*"
 
 [tool.black]
 line-length = 120
+
+[dummy.clib]
+# TODO tool.poetry.scripts are still not working properly; the scripts are created but not added to the PATH. Temporary workaround:
+# Every time the scripts below change, run the following commands:
+commands = """
+cd && z clib
+poetry update && poetry run poetryx setup-py && pyclean_dist
+test $? -eq 0 && cd && pipx uninstall clib
+pipx install -e --spec ~/Code/python-clib/ clib
+"""
 
 [build-system]
 requires = ["poetry>=0.12"]

@@ -12,5 +12,5 @@ config.starting_path = os.path.expanduser("~/.config/clib")
 RSYNC_EXCLUDE: List[str] = config(
     "RSYNC_EXCLUDE", cast=config.list, default="lost+found/,.dropbox.cache,.Trash-*,.DS_Store"
 )
-BACKUP_DIRS: List[str] = config("BACKUP_DIRS", cast=cast_to_directory_list())
-PICTURE_DIRS: List[str] = config("PICTURE_DIRS", cast=cast_to_directory_list())
+BACKUP_DIRS: List[str] = config("BACKUP_DIRS", cast=cast_to_directory_list(), default="")
+PICTURE_DIRS: List[str] = config("PICTURE_DIRS", cast=cast_to_directory_list(), default="")

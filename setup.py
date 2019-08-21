@@ -21,8 +21,10 @@ install_requires = [
     "argcomplete",
     "click",
     "colorlog",
+    "pendulum",
     "plumbum",
     "prettyconf",
+    "python-slugify",
     "requests",
     "requests-html",
 ]
@@ -37,6 +39,7 @@ entry_points = {
         "pycharmx = clib.dev:pycharmx",
         "pypub = clib.dev.packaging:pypub",
         "pytestx = clib.dev:pytestx",
+        "rename-slugify = clib.files:rename_slugify",
         "rm-broken-symlinks = clib.files:rm_broken_symlinks",
     ]
 }

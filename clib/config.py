@@ -48,7 +48,7 @@ def cast_to_directory_list(check_existing: bool = True):
         expanded_dirs = [os.path.expanduser(dir_).rstrip("/") for dir_ in value.split(":")]
 
         if check_existing:
-            non_existent = [d for d in expanded_dirs if not os.path.isdir(d)]
+            non_existent = [d for d in expanded_dirs if d and not os.path.isdir(d)]
             if non_existent:
                 raise RuntimeError(
                     "Some directories were not found or are not directories: {}".format(":".join(non_existent))

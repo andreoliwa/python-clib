@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """Files, symbolic links, operating system utilities."""
 import os
+import re
 from argparse import ArgumentTypeError
+from parser import ParserError
 from pathlib import Path
 from shlex import split
 from subprocess import PIPE, run
@@ -9,105 +11,31 @@ from time import sleep
 from typing import List
 
 import click
+import pendulum
 from plumbum import FG
+from slugify import slugify
 
-from clib import CONFIG, DRY_RUN_OPTION, LOGGER, read_config, save_config
+from clib import DRY_RUN_OPTION
 
-SECTION_SYMLINKS_FILES = "symlinks/files"
-SECTION_SYMLINKS_DIRS = "symlinks/dirs"
-
-
-@click.command()
-def create_symbolic_links():
-    """Create symbolic links for files and dirs, following what's stored on the config file."""
-    dot_files_dir = read_config(
-        "dirs", "dotfiles", os.path.realpath(os.path.join(os.path.dirname(__file__), "../dotfiles"))
-    )
-    if not os.path.exists(dot_files_dir):
-        LOGGER.warning("The directory '%s' does not exist", dot_files_dir)
-        return
-    LOGGER.info("Directory with dot files: '%s'", dot_files_dir)
-
-    LOGGER.info("Creating links for files in [%s]", SECTION_SYMLINKS_FILES)
-    links = {}
-    cut = len(dot_files_dir) + 1
-    for root, _, files in os.walk(dot_files_dir):
-        for one_file in files:
-            source_file = os.path.join(root, one_file)
-            key = source_file[cut:]
-            raw_link_name = read_config(SECTION_SYMLINKS_FILES, key, "")
-            links[key] = (source_file, raw_link_name)
-    # http://stackoverflow.com/questions/9001509/how-can-i-sort-a-python-dictionary-sort-by-key/13990710#13990710
-    for key in sorted(links):
-        (source_file, raw_link_name) = links[key]
-        create_link(key, source_file, raw_link_name, False)
-
-    LOGGER.info("Creating links for dirs in [%s]", SECTION_SYMLINKS_DIRS)
-    if CONFIG.has_section(SECTION_SYMLINKS_DIRS):
-        for key in CONFIG.options(SECTION_SYMLINKS_DIRS):
-            raw_link_name = read_config(SECTION_SYMLINKS_DIRS, key, "")
-            create_link(key, key, raw_link_name, True)
-
-    save_config()
-
-
-def create_link(key, source_file, raw_link, is_dir):
-    """Check and create a symbolic link.
-
-    :param key: Key name in the config.ini file.
-    :param source_file: Full path to the source file that will be linked.
-    :param raw_link: Raw destination link taken from config.ini.
-    :param is_dir: Consider the paths as directories.
-    :return:
-    """
-
-    def message(text, logger_func=LOGGER.warning):
-        """Show a message with details about the links and files.
-
-        :param text: Text to be shown.
-        :param logger_func: Logger function to be used.
-        :return:
-        """
-        logger_func("%s -> '%s': %s", key, final_link, text)
-
-    if is_dir:
-        # In config.ini, a dir can contain the char "~" in the key
-        source_file = os.path.expanduser(source_file)
-
-    final_link = raw_link
-    if not raw_link:
-        message("empty link in the config file")
-        return
-
-    expanded_link = os.path.expanduser(raw_link)
-    if raw_link == "~" or expanded_link.endswith("/"):
-        # Append the basename when the dir ends with a slash
-        final_link = os.path.join(expanded_link, os.path.basename(source_file))
-    else:
-        final_link = expanded_link
-
-    if os.path.islink(final_link):
-        try:
-            if os.path.samefile(source_file, final_link):
-                message("link already exists", LOGGER.info)
-                return
-            message("link already exists, but points to a different file")
-        except FileNotFoundError as err:
-            message("file not found? {}".format(err), LOGGER.error)
-        return
-    elif os.path.isfile(final_link):
-        if os.path.samefile(source_file, final_link):
-            message("an identical file already exists; it can be manually replaced")
-            return
-        message(
-            "a file with the same name already exists, and they are not the same. "
-            "Try comparing the files with:\nmeld '{}' '{}'".format(source_file, final_link),
-            LOGGER.error,
-        )
-        return
-
-    os.symlink(source_file, final_link, target_is_directory=not is_dir)
-    message("link created", LOGGER.info)
+# DATE_REGEX = re.compile(r"(\d{2}[-_\.]?\d{2}[-_\.]?(19\d{2}|20\d{2})|(19\d{2}|20\d{2})[-_\.]?\d{2}[-_\.]?\d{2})")
+DATE_REGEX = re.compile(r"([0-9][0-9-_\.]+[0-9])")
+UNDERLINE_LOWER_CASE_REGEX = re.compile(r"_[a-z]")
+POSSIBLE_FORMATS = (
+    # Human formats first
+    "MM_YYYY",
+    "DD_MM_YYYY",
+    "DD_MM_YY",
+    "DDMMYYYY",
+    "DD_MM_YYYY_HH_mm_ss",
+    "DD_MM_YY_HH_mm_ss",
+    # Then inverted formats
+    "YYYY_MM",
+    "YYYY_MM_DD",
+    "YYYYMMDD",
+    "YY_MM_DD_HH_mm_ss",
+    "YYYY_MM_DD_HH_mm_ss",
+    "YYYYMMDDHHmmss",
+)
 
 
 def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool = False, kill: bool = False):
@@ -117,7 +45,11 @@ def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool 
     from clib.environments import RSYNC_EXCLUDE
 
     for dest_dir in destination_dirs:
+        if not dest_dir:
+            continue
         for src_dir in source_dirs:
+            if not src_dir:
+                continue
             # Remove the user home and concatenate the source after the destination
             full_dest_dir = os.path.join(dest_dir, src_dir.replace(os.path.expanduser("~"), "")[1:])
 
@@ -238,7 +170,7 @@ def rm_broken_symlinks(dry_run: bool, directories):
         click.secho("[DRY-RUN]", fg="cyan")
 
     clean_dirs = [dir_str.rstrip("/") for dir_str in directories]
-    base_command = "find {dir} -type l ! -exec test -e {{}} \; -print{extra}"
+    base_command = r"find {dir} -type l ! -exec test -e {{}} \; -print{extra}"
 
     all_broken_links = []
     for clean_dir in clean_dirs:
@@ -257,3 +189,122 @@ def rm_broken_symlinks(dry_run: bool, directories):
     for clean_dir in clean_dirs:
         click.secho(f"Removing broken symlinks in {click.format_filename(clean_dir)}...", fg="green")
         shell(base_command.format(dir=clean_dir, extra=" -delete"))
+
+
+def slugify_camel_iso(old_string: str) -> str:
+    """Slugify a string with camel case, underscores and ISO date/time formats.
+
+    >>> slugify_camel_iso("some name Here 2017_12_30")
+    'Some_Name_Here_2017-12-30'
+    >>> slugify_camel_iso("DONT_PAY_this-bill-10-05-2015")
+    'Dont_Pay_This_Bill_2015-05-10'
+    >>> slugify_camel_iso("normal DATE 01012019 with no DASHES")
+    'Normal_Date_2019-01-01_With_No_Dashes'
+    >>> slugify_camel_iso("normal DATE 23_05_2019 with underscores")
+    'Normal_Date_2019-05-23_With_Underscores'
+    >>> slugify_camel_iso("inVerTed DATE 20191020 with no DASHES")
+    'Inverted_Date_2019-10-20_With_No_Dashes'
+    >>> slugify_camel_iso("blablabla-SCREAM LOUD AGAIN - XXX UTILIZAÇÃO 27.11.17")
+    'Blablabla_Scream_Loud_Again_Xxx_Utilizacao_2017-11-27'
+    >>> slugify_camel_iso("something-614 ATA AUG IN 25-04-17")
+    'Something_614_Ata_Aug_In_2017-04-25'
+    >>> slugify_camel_iso("inverted 2017_12_30_10_44_56 bla")
+    'Inverted_2017-12-30T10-44-56_Bla'
+    >>> slugify_camel_iso("normal 30.12.2017_10_44_56 bla")
+    'Normal_2017-12-30T10-44-56_Bla'
+    >>> slugify_camel_iso(" no day inverted 1975 08 ")
+    'No_Day_Inverted_1975-08'
+    >>> slugify_camel_iso(" no day normal 08 1975 ")
+    'No_Day_Normal_1975-08'
+    """
+    # TODO
+    # >>> slugify_camel_iso("WhatsApp Ptt 2019-08-21 at 14.24.19")
+    # 'Whatsapp_Ptt_2019-08-21T14-24-19'
+    new_string = slugify(old_string, separator="_").capitalize()
+    new_string = UNDERLINE_LOWER_CASE_REGEX.sub(lambda matchobj: matchobj.group(0).upper(), new_string)
+
+    def try_date(matchobj):
+        original_string = matchobj.group(0)
+        actual_date = None
+        which_format = "YYYY-MM-DD"
+        for date_format in POSSIBLE_FORMATS:
+            # Only try formats with the same size; Pendulum is too permissive and returns wrong dates.
+            if len(original_string) != len(date_format):
+                continue
+
+            try:
+                actual_date = pendulum.from_format(original_string, date_format)
+                if "HH" in date_format:
+                    which_format = "YYYY-MM-DDTHH-mm-ss"
+                elif "DD" not in date_format:
+                    which_format = "YYYY-MM"
+                break
+            except ValueError:
+                continue
+            if actual_date is None:
+                try:
+                    actual_date = pendulum.parse(original_string, strict=False)
+                except (ValueError, ParserError):
+                    continue
+
+        return actual_date.format(which_format) if actual_date else original_string
+
+    new_string = DATE_REGEX.sub(try_date, new_string)
+    return new_string
+
+
+def rename_batch(dry_run: bool, which_type: str, root_dir: Path, items: List[Path]) -> bool:
+    """Rename a batch of items (directories or files)."""
+    pairs = []
+    for item in sorted(items):
+        new_name = slugify_camel_iso(item.stem) + item.suffix.lower()
+
+        if item.name == new_name:
+            continue
+
+        relative_dir = str(item.parent.relative_to(root_dir))
+
+        if dry_run:
+            click.secho("[dry-run] ", fg="bright_red", nl=False)
+        click.echo(f"from: {relative_dir}/{item.name}")
+        if dry_run:
+            click.secho("[dry-run] ", fg="bright_red", nl=False)
+        click.echo(f"  to: {relative_dir}/", nl=False)
+        click.secho(new_name, fg="green")
+        pairs.append((item, item.with_name(new_name)))
+
+    if not dry_run and pairs:
+        click.confirm(f"Rename these {which_type}?", default=False, abort=True)
+        for original, new in pairs:
+            os.rename(original, new)
+        click.secho(f"{which_type.capitalize()} renamed succesfully.", fg="green")
+
+    return bool(pairs)
+
+
+@click.command()
+@DRY_RUN_OPTION
+@click.argument("directories", nargs=-1, type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True)
+def rename_slugify(dry_run: bool, directories):
+    """Rename files recursively, slugifying them. Format dates in file names as ISO. Ignore hidden files."""
+    for directory in directories:
+        original_dir = Path(directory)
+
+        # Rename directories first
+        rename_batch(
+            dry_run,
+            "directories",
+            original_dir,
+            [item for item in original_dir.glob("**/*") if item.is_dir() and not item.name.startswith(".")],
+        )
+
+        # Glob the renamed directories for files
+        files_found = rename_batch(
+            dry_run,
+            "files",
+            original_dir,
+            [item for item in original_dir.glob("**/*") if not item.is_dir() and not item.name.startswith(".")],
+        )
+
+        if not files_found:
+            click.secho("All files already have correct names.")
