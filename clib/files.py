@@ -19,6 +19,7 @@ from clib import DRY_RUN_OPTION
 
 # DATE_REGEX = re.compile(r"(\d{2}[-_\.]?\d{2}[-_\.]?(19\d{2}|20\d{2})|(19\d{2}|20\d{2})[-_\.]?\d{2}[-_\.]?\d{2})")
 DATE_REGEX = re.compile(r"([0-9][0-9-_\.]+[0-9])")
+UPPER_CASE_LETTER_REGEX = re.compile(r"([^A-ZÁÉÍÓÚÀÈÌÒÙÃÃÕÇÇÄËÏÖÜ])([A-ZÁÉÍÓÚÀÈÌÒÙÃÃÕÇÇÄËÏÖÜ])")
 UNDERLINE_LOWER_CASE_REGEX = re.compile(r"_[a-z]")
 POSSIBLE_FORMATS = (
     # Human formats first
@@ -202,7 +203,7 @@ def slugify_camel_iso(old_string: str) -> str:
     'Normal_Date_2019-01-01_With_No_Dashes'
     >>> slugify_camel_iso("normal DATE 23_05_2019 with underscores")
     'Normal_Date_2019-05-23_With_Underscores'
-    >>> slugify_camel_iso("inVerTed DATE 20191020 with no DASHES")
+    >>> slugify_camel_iso("inverted DATE 20191020 with no DASHES")
     'Inverted_Date_2019-10-20_With_No_Dashes'
     >>> slugify_camel_iso("blablabla-SCREAM LOUD AGAIN - XXX UTILIZAÇÃO 27.11.17")
     'Blablabla_Scream_Loud_Again_Xxx_Utilizacao_2017-11-27'
@@ -216,12 +217,15 @@ def slugify_camel_iso(old_string: str) -> str:
     'No_Day_Inverted_1975-08'
     >>> slugify_camel_iso(" no day normal 08 1975 ")
     'No_Day_Normal_1975-08'
+    >>> slugify_camel_iso(" CamelCase pascalCase JSONfile WhatsApp")
+    'Camel_Case_Pascal_Case_Jsonfile_Whats_App'
     """
     # TODO
     # >>> slugify_camel_iso("WhatsApp Ptt 2019-08-21 at 14.24.19")
     # 'Whatsapp_Ptt_2019-08-21T14-24-19'
-    new_string = slugify(old_string, separator="_").capitalize()
-    new_string = UNDERLINE_LOWER_CASE_REGEX.sub(lambda matchobj: matchobj.group(0).upper(), new_string)
+    under_before_caps = UPPER_CASE_LETTER_REGEX.sub(r"\1_\2", old_string)
+    slugged = slugify(under_before_caps, separator="_").capitalize()
+    new_string = UNDERLINE_LOWER_CASE_REGEX.sub(lambda matchobj: matchobj.group(0).upper(), slugged)
 
     def try_date(matchobj):
         original_string = matchobj.group(0)
