@@ -15,12 +15,19 @@ import pendulum
 from plumbum import FG
 from slugify import slugify
 
-from clib import DRY_RUN_OPTION
+from clib import dry_run_option
+from clib.constants import COLOR_OK, COLOR_CHANGED
 
-# DATE_REGEX = re.compile(r"(\d{2}[-_\.]?\d{2}[-_\.]?(19\d{2}|20\d{2})|(19\d{2}|20\d{2})[-_\.]?\d{2}[-_\.]?\d{2})")
-DATE_REGEX = re.compile(r"([0-9][0-9-_\.]+[0-9])")
-UPPER_CASE_LETTER_REGEX = re.compile(r"([^A-ZÁÉÍÓÚÀÈÌÒÙÃÃÕÇÇÄËÏÖÜ])([A-ZÁÉÍÓÚÀÈÌÒÙÃÃÕÇÇÄËÏÖÜ])")
-UNDERLINE_LOWER_CASE_REGEX = re.compile(r"_[a-z]")
+ACCENTED_UPPER = "ÁÉÍÓÚÀÈÌÒÙÃÃÕÇÇÄËÏÖÜÜ"
+ACCENTED_LOWER = "üçã"
+
+REGEX_DATE_TIME = re.compile(r"([0-9][0-9-_\.]+[0-9])")
+REGEX_UPPER_CASE_LETTER = re.compile(
+    "([^A-Z{upper}{lower}])([A-Z{upper}])".format(upper=ACCENTED_UPPER, lower=ACCENTED_LOWER)
+)
+REGEX_UNDERLINE_LOWER_CASE = re.compile(r"_[a-z]")
+REGEX_EXISTING_TIME = re.compile(r"(-[0-9]{2})[ _]?[Aa]?[Tt]?[ _]?([0-9]{2}[-._])")
+
 POSSIBLE_FORMATS = (
     # Human formats first
     "MM_YYYY",
@@ -67,7 +74,7 @@ def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool 
 
 
 @click.command()
-@DRY_RUN_OPTION
+@dry_run_option
 @click.option("--kill", "-k", default=False, is_flag=True, help="Kill files when using rsync (--del)")
 @click.option("--pictures", "-p", default=False, is_flag=True, help="Backup pictures")
 @click.pass_context
@@ -130,6 +137,12 @@ def shell_find(command_line, **kwargs) -> List[str]:
     return shell(command_line, return_lines=True, **kwargs)
 
 
+def relative_to_home(full_path: str):
+    """Return a directory with ``~`` instead of printing the home dir full path."""
+    path_obj = Path(full_path)
+    return "~/{}".format(path_obj.relative_to(path_obj.home()))
+
+
 def _check_type(full_path, method, msg):
     """Check a path, raise an error if it's not valid."""
     obj = Path(full_path)
@@ -163,7 +176,7 @@ def wait_for_process(process_name: str) -> None:
 
 
 @click.command()
-@DRY_RUN_OPTION
+@dry_run_option
 @click.argument("directories", nargs=-1, required=True, type=click.Path(exists=True), metavar="[DIR1 [DIR2]...]")
 def rm_broken_symlinks(dry_run: bool, directories):
     """Remove broken symlinks from directories (asks for confirmation)."""
@@ -219,13 +232,19 @@ def slugify_camel_iso(old_string: str) -> str:
     'No_Day_Normal_1975-08'
     >>> slugify_camel_iso(" CamelCase pascalCase JSONfile WhatsApp")
     'Camel_Case_Pascal_Case_Jsonfile_Whats_App'
+    >>> slugify_camel_iso(" 2019-08-22T16-01-22 keep formatted times ")
+    '2019-08-22T16-01-22_Keep_Formatted_Times'
+    >>> slugify_camel_iso("WhatsApp Ptt 2019-08-21 at 14.24.19")
+    'Whats_App_Ptt_2019-08-21T14-24-19'
+    >>> slugify_camel_iso("Whats_App_Image_2019-08-23_At_12_34_55 fix times on whatsapp files")
+    'Whats_App_Image_2019-08-23T12-34-55_Fix_Times_On_Whatsapp_Files'
+    >>> slugify_camel_iso("Whats_App_Zip_2019-08-23_At_13_23.36")
+    'Whats_App_Zip_2019-08-23T13-23-36'
     """
-    # TODO
-    # >>> slugify_camel_iso("WhatsApp Ptt 2019-08-21 at 14.24.19")
-    # 'Whatsapp_Ptt_2019-08-21T14-24-19'
-    under_before_caps = UPPER_CASE_LETTER_REGEX.sub(r"\1_\2", old_string)
+    existing_times = REGEX_EXISTING_TIME.sub(r"\1_\2", old_string)
+    under_before_caps = REGEX_UPPER_CASE_LETTER.sub(r"\1_\2", existing_times)
     slugged = slugify(under_before_caps, separator="_").capitalize()
-    new_string = UNDERLINE_LOWER_CASE_REGEX.sub(lambda matchobj: matchobj.group(0).upper(), slugged)
+    new_string = REGEX_UNDERLINE_LOWER_CASE.sub(lambda matchobj: matchobj.group(0).upper(), slugged)
 
     def try_date(matchobj):
         original_string = matchobj.group(0)
@@ -253,15 +272,19 @@ def slugify_camel_iso(old_string: str) -> str:
 
         return actual_date.format(which_format) if actual_date else original_string
 
-    new_string = DATE_REGEX.sub(try_date, new_string)
+    new_string = REGEX_DATE_TIME.sub(try_date, new_string)
     return new_string
 
 
-def rename_batch(dry_run: bool, which_type: str, root_dir: Path, items: List[Path]) -> bool:
+def rename_batch(dry_run: bool, is_dir: bool, root_dir: Path, items: List[Path]) -> bool:
     """Rename a batch of items (directories or files)."""
+    which_type = "directories" if is_dir else "files"
     pairs = []
     for item in sorted(items):
-        new_name = slugify_camel_iso(item.stem) + item.suffix.lower()
+        if is_dir:
+            new_name = slugify_camel_iso(item.name)
+        else:
+            new_name = slugify_camel_iso(item.stem) + item.suffix.lower()
 
         if item.name == new_name:
             continue
@@ -274,30 +297,30 @@ def rename_batch(dry_run: bool, which_type: str, root_dir: Path, items: List[Pat
         if dry_run:
             click.secho("[dry-run] ", fg="bright_red", nl=False)
         click.echo(f"  to: {relative_dir}/", nl=False)
-        click.secho(new_name, fg="green")
+        click.secho(new_name, fg="yellow")
         pairs.append((item, item.with_name(new_name)))
 
     if not dry_run and pairs:
         click.confirm(f"Rename these {which_type}?", default=False, abort=True)
         for original, new in pairs:
             os.rename(original, new)
-        click.secho(f"{which_type.capitalize()} renamed succesfully.", fg="green")
+        click.secho(f"{relative_to_home(root_dir)}: {which_type.capitalize()} renamed succesfully.", fg="yellow")
 
     return bool(pairs)
 
 
 @click.command()
-@DRY_RUN_OPTION
+@dry_run_option
 @click.argument("directories", nargs=-1, type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True)
 def rename_slugify(dry_run: bool, directories):
-    """Rename files recursively, slugifying them. Format dates in file names as ISO. Ignore hidden files."""
+    """Rename files recursively, slugifying them. Format dates in file names as ISO. Ignore hidden dirs/files."""
     for directory in directories:
         original_dir = Path(directory)
 
         # Rename directories first
         rename_batch(
             dry_run,
-            "directories",
+            True,
             original_dir,
             [item for item in original_dir.glob("**/*") if item.is_dir() and not item.name.startswith(".")],
         )
@@ -305,10 +328,11 @@ def rename_slugify(dry_run: bool, directories):
         # Glob the renamed directories for files
         files_found = rename_batch(
             dry_run,
-            "files",
+            False,
             original_dir,
             [item for item in original_dir.glob("**/*") if not item.is_dir() and not item.name.startswith(".")],
         )
 
         if not files_found:
-            click.secho("All files already have correct names.")
+            click.secho(f"{relative_to_home(directory)}: All files already have correct names.", fg=COLOR_OK)
+

@@ -9,7 +9,7 @@ from typing import List, Optional, Tuple
 
 import click
 
-from clib import DRY_RUN_OPTION
+from clib import dry_run_option
 from clib.files import shell
 from clib.ui import prompt
 
@@ -380,7 +380,7 @@ def tools(verbose: bool):
 
 
 @pypub.command()
-@DRY_RUN_OPTION
+@dry_run_option
 @Publisher.part_option()
 @Publisher.allow_dirty_option()
 @Publisher.github_access_token_option()
@@ -391,7 +391,7 @@ def pypi(ctx, dry_run: bool, part: str, allow_dirty: bool, github_access_token: 
 
 
 @pypub.command()
-@DRY_RUN_OPTION
+@dry_run_option
 @Publisher.part_option()
 @Publisher.allow_dirty_option()
 @Publisher.github_access_token_option()
