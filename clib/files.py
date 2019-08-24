@@ -2,6 +2,7 @@
 """Files, symbolic links, operating system utilities."""
 import os
 import re
+import unicodedata
 from argparse import ArgumentTypeError
 from parser import ParserError
 from pathlib import Path
@@ -18,13 +19,8 @@ from slugify import slugify
 from clib import dry_run_option
 from clib.constants import COLOR_OK, COLOR_CHANGED
 
-ACCENTED_UPPER = "ÁÉÍÓÚÀÈÌÒÙÃÃÕÇÇÄËÏÖÜÜ"
-ACCENTED_LOWER = "üçã"
-
 REGEX_DATE_TIME = re.compile(r"([0-9][0-9-_\.]+[0-9])")
-REGEX_UPPER_CASE_LETTER = re.compile(
-    "([^A-Z{upper}{lower}])([A-Z{upper}])".format(upper=ACCENTED_UPPER, lower=ACCENTED_LOWER)
-)
+REGEX_UPPER_CASE_LETTER = re.compile("([0-9a-z])([A-Z]+)")
 REGEX_UNDERLINE_LOWER_CASE = re.compile(r"_[a-z]")
 REGEX_EXISTING_TIME = re.compile(r"(-[0-9]{2})[ _]?[Aa]?[Tt]?[ _]?([0-9]{2}[-._])")
 
@@ -34,6 +30,7 @@ POSSIBLE_FORMATS = (
     "DD_MM_YYYY",
     "DD_MM_YY",
     "DDMMYYYY",
+    "DDMMYY",
     "DD_MM_YYYY_HH_mm_ss",
     "DD_MM_YY_HH_mm_ss",
     # Then inverted formats
@@ -240,11 +237,20 @@ def slugify_camel_iso(old_string: str) -> str:
     'Whats_App_Image_2019-08-23T12-34-55_Fix_Times_On_Whatsapp_Files'
     >>> slugify_camel_iso("Whats_App_Zip_2019-08-23_At_13_23.36")
     'Whats_App_Zip_2019-08-23T13-23-36'
+    >>> slugify_camel_iso("fwdConsultaCognicao")
+    'Fwd_Consulta_Cognicao'
+    >>> slugify_camel_iso("bla Bancários - Atenção ble")
+    'Bla_Bancarios_Atencao_Ble'
+    >>> slugify_camel_iso(" 240819 human day month year 290875 ")
+    '2019-08-24_Human_Day_Month_Year_1975-08-29'
     """
-    existing_times = REGEX_EXISTING_TIME.sub(r"\1_\2", old_string)
+    normalised = unicodedata.normalize("NFKC", old_string)
+    existing_times = REGEX_EXISTING_TIME.sub(r"\1_\2", normalised)
     under_before_caps = REGEX_UPPER_CASE_LETTER.sub(r"\1_\2", existing_times)
     slugged = slugify(under_before_caps, separator="_").capitalize()
     new_string = REGEX_UNDERLINE_LOWER_CASE.sub(lambda matchobj: matchobj.group(0).upper(), slugged)
+
+    next_ten_years = pendulum.today().year + 10
 
     def try_date(matchobj):
         original_string = matchobj.group(0)
@@ -257,6 +263,12 @@ def slugify_camel_iso(old_string: str) -> str:
 
             try:
                 actual_date = pendulum.from_format(original_string, date_format)
+
+                # If the year has only 2 digits, consider it as between 1929 and 2029
+                format_has_century = "YYYY" in date_format
+                if not format_has_century and actual_date.year > next_ten_years:
+                    actual_date = actual_date.subtract(years=100)
+
                 if "HH" in date_format:
                     which_format = "YYYY-MM-DDTHH-mm-ss"
                 elif "DD" not in date_format:
