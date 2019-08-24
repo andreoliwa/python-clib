@@ -19,10 +19,11 @@ from slugify import slugify
 from clib import dry_run_option
 from clib.constants import COLOR_OK, COLOR_CHANGED
 
-REGEX_DATE_TIME = re.compile(r"([0-9][0-9-_\.]+[0-9])")
-REGEX_UPPER_CASE_LETTER = re.compile("([0-9a-z])([A-Z]+)")
-REGEX_UNDERLINE_LOWER_CASE = re.compile(r"_[a-z]")
 REGEX_EXISTING_TIME = re.compile(r"(-[0-9]{2})[ _]?[Aa]?[Tt]?[ _]?([0-9]{2}[-._])")
+REGEX_UPPER_CASE_LETTER = re.compile(r"([0-9a-z])([A-Z]+)")
+REGEX_NUMBER_BEFORE_CHAR = re.compile(r"([0-9])([A-Za-z])")
+REGEX_UNDERLINE_LOWER_CASE = re.compile(r"_[a-z]")
+REGEX_DATE_TIME = re.compile(r"([0-9][0-9-_\.]+[0-9])")
 
 POSSIBLE_FORMATS = (
     # Human formats first
@@ -243,11 +244,16 @@ def slugify_camel_iso(old_string: str) -> str:
     'Bla_Bancarios_Atencao_Ble'
     >>> slugify_camel_iso(" 240819 human day month year 290875 ")
     '2019-08-24_Human_Day_Month_Year_1975-08-29'
+    >>> slugify_camel_iso("2019-08-23T12-48-26words with numbers")
+    '2019-08-23T12-48-26_Words_With_Numbers'
     """
-    normalised = unicodedata.normalize("NFKC", old_string)
-    existing_times = REGEX_EXISTING_TIME.sub(r"\1_\2", normalised)
-    under_before_caps = REGEX_UPPER_CASE_LETTER.sub(r"\1_\2", existing_times)
-    slugged = slugify(under_before_caps, separator="_").capitalize()
+    temp_string = unicodedata.normalize("NFKC", old_string)
+
+    # Insert separator in these cases
+    for regex in (REGEX_EXISTING_TIME, REGEX_UPPER_CASE_LETTER, REGEX_NUMBER_BEFORE_CHAR):
+        temp_string = regex.sub(r"\1_\2", temp_string)
+
+    slugged = slugify(temp_string, separator="_").capitalize()
     new_string = REGEX_UNDERLINE_LOWER_CASE.sub(lambda matchobj: matchobj.group(0).upper(), slugged)
 
     next_ten_years = pendulum.today().year + 10
