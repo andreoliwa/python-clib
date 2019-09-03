@@ -41,6 +41,7 @@ POSSIBLE_FORMATS = (
     "YY_MM_DD_HH_mm_ss",
     "YYYY_MM_DD_HH_mm_ss",
     "YYYYMMDDHHmmss",
+    "YYYYMMDD_HHmmss",
 )
 
 
@@ -246,6 +247,8 @@ def slugify_camel_iso(old_string: str) -> str:
     '2019-08-24_Human_Day_Month_Year_1975-08-29'
     >>> slugify_camel_iso("2019-08-23T12-48-26words with numbers")
     '2019-08-23T12-48-26_Words_With_Numbers'
+    >>> slugify_camel_iso("some 20180726_224001 thing")
+    'Some_2018-07-26T22-40-01_Thing'
     """
     temp_string = unicodedata.normalize("NFKC", old_string)
 
