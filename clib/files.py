@@ -19,11 +19,13 @@ from slugify import slugify
 from clib import dry_run_option
 from clib.constants import COLOR_OK, COLOR_CHANGED
 
+SLUG_SEPARATOR = "_"
 REGEX_EXISTING_TIME = re.compile(r"(-[0-9]{2})[ _]?[Aa]?[Tt]?[ _]?([0-9]{2}[-._])")
 REGEX_UPPER_CASE_LETTER = re.compile(r"([0-9a-z])([A-Z]+)")
 REGEX_NUMBER_BEFORE_CHAR = re.compile(r"([0-9])([A-Za-z])")
-REGEX_UNDERLINE_LOWER_CASE = re.compile(r"_[a-z]")
+REGEX_UNDERLINE_LOWER_CASE = re.compile("_[a-z]")
 REGEX_DATE_TIME = re.compile(r"([0-9][0-9-_\.]+[0-9])")
+REGEX_MULTIPLE_SEPARATORS = re.compile("_+")
 
 POSSIBLE_FORMATS = (
     # Human formats first
@@ -249,6 +251,10 @@ def slugify_camel_iso(old_string: str) -> str:
     '2019-08-23T12-48-26_Words_With_Numbers'
     >>> slugify_camel_iso("some 20180726_224001 thing")
     'Some_2018-07-26T22-40-01_Thing'
+    >>> slugify_camel_iso("glued14092019")
+    'Glued_2019-09-14'
+    >>> slugify_camel_iso("glued2019-08-23T12-48-26")
+    'Glued_2019-08-23T12-48-26'
     """
     temp_string = unicodedata.normalize("NFKC", old_string)
 
@@ -256,7 +262,7 @@ def slugify_camel_iso(old_string: str) -> str:
     for regex in (REGEX_EXISTING_TIME, REGEX_UPPER_CASE_LETTER, REGEX_NUMBER_BEFORE_CHAR):
         temp_string = regex.sub(r"\1_\2", temp_string)
 
-    slugged = slugify(temp_string, separator="_").capitalize()
+    slugged = slugify(temp_string, separator=SLUG_SEPARATOR).capitalize()
     new_string = REGEX_UNDERLINE_LOWER_CASE.sub(lambda matchobj: matchobj.group(0).upper(), slugged)
 
     next_ten_years = pendulum.today().year + 10
@@ -291,10 +297,12 @@ def slugify_camel_iso(old_string: str) -> str:
                 except (ValueError, ParserError):
                     continue
 
-        return actual_date.format(which_format) if actual_date else original_string
+        new_date = actual_date.format(which_format) if actual_date else original_string
+        return f"{SLUG_SEPARATOR}{new_date}{SLUG_SEPARATOR}"
 
-    new_string = REGEX_DATE_TIME.sub(try_date, new_string)
-    return new_string
+    replaced_dates_multiple_seps = REGEX_DATE_TIME.sub(try_date, new_string)
+    single_seps = REGEX_MULTIPLE_SEPARATORS.sub(SLUG_SEPARATOR, replaced_dates_multiple_seps)
+    return single_seps.strip(SLUG_SEPARATOR)
 
 
 def rename_batch(dry_run: bool, is_dir: bool, root_dir: Path, items: List[Path]) -> bool:
