@@ -33,6 +33,7 @@ pypub = "clib.dev.packaging:pypub"
 pytestx = "clib.dev:pytestx"
 rm-broken-symlinks = "clib.files:rm_broken_symlinks"
 rename-slugify = "clib.files:rename_slugify"
+contacts = "clib.contacts:contacts"
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -46,6 +47,9 @@ prettyconf = "*"
 requests-html = "*"
 pendulum = "*"
 python-slugify = "*"
+postal = "^1.1"
+"ruamel.yaml" = "^0.16.5"
+phonenumbers = "^8.10"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"

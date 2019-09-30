@@ -17,7 +17,7 @@ from plumbum import FG
 from slugify import slugify
 
 from clib import dry_run_option
-from clib.constants import COLOR_OK, COLOR_CHANGED
+from clib.constants import COLOR_OK
 
 SLUG_SEPARATOR = "_"
 REGEX_EXISTING_TIME = re.compile(r"(-[0-9]{2})[ _]?[Aa]?[Tt]?[ _]?([0-9]{2}[-._])")
@@ -333,7 +333,7 @@ def rename_batch(dry_run: bool, is_dir: bool, root_dir: Path, items: List[Path])
         click.confirm(f"Rename these {which_type}?", default=False, abort=True)
         for original, new in pairs:
             os.rename(original, new)
-        click.secho(f"{relative_to_home(root_dir)}: {which_type.capitalize()} renamed succesfully.", fg="yellow")
+        click.secho(f"{relative_to_home(str(root_dir))}: {which_type.capitalize()} renamed succesfully.", fg="yellow")
 
     return bool(pairs)
 
@@ -364,4 +364,3 @@ def rename_slugify(dry_run: bool, directories):
 
         if not files_found:
             click.secho(f"{relative_to_home(directory)}: All files already have correct names.", fg=COLOR_OK)
-

@@ -37,7 +37,9 @@
       ]
     ]
   },
-  "commitlint.extends": [
-    "@commitlint/config-conventional"
-  ]
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  }
 }
