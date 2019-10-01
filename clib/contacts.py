@@ -9,6 +9,7 @@ import click
 import phonenumbers
 from phonenumbers import NumberParseException
 from ruamel.yaml import YAML
+from ruamel.yaml.composer import ComposerError
 from ruamel.yaml.scalarstring import LiteralScalarString
 
 from clib.files import shell
@@ -161,8 +162,15 @@ def parse(strict: bool, files):
         output_dict: JsonDict = {}
         original_file = Path(arg_file)
         structured_contacts = []
+
+        yaml_content: JsonDict = {}
         if original_file.suffix == ".yaml":
-            yaml_content = yaml.load(original_file)
+            try:
+                yaml_content = yaml.load(original_file)
+            except ComposerError:
+                click.secho(f"Not a valid YAML file: {original_file}. it will be read as a .txt file", fg="red")
+
+        if yaml_content:
             if KEY_CONTACTS not in yaml_content:
                 click.secho(f"Not a valid contacts file: {original_file}. Missing 'contacts' root key.", fg="red")
                 continue
