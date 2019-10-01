@@ -35,6 +35,7 @@ class Contact:
         self.address: LiteralScalarString = LiteralScalarString(data.pop("address", ""))
         self.notes: LiteralScalarString = LiteralScalarString(data.pop("notes", ""))
         self.phones: Set[str] = set(data.pop("phones", []))
+        self.emails: Set[str] = set(data.pop("emails", []))
         self.links: Set[str] = set(data.pop("links", []))
         self.raw_original: LiteralScalarString = LiteralScalarString(
             raw_original.strip() if raw_original else data.pop("raw_original", "")
@@ -54,14 +55,13 @@ class Contact:
             if not clean_line:
                 continue
 
-            formatted_phone = self.parse_phone(clean_line)
-            if formatted_phone:
-                self.phones.add(formatted_phone)
+            if self.parse_phone(clean_line):
+                continue
+            if self.parse_email(clean_line):
+                continue
+            if self.parse_link(clean_line):
                 continue
 
-            if clean_line.startswith(URL_PREFIX):
-                self.links.add(clean_line)
-                continue
             contact_lines.append(clean_line)
 
         from postal.parser import parse_address
@@ -79,27 +79,35 @@ class Contact:
             flat_value = " ".join(address_dict.pop(key, [])).strip()
             valid[key] = flat_value
 
-        self.address = LiteralScalarString(
-            dedent(
-                f"""
-                {valid["road"]}, {valid["house_number"]}
-                {valid["suburb"]}
-                {valid["postcode"]} {valid["city"]}
-                """
-            ).strip()
+        templated_address = dedent(
+            f"""
+            {valid["road"]}, {valid["house_number"]}
+            {valid["suburb"]}
+            {valid["postcode"]} {valid["city"]}
+            """
         )
+
+        # Remove empty lines
+        valid_lines = []
+        for line in templated_address.split("\n"):
+            clean_line = line.strip(" ,\n").title()
+            if not clean_line:
+                continue
+            valid_lines.append(clean_line)
+
+        self.address = LiteralScalarString("\n".join(valid_lines))
 
         notes = address_dict.pop("house", [])
         if notes:
-            self.name = notes[0]
-            self.notes = LiteralScalarString("\n".join(notes[1:]))
+            self.name = notes[0].title()
+            self.notes = LiteralScalarString("\n".join(notes[1:]).title())
 
         self.existing_data.update(address_dict)
 
     def as_dict(self):
         """Return the contact as a dict."""
         rv = {}
-        for key in ("name", "address", "notes", "phones", "links", "raw_original"):
+        for key in ("name", "address", "notes", "phones", "emails", "links", "raw_original"):
             value = getattr(self, key)
             if isinstance(value, set):
                 value = sorted(list(value))
@@ -108,21 +116,42 @@ class Contact:
         rv.update(self.existing_data)
         return rv
 
-    def parse_phone(self, clean_line) -> Optional[str]:
-        """Try to parse a phone in a line."""
+    def parse_phone(self, clean_line: str) -> bool:
+        """Parse a phone number."""
         try:
-            phone = phonenumbers.parse(clean_line, "DE")
+            phone_obj = phonenumbers.parse(clean_line, "DE")
         except NumberParseException:
-            return None
-        if not phonenumbers.is_valid_number(phone):
-            return None
+            return False
+        if not phonenumbers.is_valid_number(phone_obj):
+            return False
 
-        return phonenumbers.format_number(phone, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+        formatted_phone = phonenumbers.format_number(phone_obj, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+        self.phones.add(formatted_phone)
+        return True
+
+    def parse_link(self, clean_line: str) -> bool:
+        """Parse a URL link."""
+        if clean_line.startswith(URL_PREFIX) or "www" in clean_line:
+            self.links.add(clean_line)
+            return True
+        return False
+
+    def parse_email(self, clean_line: str) -> bool:
+        """Parse an email."""
+        if "@" in clean_line:
+            found = False
+            for possible_email in clean_line.split(" "):
+                if "@" in possible_email:
+                    self.emails.add(possible_email)
+                    found = True
+            return found
+        return False
 
 
 @contacts.command()
+@click.option("--strict", "-s", is_flag=True, default=False, help="Strict mode, don't ignore case nor whitespace")
 @click.argument("files", nargs=-1, type=click.Path(exists=True, file_okay=True, dir_okay=False), required=True)
-def parse(files):
+def parse(strict: bool, files):
     """Parse a file with contacts and structure data in a YAML file."""
     yaml = YAML()
     yaml.indent(mapping=2, sequence=4, offset=2)
@@ -150,13 +179,20 @@ def parse(files):
         output_dict = {KEY_CONTACTS: structured_contacts}
 
         if output_file == original_file:
+            if not strict:
+                flags = (
+                    "ignore-case",
+                    "ignore-tab-expansion",
+                    "ignore-space-change",
+                    "ignore-all-space",
+                    "ignore-blank-lines",
+                )
+                ignore_flags = " --" + " --".join(flags)
+            else:
+                ignore_flags = ""
             with NamedTemporaryFile() as fp:
                 yaml.dump(output_dict, fp)
-                diff = shell(
-                    "colordiff --unified --ignore-case --ignore-tab-expansion --ignore-space-change"
-                    f" --ignore-all-space --ignore-blank-lines {original_file} {fp.name}",
-                    quiet=True,
-                )
+                diff = shell(f"colordiff --unified{ignore_flags} {original_file} {fp.name}", quiet=True)
                 if diff.returncode == 0:
                     click.secho("Skipping file, content has not changed", fg="green")
                     continue
