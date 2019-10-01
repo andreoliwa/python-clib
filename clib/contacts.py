@@ -3,7 +3,7 @@ from collections import defaultdict
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from textwrap import dedent
-from typing import DefaultDict, List, Optional, Set, Tuple
+from typing import DefaultDict, List, Optional, Set, Tuple, Union
 
 import click
 import phonenumbers
@@ -31,7 +31,7 @@ class Contact:
     def __init__(self, raw_original: Optional[str], contact_dict: JsonDict = None) -> None:
         data = contact_dict.copy() if contact_dict else {}
 
-        self.name = data.pop("name", "")
+        self.name: Union[str, LiteralScalarString] = data.pop("name", "")
         self.address: LiteralScalarString = LiteralScalarString(data.pop("address", ""))
         self.notes: LiteralScalarString = LiteralScalarString(data.pop("notes", ""))
         self.phones: Set[str] = set(data.pop("phones", []))
@@ -99,7 +99,8 @@ class Contact:
 
         notes = address_dict.pop("house", [])
         if notes:
-            self.name = notes[0].title()
+            first_line = notes[0].title()
+            self.name = LiteralScalarString(first_line) if len(first_line) > 80 else first_line
             self.notes = LiteralScalarString("\n".join(notes[1:]).title())
 
         self.existing_data.update(address_dict)
@@ -157,6 +158,7 @@ def parse(strict: bool, files):
     yaml.indent(mapping=2, sequence=4, offset=2)
 
     for arg_file in files:
+        output_dict: JsonDict = {}
         original_file = Path(arg_file)
         structured_contacts = []
         if original_file.suffix == ".yaml":
@@ -169,6 +171,9 @@ def parse(strict: bool, files):
             for contact_dict in yaml_content[KEY_CONTACTS]:
                 contact = Contact(None, contact_dict)
                 structured_contacts.append(contact.as_dict())
+
+            # Preserve existing extra YAML content
+            output_dict.update(yaml_content)
         else:
             click.echo(f"Reading contacts from text file {original_file}")
             for raw_contact_string in original_file.read_text().split(CONTACT_SEPARATOR):
@@ -176,7 +181,7 @@ def parse(strict: bool, files):
                 structured_contacts.append(contact.as_dict())
 
         output_file = original_file.with_suffix(".yaml")
-        output_dict = {KEY_CONTACTS: structured_contacts}
+        output_dict[KEY_CONTACTS] = structured_contacts
 
         if output_file == original_file:
             if not strict:
