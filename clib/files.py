@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 """Files, symbolic links, operating system utilities."""
 import os
 import re
+import sys
 import unicodedata
 from argparse import ArgumentTypeError
 from parser import ParserError
@@ -120,7 +120,7 @@ def shell(
 
     completed_process = run(command_line, shell=True, universal_newlines=True, **kwargs)
     if exit_on_failure and completed_process.returncode != 0:
-        exit(completed_process.returncode)
+        sys.exit(completed_process.returncode)
 
     if not return_lines:
         return completed_process

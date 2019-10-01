@@ -1,6 +1,7 @@
 """Utilities to deal with contact data (people and places with name, address, phone)."""
 from collections import defaultdict
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from textwrap import dedent
 from typing import DefaultDict, List, Optional, Set, Tuple
 
@@ -10,6 +11,7 @@ from phonenumbers import NumberParseException
 from ruamel.yaml import YAML
 from ruamel.yaml.scalarstring import LiteralScalarString
 
+from clib.files import shell
 from clib.types import JsonDict
 
 CONTACT_SEPARATOR = "---"
@@ -27,17 +29,17 @@ class Contact:
     """A contact with name, address, phones and notes."""
 
     def __init__(self, raw_original: Optional[str], contact_dict: JsonDict = None) -> None:
-        if not contact_dict:
-            contact_dict = {}
-        self.name = contact_dict.get("name", "")
-        self.address: LiteralScalarString = LiteralScalarString(contact_dict.get("address", ""))
-        self.notes: LiteralScalarString = LiteralScalarString(contact_dict.get("notes", ""))
-        self.extra: List[JsonDict] = contact_dict.get("extra", [])
-        self.phones: Set[str] = set(contact_dict.get("phones", []))
-        self.links: Set[str] = set(contact_dict.get("links", []))
+        data = contact_dict.copy() if contact_dict else {}
+
+        self.name = data.pop("name", "")
+        self.address: LiteralScalarString = LiteralScalarString(data.pop("address", ""))
+        self.notes: LiteralScalarString = LiteralScalarString(data.pop("notes", ""))
+        self.phones: Set[str] = set(data.pop("phones", []))
+        self.links: Set[str] = set(data.pop("links", []))
         self.raw_original: LiteralScalarString = LiteralScalarString(
-            raw_original.strip() if raw_original else contact_dict.get("raw_original", "")
+            raw_original.strip() if raw_original else data.pop("raw_original", "")
         )
+        self.existing_data = data
 
         self.parse_contact()
 
@@ -92,19 +94,18 @@ class Contact:
             self.name = notes[0]
             self.notes = LiteralScalarString("\n".join(notes[1:]))
 
-        # YAML cannot represent a default dict, so let's convert to a regular dict
-        for key, values in address_dict.items():
-            self.extra.append({key: values})
+        self.existing_data.update(address_dict)
 
     def as_dict(self):
         """Return the contact as a dict."""
         rv = {}
-        for key in ("name", "address", "notes", "extra", "phones", "links", "raw_original"):
+        for key in ("name", "address", "notes", "phones", "links", "raw_original"):
             value = getattr(self, key)
             if isinstance(value, set):
-                value = list(value)
+                value = sorted(list(value))
             if value:
                 rv[key] = value
+        rv.update(self.existing_data)
         return rv
 
     def parse_phone(self, clean_line) -> Optional[str]:
@@ -146,10 +147,23 @@ def parse(files):
                 structured_contacts.append(contact.as_dict())
 
         output_file = original_file.with_suffix(".yaml")
-        if output_file == original_file:
-            click.secho(f"Replacing", fg="red", nl=False)
-        else:
-            click.secho(f"Creating", fg="yellow", nl=False)
-        click.secho(f" contacts on file {output_file}", fg="yellow")
         output_dict = {KEY_CONTACTS: structured_contacts}
+
+        if output_file == original_file:
+            with NamedTemporaryFile() as fp:
+                yaml.dump(output_dict, fp)
+                diff = shell(
+                    "colordiff --unified --ignore-case --ignore-tab-expansion --ignore-space-change"
+                    f" --ignore-all-space --ignore-blank-lines {original_file} {fp.name}",
+                    quiet=True,
+                )
+                if diff.returncode == 0:
+                    click.secho("Skipping file, content has not changed", fg="green")
+                    continue
+                if not click.confirm("Replace this file?", default=False):
+                    continue
+            verb = "Replacing"
+        else:
+            verb = "Creating"
+        click.secho(f"{verb} contacts on file {output_file}", fg="yellow")
         yaml.dump(output_dict, output_file)
