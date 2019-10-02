@@ -47,9 +47,9 @@ prettyconf = "*"
 requests-html = "*"
 pendulum = "*"
 python-slugify = "*"
-postal = "^1.1"
-"ruamel.yaml" = "^0.16.5"
-phonenumbers = "^8.10"
+postal = "*"
+"ruamel.yaml" = "*"
+phonenumbers = "*"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"

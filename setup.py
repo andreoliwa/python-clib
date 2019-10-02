@@ -22,16 +22,20 @@ install_requires = [
     "click",
     "colorlog",
     "pendulum",
+    "phonenumbers",
     "plumbum",
+    "postal",
     "prettyconf",
     "python-slugify",
     "requests",
     "requests-html",
+    "ruamel.yaml",
 ]
 
 entry_points = {
     "console_scripts": [
         "backup-full = clib.files:backup_full",
+        "contacts = clib.contacts:contacts",
         "docker-find = clib.docker:docker_find",
         "docker-volume = clib.docker:docker_volume",
         "poetryx = clib.dev.packaging:poetryx",

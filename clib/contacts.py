@@ -8,8 +8,7 @@ from typing import DefaultDict, List, Optional, Set, Tuple, Union
 import click
 import phonenumbers
 from phonenumbers import NumberParseException
-from ruamel.yaml import YAML
-from ruamel.yaml.composer import ComposerError
+from ruamel.yaml import YAML, YAMLError
 from ruamel.yaml.scalarstring import LiteralScalarString
 
 from clib.files import shell
@@ -76,15 +75,15 @@ class Contact:
     def format_address(self, address_dict: DefaultDict):
         """Format an address as a multiline string."""
         valid = {}
-        for key in ("road", "house_number", "postcode", "city", "suburb"):
+        for key in ("road", "house_number", "postcode", "city", "country"):
             flat_value = " ".join(address_dict.pop(key, [])).strip()
             valid[key] = flat_value
 
         templated_address = dedent(
             f"""
-            {valid["road"]}, {valid["house_number"]}
-            {valid["suburb"]}
+            {valid["road"]} {valid["house_number"]}
             {valid["postcode"]} {valid["city"]}
+            {valid["country"]}
             """
         )
 
@@ -167,7 +166,7 @@ def parse(strict: bool, files):
         if original_file.suffix == ".yaml":
             try:
                 yaml_content = yaml.load(original_file)
-            except ComposerError:
+            except YAMLError:
                 click.secho(f"Not a valid YAML file: {original_file}. it will be read as a .txt file", fg="red")
 
         if yaml_content:
@@ -176,7 +175,7 @@ def parse(strict: bool, files):
                 continue
 
             click.echo(f"Reading contacts from YAML file {original_file}")
-            for contact_dict in yaml_content[KEY_CONTACTS]:
+            for contact_dict in yaml_content[KEY_CONTACTS] or []:
                 contact = Contact(None, contact_dict)
                 structured_contacts.append(contact.as_dict())
 
