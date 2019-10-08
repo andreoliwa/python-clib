@@ -20,7 +20,7 @@ from clib import dry_run_option
 from clib.constants import COLOR_OK
 
 SLUG_SEPARATOR = "_"
-REGEX_EXISTING_TIME = re.compile(r"(-[0-9]{2})[ _]?[Aa]?[Tt]?[ _]?([0-9]{2}[-._])")
+REGEX_EXISTING_TIME = re.compile(r"(-[0-9]{2})[ _]?[Aa]?[Tt][ _]?([0-9]{2}[-._])")
 REGEX_UPPER_CASE_LETTER = re.compile(r"([0-9a-z])([A-Z]+)")
 REGEX_NUMBER_BEFORE_CHAR = re.compile(r"([0-9])([A-Za-z])")
 REGEX_UNDERLINE_LOWER_CASE = re.compile("_[a-z]")
@@ -255,6 +255,10 @@ def slugify_camel_iso(old_string: str) -> str:
     'Glued_2019-09-14'
     >>> slugify_camel_iso("glued2019-08-23T12-48-26")
     'Glued_2019-08-23T12-48-26'
+    >>> slugify_camel_iso("yeah-1975-08")
+    'Yeah_1975-08'
+    >>> slugify_camel_iso("xxx visa-2013-07 yyy")
+    'Xxx_Visa_2013-07_Yyy'
     """
     temp_string = unicodedata.normalize("NFKC", old_string)
 
