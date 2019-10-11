@@ -36,6 +36,7 @@ POSSIBLE_FORMATS = (
     "DDMMYY",
     "DD_MM_YYYY_HH_mm_ss",
     "DD_MM_YY_HH_mm_ss",
+    "DDMMYYYYHHmm",
     # Then inverted formats
     "YYYY_MM",
     "YYYY_MM_DD",
@@ -259,6 +260,8 @@ def slugify_camel_iso(old_string: str) -> str:
     'Yeah_1975-08'
     >>> slugify_camel_iso("xxx visa-2013-07 yyy")
     'Xxx_Visa_2013-07_Yyy'
+    >>> slugify_camel_iso("date without seconds 101020191830 ")
+    'Date_Without_Seconds_2019-10-10T18-30-00'
     """
     temp_string = unicodedata.normalize("NFKC", old_string)
 
