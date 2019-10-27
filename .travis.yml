@@ -32,6 +32,17 @@ jobs:
         script: semantic-release
     - stage: test
       install:
+        # https://github.com/openvenues/libpostal#installation-maclinux
+        - mkdir -p $HOME/libpostal
+        - sudo apt-get install curl autoconf automake libtool pkg-config
+        - git clone https://github.com/openvenues/libpostal
+        - cd libpostal
+        - ./bootstrap.sh
+        - ./configure --datadir=$HOME/libpostal
+        - make -j4
+        - sudo make install
+        - sudo ldconfig
+        # end of libpostal install
         - pip install -U poetry pre-commit
         - poetry install --no-ansi --no-interaction
       script:
