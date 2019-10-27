@@ -13,25 +13,27 @@ cache:
 language: python
 python:
   - "3.7"
-script:
-  # Run all pre-commit hooks on Travis.
-  - pre-commit run --all-files
-install:
-  - pip install -U poetry pre-commit
-  - poetry install --no-ansi --no-interaction
 stages:
   - name: release
     if: branch = master
+  - name: test
 jobs:
   include:
     # Define the release stage that runs semantic-release
     # https://github.com/semantic-release/semantic-release/blob/master/docs/recipes/travis.md
     - stage: release
-      script: skip
       install:
         - pip install -U poetry pre-commit bumpversion twine
         - npm install -g semantic-release@15 @semantic-release/changelog @semantic-release/git @semantic-release/exec
+      script: skip
       deploy:
         provider: script
         skip_cleanup: true
         script: semantic-release
+    - stage: test
+      install:
+        - pip install -U poetry pre-commit
+        - poetry install --no-ansi --no-interaction
+      script:
+        # Run all pre-commit hooks on Travis.
+        - pre-commit run --all-files
