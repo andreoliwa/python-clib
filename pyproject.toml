@@ -47,7 +47,7 @@ prettyconf = "*"
 requests-html = "*"
 pendulum = "*"
 python-slugify = "*"
-postal = "*"
+postal = { version = "*", optional = true }
 "ruamel.yaml" = "*"
 phonenumbers = "*"
 

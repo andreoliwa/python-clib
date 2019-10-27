@@ -432,7 +432,7 @@ version = "1.6.7"
 category = "main"
 description = "Python bindings to libpostal for fast international address parsing/normalization"
 name = "postal"
-optional = false
+optional = true
 python-versions = "*"
 version = "1.1.8"
 
@@ -907,7 +907,7 @@ more-itertools = "*"
 macos = ["postal"]
 
 [metadata]
-content-hash = "62cd147bd270f8666cc382b262a5e95ea56b5e4d08bf78e988cf8cebd7c4a04b"
+content-hash = "3165d87eab652551e0ffad146e5fb4552d80964e0164e0707bc83ab9d130f10e"
 python-versions = "^3.7"
 
 [metadata.hashes]
