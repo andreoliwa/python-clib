@@ -9,6 +9,7 @@ cache:
   directories:
     - $HOME/.cache/pip
     - $PRE_COMMIT_HOME
+    - $HOME/libpostal
 # https://docs.travis-ci.com/user/languages/python/
 language: python
 python:
@@ -42,6 +43,7 @@ jobs:
         - make -j4
         - sudo make install
         - sudo ldconfig
+        - cd ..
         # end of libpostal install
         - pip install -U poetry pre-commit
         - poetry install --no-ansi --no-interaction
