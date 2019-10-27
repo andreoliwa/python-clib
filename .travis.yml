@@ -3,6 +3,7 @@ dist: xenial
 env:
   global:
     - PRE_COMMIT_HOME=$HOME/.cache/pre-commit
+    - TWINE_USERNAME=andreoliwa
 cache:
   npm: true
   directories:
@@ -16,8 +17,7 @@ script:
   # Run all pre-commit hooks on Travis.
   - pre-commit run --all-files
 install:
-  - npm install -g semantic-release@15 @semantic-release/changelog @semantic-release/git @semantic-release/exec
-  - pip install -U poetry pre-commit bumpversion twine
+  - pip install -U poetry pre-commit
   - poetry install --no-ansi --no-interaction
 stages:
   - name: release
@@ -28,6 +28,9 @@ jobs:
     # https://github.com/semantic-release/semantic-release/blob/master/docs/recipes/travis.md
     - stage: release
       script: skip
+      install:
+        - pip install -U poetry pre-commit bumpversion twine
+        - npm install -g semantic-release@15 @semantic-release/changelog @semantic-release/git @semantic-release/exec
       deploy:
         provider: script
         skip_cleanup: true
