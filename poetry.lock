@@ -903,8 +903,11 @@ version = "0.6.0"
 [package.dependencies]
 more-itertools = "*"
 
+[extras]
+macos = ["postal"]
+
 [metadata]
-content-hash = "6f3614d8e284ba98223ed8781a25229ade2c48273c6028136e9d5aaac4f393ba"
+content-hash = "62cd147bd270f8666cc382b262a5e95ea56b5e4d08bf78e988cf8cebd7c4a04b"
 python-versions = "^3.7"
 
 [metadata.hashes]

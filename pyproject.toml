@@ -51,6 +51,11 @@ postal = "*"
 "ruamel.yaml" = "*"
 phonenumbers = "*"
 
+[tool.poetry.extras]
+# Those optional packages are only available on macOS. To install them:
+# poetry install --extras macos
+macos = ["postal"]
+
 [tool.poetry.dev-dependencies]
 coverage = "*"
 docutils = "*"
