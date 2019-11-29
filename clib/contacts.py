@@ -111,7 +111,7 @@ class Contact:
         for key in ("name", "address", "notes", "phones", "emails", "links", "raw_original"):
             value = getattr(self, key)
             if isinstance(value, set):
-                value = sorted(list(value))
+                value = sorted(value)
             if value:
                 rv[key] = value
         rv.update(self.existing_data)
