@@ -4,7 +4,6 @@ import re
 import sys
 import unicodedata
 from argparse import ArgumentTypeError
-from parser import ParserError
 from pathlib import Path
 from shlex import split
 from subprocess import PIPE, run
