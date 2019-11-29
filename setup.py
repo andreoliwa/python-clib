@@ -24,13 +24,14 @@ install_requires = [
     "pendulum",
     "phonenumbers",
     "plumbum",
-    "postal",
     "prettyconf",
     "python-slugify",
     "requests",
     "requests-html",
     "ruamel.yaml",
 ]
+
+extras_require = {"macos": ["postal"]}
 
 entry_points = {
     "console_scripts": [
@@ -59,6 +60,7 @@ setup_kwargs = {
     "packages": packages,
     "package_data": package_data,
     "install_requires": install_requires,
+    "extras_require": extras_require,
     "entry_points": entry_points,
     "python_requires": ">=3.7,<4.0",
 }

@@ -21,8 +21,7 @@ from clib.constants import COLOR_OK
 
 SLUG_SEPARATOR = "_"
 REGEX_EXISTING_TIME = re.compile(r"(-[0-9]{2})[ _]?[Aa]?[Tt][ _]?([0-9]{2}[-._])")
-REGEX_UPPER_CASE_LETTER = re.compile(r"([0-9a-z])([A-Z]+)")
-REGEX_NUMBER_BEFORE_CHAR = re.compile(r"([0-9])([A-Za-z])")
+REGEX_UPPER_CASE_LETTER = re.compile(r"([a-z])([A-Z]+)")
 REGEX_UNDERLINE_LOWER_CASE = re.compile("_[a-z]")
 REGEX_DATE_TIME = re.compile(r"([0-9][0-9-_\.]+[0-9])")
 REGEX_MULTIPLE_SEPARATORS = re.compile("_+")
@@ -262,15 +261,16 @@ def slugify_camel_iso(old_string: str) -> str:
     'Xxx_Visa_2013-07_Yyy'
     >>> slugify_camel_iso("date without seconds 101020191830 ")
     'Date_Without_Seconds_2019-10-10T18-30-00'
+    >>> slugify_camel_iso(" p2p b2b 1on1 P2P B2B 1ON1 ")
+    'P2p_B2b_1on1_P2p_B2b_1on1'
     """
     temp_string = unicodedata.normalize("NFKC", old_string)
 
     # Insert separator in these cases
-    for regex in (REGEX_EXISTING_TIME, REGEX_UPPER_CASE_LETTER, REGEX_NUMBER_BEFORE_CHAR):
+    for regex in (REGEX_EXISTING_TIME, REGEX_UPPER_CASE_LETTER):
         temp_string = regex.sub(r"\1_\2", temp_string)
 
     slugged = slugify(temp_string, separator=SLUG_SEPARATOR).capitalize()
-    new_string = REGEX_UNDERLINE_LOWER_CASE.sub(lambda matchobj: matchobj.group(0).upper(), slugged)
 
     next_ten_years = pendulum.today().year + 10
 
@@ -298,18 +298,14 @@ def slugify_camel_iso(old_string: str) -> str:
                 break
             except ValueError:
                 continue
-            if actual_date is None:
-                try:
-                    actual_date = pendulum.parse(original_string, strict=False)
-                except (ValueError, ParserError):
-                    continue
 
         new_date = actual_date.format(which_format) if actual_date else original_string
         return f"{SLUG_SEPARATOR}{new_date}{SLUG_SEPARATOR}"
 
-    replaced_dates_multiple_seps = REGEX_DATE_TIME.sub(try_date, new_string)
+    replaced_dates_multiple_seps = REGEX_DATE_TIME.sub(try_date, slugged)
     single_seps = REGEX_MULTIPLE_SEPARATORS.sub(SLUG_SEPARATOR, replaced_dates_multiple_seps)
-    return single_seps.strip(SLUG_SEPARATOR)
+    corrected_case = REGEX_UNDERLINE_LOWER_CASE.sub(lambda match_obj: match_obj.group(0).upper(), single_seps)
+    return corrected_case.strip(SLUG_SEPARATOR)
 
 
 def rename_batch(dry_run: bool, is_dir: bool, root_dir: Path, items: List[Path]) -> bool:
