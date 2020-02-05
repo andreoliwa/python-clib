@@ -453,8 +453,5 @@ def setup_py():
         ).strip(),
     )
 
-    # Add a hint so mypy ignores the setup() line
-    lines[-2] += "  # type: ignore"
-
     setup_py_path.write_text("\n".join(lines))
     click.secho("setup.py generated!", fg="green")
