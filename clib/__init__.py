@@ -44,6 +44,7 @@ if not LOGGER.hasHandlers():
 dry_run_option = click.option(
     "--dry-run", "-n", default=False, is_flag=True, help="Only show what would be done, without actually doing it"
 )
+verbose_option = click.option("--verbose", "-v", default=False, is_flag=True, type=bool, help="Verbose display")
 
 
 def read_config(section_name, key_name, default=None):

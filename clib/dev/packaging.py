@@ -9,7 +9,7 @@ from typing import List, Optional, Tuple
 
 import click
 
-from clib import dry_run_option
+from clib import dry_run_option, verbose_option
 from clib.files import shell
 from clib.ui import prompt
 
@@ -365,7 +365,7 @@ def check(github_access_token: str = None):
 
 
 @pypub.command()
-@click.option("--verbose", "-v", default=False, is_flag=True, type=bool, help="Show --help for each command")
+@verbose_option
 def tools(verbose: bool):
     """Show needed tools and files for the deployment."""
     for tool, help_text in Publisher.NEEDED_TOOLS.items():
