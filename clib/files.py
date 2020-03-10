@@ -15,7 +15,7 @@ import pendulum
 from plumbum import FG
 from slugify import slugify
 
-from clib import dry_run_option, verbose_option
+from clib import dry_run_option, verbose_option, yes_option
 from clib.constants import COLOR_OK
 
 SLUG_SEPARATOR = "_"
@@ -307,7 +307,7 @@ def slugify_camel_iso(old_string: str) -> str:
     return corrected_case.strip(SLUG_SEPARATOR)
 
 
-def rename_batch(dry_run: bool, is_dir: bool, root_dir: Path, items: Set[Path]) -> bool:
+def rename_batch(yes: bool, dry_run: bool, is_dir: bool, root_dir: Path, items: Set[Path]) -> bool:
     """Rename a batch of items (directories or files)."""
     which_type = "directories" if is_dir else "files"
     pairs = []
@@ -333,7 +333,8 @@ def rename_batch(dry_run: bool, is_dir: bool, root_dir: Path, items: Set[Path]) 
 
     if not dry_run and pairs:
         pretty_root = relative_to_home(root_dir)
-        click.confirm(f"{pretty_root}: Rename these {which_type}?", default=False, abort=True)
+        if not yes:
+            click.confirm(f"{pretty_root}: Rename these {which_type}?", default=False, abort=True)
         for original, new in pairs:
             os.rename(original, new)
         click.secho(f"{pretty_root}: {which_type.capitalize()} renamed succesfully.", fg="yellow")
@@ -349,10 +350,11 @@ def rename_batch(dry_run: bool, is_dir: bool, root_dir: Path, items: Set[Path]) 
     multiple=True,
     help="Exclude one or more directories",
 )
+@yes_option
 @dry_run_option
 @verbose_option
 @click.argument("directories", nargs=-1, type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True)
-def rename_slugify(exclude, dry_run: bool, verbose: bool, directories):
+def rename_slugify(exclude, yes: bool, dry_run: bool, verbose: bool, directories):
     """Rename files recursively, slugifying them. Format dates in file names as ISO. Ignore hidden dirs/files."""
     excluded_dirs = set()
     excluded_files = set()
@@ -398,10 +400,10 @@ def rename_slugify(exclude, dry_run: bool, verbose: bool, directories):
                     click.echo(f"Ignoring file {relative_to_home(child)}")
 
         # Rename directories first
-        rename_batch(dry_run, True, original_dir, dirs_to_rename)
+        rename_batch(yes, dry_run, True, original_dir, dirs_to_rename)
 
         # Glob the renamed directories for files
-        files_found = rename_batch(dry_run, False, original_dir, files_to_rename)
+        files_found = rename_batch(yes, dry_run, False, original_dir, files_to_rename)
 
         if not files_found:
             click.secho(f"{relative_to_home(directory)}: All files already have correct names.", fg=COLOR_OK)

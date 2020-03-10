@@ -40,7 +40,8 @@ if not LOGGER.hasHandlers():
     )
     LOGGER.addHandler(CHANNEL)
 
-# Dry run option to use as a decorator on commands.
+# Options to use as decorators on commands.
+yes_option = click.option("--yes", "-y", default=False, is_flag=True, help="Answer yes on all prompts")
 dry_run_option = click.option(
     "--dry-run", "-n", default=False, is_flag=True, help="Only show what would be done, without actually doing it"
 )
