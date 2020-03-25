@@ -38,7 +38,6 @@ This project is not on PyPI because:
 [docker-volume](#docker-volume) |
 [pycharm-cli](#pycharm-cli) |
 [pypi](#pypi) |
-[poetryx](#poetryx) |
 [postgresx](#postgresx) |
 [pytestx](#pytestx)
 
@@ -201,29 +200,6 @@ This project is not on PyPI because:
       -p, --part [major|minor|patch]  Which part of the version number to bump
       -d, --allow-dirty               Allow bumpversion to run on a dirty repo
       --help                          Show this message and exit.
-
-## poetryx
-
-    $ poetryx --help
-    Usage: poetryx [OPTIONS] COMMAND [ARGS]...
-
-      Extra commands for poetry.
-
-    Options:
-      --help  Show this message and exit.
-
-    Commands:
-      setup-py  Use poetry to generate a setup.py file from pyproject.toml.
-
----
-
-    $ poetryx setup-py --help
-    Usage: poetryx setup-py [OPTIONS]
-
-      Use poetry to generate a setup.py file from pyproject.toml.
-
-    Options:
-      --help  Show this message and exit.
 
 ## postgresx
 

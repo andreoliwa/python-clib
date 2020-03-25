@@ -26,7 +26,6 @@ classifiers = [
 backup-full = "clib.files:backup_full"
 docker-find = "clib.docker:docker_find"
 docker-volume = "clib.docker:docker_volume"
-poetryx = "clib.dev.packaging:poetryx"
 postgresx = "clib.db:postgresx"
 pycharmx = "clib.dev:pycharmx"
 pypub = "clib.dev.packaging:pypub"
@@ -75,7 +74,7 @@ line-length = 120
 # Every time the scripts below change, run the following commands:
 commands = """
 cd && z clib
-poetry update && poetry run poetryx setup-py && pyclean_dist
+poetry update && pyclean_dist
 test $? -eq 0 && cd && pipx uninstall clib
 pipx install -e --spec ~/Code/python-clib/ clib
 """

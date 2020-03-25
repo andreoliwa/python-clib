@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """Packaging tools to publish projects on PyPI and GitHub."""
 import os
-import sys
 from pathlib import Path
 from shutil import rmtree
-from textwrap import dedent
 from typing import List, Optional, Tuple
 
 import click
@@ -199,14 +197,6 @@ class Publisher:
         """Actually bump the version."""
         shell(self._bump(self.CMD_BUMP_VERSION, part, allow_dirty), dry_run=self.dry_run, header=f"Bump versions")
 
-    def recreate_setup_py(self, ctx) -> None:
-        """Recreate the setup.py if it exists."""
-        if Path("setup.py").exists():
-            if self.dry_run:
-                shell("poetryx setup-py", dry_run=True, header="Regenerate setup.py from pyproject.toml")
-            else:
-                ctx.invoke(setup_py)
-
     def generate_changelog(self) -> None:
         """Generate the changelog."""
         shell(f"{Publisher.CMD_CHANGELOG} -s", dry_run=self.dry_run, header="Generate the changelog")
@@ -323,7 +313,6 @@ class Publisher:
         self.check_tools(github_access_token)
         commit_message, new_version = self.check_bumped_version(part, allow_dirty)
         self.actually_bump_version(part, allow_dirty)
-        self.recreate_setup_py(ctx)
         self.generate_changelog()
         self.build_with_poetry()
         self.show_diff()
@@ -415,43 +404,3 @@ def github(
 def changelog():
     """Preview the changelog."""
     shell(f"{Publisher.CMD_CHANGELOG} -u | less")
-
-
-@click.group()
-def poetryx():
-    """Extra commands for poetry."""
-    pass
-
-
-@poetryx.command()
-def setup_py():
-    """Use poetry to generate a setup.py file from pyproject.toml."""
-    remove_previous_builds()
-    shell("poetry build")
-    extra_args = " --wildcards" if sys.platform == "linux" else ""
-    shell(f"tar -xvzf dist/*.gz{extra_args} --strip-components 1 */setup.py")
-    shell("black setup.py")
-
-    setup_py_path: Path = Path.cwd() / "setup.py"
-    lines = setup_py_path.read_text().split("\n")
-    lines.insert(
-        1,
-        dedent(
-            '''
-            """
-            Setup for this package.
-
-            .. note::
-
-                This file was generated automatically by ``poetryx setup-py``.
-                A ``setup.py`` file is needed to install this project in editable mode (``pip install -e /path/to/project``).
-
-                `See this and other utilities from the clib package <https://github.com/andreoliwa/python-clib#poetryx>`_.
-            """
-            # pylint: disable=line-too-long
-            '''
-        ).strip(),
-    )
-
-    setup_py_path.write_text("\n".join(lines))
-    click.secho("setup.py generated!", fg="green")
