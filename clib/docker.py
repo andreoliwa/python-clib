@@ -100,7 +100,9 @@ def yml_command(parser, args):
     sorted_found = sorted(found)
     if len(sorted_found) > 1:
         choices = "\n".join(sorted_found)
-        chosen_yml = shell(f"echo '{choices}' | fzf --cycle --tac", quiet=True, stdout=PIPE).stdout.strip()
+        chosen_yml = shell(
+            f"echo '{choices}' | fzf --height={len(sorted_found) + 2} --cycle --tac", quiet=True, stdout=PIPE
+        ).stdout.strip()
         if not chosen_yml:
             print("No .yml file was chosen")
             exit(2)
