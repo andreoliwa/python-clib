@@ -31,3 +31,13 @@ def prompt(message: str, fg: str = "bright_white") -> None:
     click.secho(message, fg=fg)
     time.sleep(0.2)
     input("Press ENTER to continue or Ctrl-C to abort: ")
+
+
+def success(message: str) -> None:
+    """Display a success message."""
+    click.secho(message, fg="bright_green")
+
+
+def failure(message: str) -> None:
+    """Display an error message."""
+    click.secho(message, fg="bright_red", err=True)
