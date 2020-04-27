@@ -38,6 +38,8 @@ def success(message: str) -> None:
     click.secho(message, fg="bright_green")
 
 
-def failure(message: str) -> None:
-    """Display an error message."""
+def failure(message: str, exit_code: int = None) -> None:
+    """Display an error message and optionally exit."""
     click.secho(message, fg="bright_red", err=True)
+    if exit_code is not None:
+        sys.exit(exit_code)
