@@ -43,3 +43,22 @@ def failure(message: str, exit_code: int = None) -> None:
     click.secho(message, fg="bright_red", err=True)
     if exit_code is not None:
         sys.exit(exit_code)
+
+
+class AliasedGroup(click.Group):
+    """A click group that allows aliases.
+
+    Taken from ``click``'s documentation: `Command Aliases <https://click.palletsprojects.com/en/7.x/advanced/#command-aliases>`_.
+    """
+
+    def get_command(self, ctx, cmd_name):
+        """Get a click command."""
+        rv = click.Group.get_command(self, ctx, cmd_name)
+        if rv is not None:
+            return rv
+        matches = [x for x in self.list_commands(ctx) if x.startswith(cmd_name)]
+        if not matches:
+            return None
+        elif len(matches) == 1:
+            return click.Group.get_command(self, ctx, matches[0])
+        ctx.fail("Too many matches: %s" % ", ".join(sorted(matches)))
