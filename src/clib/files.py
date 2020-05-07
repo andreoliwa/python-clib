@@ -8,7 +8,7 @@ from pathlib import Path
 from shlex import split
 from subprocess import PIPE, run
 from time import sleep
-from typing import Any, List, Set, Union
+from typing import Any, List, Optional, Set, Union
 
 import click
 import pendulum
@@ -137,16 +137,22 @@ def shell_find(command_line, **kwargs) -> List[str]:
     return shell(command_line, return_lines=True, **kwargs)
 
 
-def fzf(items: List[Any], reverse=False) -> str:
+def fzf(items: List[Any], *, query: str = None, auto_select=False, reverse=False) -> Optional[str]:
     """Run fzf to select among multiple choices."""
     choices = "\n".join([str(item) for item in items]).replace("'", "")
-    tac = " --tac" if reverse else ""
-    return run(
-        f"echo '{choices}' | fzf --height={len(items) + 2}{tac} --cycle",
-        shell=True,
-        stdout=PIPE,
-        universal_newlines=True,
-    ).stdout.strip()
+
+    query_opt = f" --query={query}" if query else ""
+    select_one_opt = " --select-1" if auto_select else ""
+    tac_opt = " --tac" if reverse else ""
+
+    return min(
+        shell(
+            f"echo '{choices}' | fzf --height={len(items) + 2}{query_opt}{tac_opt}{select_one_opt} --cycle",
+            quiet=True,
+            return_lines=True,
+        ),
+        default=None,
+    )
 
 
 def relative_to_home(full_path: Union[str, Path]):
