@@ -17,8 +17,9 @@ from clib.files import shell
 # ___ test_name[Parameter] ___
 TEST_NAMES_REGEX = re.compile(r"___ .*(test[^\[\] ]+)[\[\]A-Za-z]* ___")
 
+# https://www.jetbrains.com/help/pycharm/directories-used-by-the-ide-to-store-settings-caches-plugins-and-logs.html
 PYCHARM_MACOS_APP_PATH = Path("/Applications/PyCharm.app/Contents/MacOS/pycharm")
-LIBRARY_LOGS_DIR = Path.home() / "Library/Logs"
+LIBRARY_LOGS_DIR = Path.home() / "Library/Logs/JetBrains"
 
 
 @click.group()
