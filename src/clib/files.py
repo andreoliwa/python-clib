@@ -137,17 +137,29 @@ def shell_find(command_line, **kwargs) -> List[str]:
     return shell(command_line, return_lines=True, **kwargs)
 
 
-def fzf(items: List[Any], *, query: str = None, auto_select=False, reverse=False) -> Optional[str]:
+def fzf(
+    items: List[Any], *, reverse=False, query: str = None, auto_select: bool = None, exit_no_match: bool = None
+) -> Optional[str]:
     """Run fzf to select among multiple choices."""
     choices = "\n".join([str(item) for item in items]).replace("'", "")
 
-    query_opt = f" --query={query}" if query else ""
+    query_opt = ""
+    if query:
+        query_opt = f" --query={query}"
+        # If there is a query, set auto-select flags when no explicit booleans were informed
+        if auto_select is None:
+            auto_select = True
+        if exit_no_match is None:
+            exit_no_match = True
+
     select_one_opt = " --select-1" if auto_select else ""
     tac_opt = " --tac" if reverse else ""
+    exit_zero_opt = " --exit-0" if exit_no_match else ""
 
     return min(
         shell(
-            f"echo '{choices}' | fzf --height={len(items) + 2}{query_opt}{tac_opt}{select_one_opt} --cycle",
+            f"echo '{choices}' | fzf --height={len(items) + 2}"
+            f"{query_opt}{tac_opt}{select_one_opt}{exit_zero_opt} --cycle",
             quiet=True,
             return_lines=True,
         ),
