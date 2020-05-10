@@ -8,7 +8,7 @@ from typing import List, Optional
 from clib.docker import DockerContainer
 from clib.files import existing_directory_type, existing_file_type, shell
 
-POSTGRES_DOCKER_CONTAINER_NAME = "postgres10"
+POSTGRES_DOCKER_CONTAINER_NAME = "postgres12"
 
 
 class DatabaseServer:
