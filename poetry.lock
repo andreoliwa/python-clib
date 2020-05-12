@@ -464,7 +464,7 @@ description = "Python version of Google's common library for parsing, formatting
 name = "phonenumbers"
 optional = false
 python-versions = "*"
-version = "8.12.2"
+version = "8.12.3"
 
 [[package]]
 category = "dev"
@@ -1359,8 +1359,8 @@ pexpect = [
     {file = "pexpect-4.8.0.tar.gz", hash = "sha256:fc65a43959d153d0114afe13997d439c22823a27cefceb5ff35c2178c6784c0c"},
 ]
 phonenumbers = [
-    {file = "phonenumbers-8.12.2-py2.py3-none-any.whl", hash = "sha256:eedbace07295109ce98b13b9bd1ac22dd43c1e90a3f0854c557c2298493fc731"},
-    {file = "phonenumbers-8.12.2.tar.gz", hash = "sha256:61adadab01adaac571b04ddbe50f981c488ef00cfd51eef7e040ef4765871b00"},
+    {file = "phonenumbers-8.12.3-py2.py3-none-any.whl", hash = "sha256:78e06d97ad8a4e1832061f9062ef17ba96b51c97f1ae489d557d41305173521b"},
+    {file = "phonenumbers-8.12.3.tar.gz", hash = "sha256:a5e6615a36b3366bc1193feeb4e461b49d2b26b29ea43ca4f7dcc53f0182bbd1"},
 ]
 pickleshare = [
     {file = "pickleshare-0.7.5-py2.py3-none-any.whl", hash = "sha256:9649af414d74d4df115d5d718f82acb59c9d418196b7b4290ed47a12ce62df56"},
