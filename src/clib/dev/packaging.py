@@ -162,7 +162,7 @@ class Publisher:
             return
 
         if all_ok:
-            click.secho(f"All the necessary tools are installed.", fg="bright_white")
+            click.secho("All the necessary tools are installed.", fg="bright_white")
         else:
             click.secho("Install the tools and create the missing files.")
             exit(1)
@@ -181,7 +181,7 @@ class Publisher:
         )
 
         bump_cmd = self._bump(self.CMD_BUMP_VERSION_VERBOSE_FILES, part, allow_dirty)
-        shell(bump_cmd, dry_run=self.dry_run, header=f"Display what files would be changed", exit_on_failure=True)
+        shell(bump_cmd, dry_run=self.dry_run, header="Display what files would be changed", exit_on_failure=True)
         if not self.dry_run:
             chosen_lines = shell(self._bump(self.CMD_BUMP_VERSION_GREP, part, allow_dirty), return_lines=True)
             new_version = chosen_lines[0].strip("'")
@@ -195,7 +195,7 @@ class Publisher:
 
     def actually_bump_version(self, part: str, allow_dirty: bool) -> None:
         """Actually bump the version."""
-        shell(self._bump(self.CMD_BUMP_VERSION, part, allow_dirty), dry_run=self.dry_run, header=f"Bump versions")
+        shell(self._bump(self.CMD_BUMP_VERSION, part, allow_dirty), dry_run=self.dry_run, header="Bump versions")
 
     def generate_changelog(self) -> None:
         """Generate the changelog."""
@@ -226,7 +226,7 @@ class Publisher:
         shell(f"{Publisher.TOOL_GIT} status", dry_run=self.dry_run, header="Show the list of changed files")
         prompt(
             "Last confirmation (point of no return):\n"
-            + f"Changes will be committed, files will be uploaded, a GitHub release will be created"
+            + "Changes will be committed, files will be uploaded, a GitHub release will be created"
         )
 
     @classmethod
@@ -390,7 +390,7 @@ def pypi(ctx, dry_run: bool, part: str, allow_dirty: bool, github_access_token: 
     default=False,
     is_flag=True,
     type=bool,
-    help=f"Run commands up until tagging. Tag, merge, create the release: all have to be done manually",
+    help="Run commands up until tagging. Tag, merge, create the release: all have to be done manually",
 )
 @click.pass_context
 def github(

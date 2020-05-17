@@ -59,7 +59,7 @@ def scan_command(parser, args):
     """Scan directories and add them to the list."""
     dirs = YML_DIRS.load_set()
     if not args.dir:
-        print(f"Rescanning existing directories")
+        print("Rescanning existing directories")
     for dir in args.dir:
         dirs.add(str(dir))
         print(f"Directory added: {dir}")
