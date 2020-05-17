@@ -141,7 +141,7 @@ def fzf(
     items: List[Any], *, reverse=False, query: str = None, auto_select: bool = None, exit_no_match: bool = None
 ) -> Optional[str]:
     """Run fzf to select among multiple choices."""
-    choices = "\n".join([str(item) for item in items]).replace("'", "")
+    choices = "\n".join([str(item) for item in items])
 
     query_opt = ""
     if query:
@@ -158,7 +158,7 @@ def fzf(
 
     return min(
         shell(
-            f"echo '{choices}' | fzf --height={len(items) + 2}"
+            f'echo "{choices}" | fzf --height={len(items) + 2}'
             f"{query_opt}{tac_opt}{select_one_opt}{exit_zero_opt} --cycle",
             quiet=True,
             return_lines=True,
