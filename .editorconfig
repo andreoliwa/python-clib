@@ -2,6 +2,10 @@
 
 root = true
 
+# https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties#max_line_length
+# This is not recognized by Visual Studio Code; use .prettierrc.toml instead
+max_line_length = 120
+
 [*]
 indent_style = space
 indent_size = 4
@@ -14,7 +18,7 @@ end_of_line = lf
 indent_style = tab
 end_of_line = crlf
 
-[*.{yml,yaml,json}]
+[*.{yml,yaml,json,js,md}]
 indent_size = 2
 
 [LICENSE]

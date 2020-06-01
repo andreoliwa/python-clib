@@ -1,12 +1,12 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.0.0
+    rev: v3.1.0
     hooks:
       - id: debug-statements
       - id: end-of-file-fixer
       - id: trailing-whitespace
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.4.1
+    rev: v2.4.4
     hooks:
       - id: pyupgrade
   - repo: https://github.com/python/black
@@ -36,11 +36,11 @@ repos:
       - id: python-no-log-warn
       - id: rst-backticks
   - repo: https://github.com/andreoliwa/nitpick
-    rev: develop
+    rev: v0.22.2
     hooks:
       - id: nitpick
   - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.1
+    rev: 3.8.2
     hooks:
       - id: flake8
         additional_dependencies:

@@ -25,11 +25,11 @@ You can clone the repo locally and then install it:
 
 This project is not on PyPI because:
 
--   it's not that generic;
--   from the beginning, it was not built as a package to be published (it would need some adptations);
--   the code is not super clean;
--   it doesn't have proper tests;
--   etc.
+- it's not that generic;
+- from the beginning, it was not built as a package to be published (it would need some adptations);
+- the code is not super clean;
+- it doesn't have proper tests;
+- etc.
 
 # Available commands
 
