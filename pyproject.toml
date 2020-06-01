@@ -1,3 +1,6 @@
+[tool.nitpick]
+style = ["https://raw.githubusercontent.com/andreoliwa/nitpick/develop/nitpick-style.toml"]
+
 [tool.poetry]
 name = "clib"
 version = "0.10.0"
