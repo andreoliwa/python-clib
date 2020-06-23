@@ -464,7 +464,7 @@ description = "Python version of Google's common library for parsing, formatting
 name = "phonenumbers"
 optional = false
 python-versions = "*"
-version = "8.12.4"
+version = "8.12.6"
 
 [[package]]
 category = "dev"
@@ -1359,8 +1359,8 @@ pexpect = [
     {file = "pexpect-4.8.0.tar.gz", hash = "sha256:fc65a43959d153d0114afe13997d439c22823a27cefceb5ff35c2178c6784c0c"},
 ]
 phonenumbers = [
-    {file = "phonenumbers-8.12.4-py2.py3-none-any.whl", hash = "sha256:c6c43d6459aac85b646d6b7a7ab79b3b629eb168f0e9b851b331e2e5872bbd01"},
-    {file = "phonenumbers-8.12.4.tar.gz", hash = "sha256:46c5997fe076026aa2d4b66d0c53eea4babae2e808e8a5f39c09e2dfa6612d08"},
+    {file = "phonenumbers-8.12.6-py2.py3-none-any.whl", hash = "sha256:e49b8e21c557f0dafee966ddd55fb2bd3d6db155451999b75fb1b012e8d2016c"},
+    {file = "phonenumbers-8.12.6.tar.gz", hash = "sha256:d332078fe71c6153b5a263ac87283618b2afe514a248a14f06a0d39ce1f5ce0b"},
 ]
 pickleshare = [
     {file = "pickleshare-0.7.5-py2.py3-none-any.whl", hash = "sha256:9649af414d74d4df115d5d718f82acb59c9d418196b7b4290ed47a12ce62df56"},
@@ -1440,6 +1440,7 @@ pytzdata = [
     {file = "pytzdata-2019.3.tar.gz", hash = "sha256:fac06f7cdfa903188dc4848c655e4adaee67ee0f2fe08e7daf815cf2a761ee5e"},
 ]
 requests = [
+    {file = "requests-2.23.0-py2.7.egg", hash = "sha256:5d2d0ffbb515f39417009a46c14256291061ac01ba8f875b90cad137de83beb4"},
     {file = "requests-2.23.0-py2.py3-none-any.whl", hash = "sha256:43999036bfa82904b6af1d99e4882b560e5e2c68e5c4b0aa03b655f3d7d73fee"},
     {file = "requests-2.23.0.tar.gz", hash = "sha256:b3f43d496c6daba4493e7c431722aeb7dbc6288f52a6e04e7b6023b0247817e6"},
 ]
