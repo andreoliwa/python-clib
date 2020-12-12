@@ -76,9 +76,12 @@ dist: clean
 	python setup.py bdist_wheel
 	ls -l dist
 
-install: clean
-	python setup.py install
+install: clean # Install the project on ~/.local/bin using pipx
+	poetry install
 
+	pipx uninstall clib
+	pipx install --verbose .
+.PHONY: install
 
 update:
 	clear
