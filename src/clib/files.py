@@ -50,6 +50,7 @@ def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool 
     """Synchronize a source directory with a destination."""
     # Import locally, so we get an error only in this function, and not in other functions of this module.
     from plumbum.cmd import rsync
+
     from clib.environments import RSYNC_EXCLUDE
 
     for dest_dir in destination_dirs:
@@ -81,9 +82,9 @@ def sync_dir(source_dirs: List[str], destination_dirs: List[str], dry_run: bool 
 def backup_full(ctx, dry_run: bool, kill: bool, pictures: bool):
     """Perform all backups in a single script."""
     if pictures:
-        click.secho("Pictures backup", bold=True, fg="green")
-        from clib.environments import PICTURE_DIRS, BACKUP_DIRS
+        from clib.environments import BACKUP_DIRS, PICTURE_DIRS
 
+        click.secho("Pictures backup", bold=True, fg="green")
         sync_dir(PICTURE_DIRS, BACKUP_DIRS, dry_run, kill)
     else:
         click.secho("Choose one of the options below.", fg="red")

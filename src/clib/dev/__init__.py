@@ -80,7 +80,7 @@ def pytestx():
 def run(delete: bool, failed: bool, count: int, reruns: int, class_names_or_args: Tuple[str]):
     """Run pytest with some shortcut options."""
     # Import locally, so we get an error only in this function, and not in other functions of this module.
-    from plumbum.cmd import time as time_cmd, rm
+    from plumbum.cmd import rm, time as time_cmd
 
     if delete:
         click.secho("Removing .pytest directory", fg="green", bold=True)

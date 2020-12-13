@@ -1,5 +1,11 @@
 .PHONY: clean-pyc clean-build docs clean
 
+build:
+	clear
+	pre-commit run --all-files
+	# pytest
+.PHONY: build
+
 help:
 	@echo "clean - remove all build, test, coverage and Python artifacts"
 	@echo "clean-build - remove build artifacts"
@@ -89,7 +95,8 @@ update:
 	pre-commit gc
 	poetry update
 
-dev:
-	clear
-	pre-commit run --all-files
-	# pytest
+pre-commit: # Install pre-commit hooks
+	pre-commit install --install-hooks
+	pre-commit install --hook-type commit-msg
+	pre-commit gc
+.PHONY: pre-commit
