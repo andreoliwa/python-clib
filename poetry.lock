@@ -492,7 +492,7 @@ six = "*"
 
 [[package]]
 name = "prettyconf"
-version = "2.1.0"
+version = "2.2.1"
 description = "Separation of settings from code."
 category = "main"
 optional = false
@@ -1357,7 +1357,7 @@ postal = [
     {file = "postal-1.1.9.tar.gz", hash = "sha256:2158fde6872d57c342b384ca1d0eadd562dc466a8a36f1160919e8189864b1b1"},
 ]
 prettyconf = [
-    {file = "prettyconf-2.1.0.tar.gz", hash = "sha256:358af2f0d722999eaa4b3e0eb790fd10fad33bcb697d9bcacd53b58ff7fb342e"},
+    {file = "prettyconf-2.2.1.tar.gz", hash = "sha256:2478d16bc2596c9863e93dd182ca70b71f636f0e169ab23288906c53147cfdbc"},
 ]
 prompt-toolkit = [
     {file = "prompt_toolkit-3.0.8-py3-none-any.whl", hash = "sha256:7debb9a521e0b1ee7d2fe96ee4bd60ef03c6492784de0547337ca4433e46aa63"},
