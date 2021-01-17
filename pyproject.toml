@@ -33,11 +33,9 @@ contacts = "clib.contacts:contacts"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-argcomplete = "*"
 click = "*"
 colorlog = "*"
 requests = "*"
-SQLAlchemy = "*"
 plumbum = "*"
 prettyconf = "*"
 requests-html = "*"
