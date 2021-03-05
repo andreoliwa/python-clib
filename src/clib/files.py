@@ -4,6 +4,7 @@ import re
 import sys
 import unicodedata
 from argparse import ArgumentTypeError
+from functools import partial
 from pathlib import Path
 from shlex import split
 from subprocess import PIPE, run
@@ -17,6 +18,8 @@ from slugify import slugify
 
 from clib import dry_run_option, verbose_option, yes_option
 from clib.constants import COLOR_OK
+from clib.types import PathOrStr
+from clib.ui import echo_dry_run
 
 SLUG_SEPARATOR = "_"
 REGEX_EXISTING_TIME = re.compile(r"(-[0-9]{2})[ _]?[Aa]?[Tt][ _]?([0-9]{2}[-._])")
@@ -24,6 +27,9 @@ REGEX_UPPER_CASE_LETTER = re.compile(r"([a-z])([A-Z]+)")
 REGEX_UNDERLINE_LOWER_CASE = re.compile("_[a-z]")
 REGEX_DATE_TIME = re.compile(r"([0-9][0-9-_\.]+[0-9])")
 REGEX_MULTIPLE_SEPARATORS = re.compile("_+")
+
+REGEX_UNIQUE_FILE = re.compile(r"(?P<original_stem>.+)_copy(?P<index>\d+)?", re.IGNORECASE)
+IGNORE_FILES_ON_MERGE = {".DS_Store"}
 
 POSSIBLE_FORMATS = (
     # Human formats first
@@ -159,7 +165,7 @@ def fzf(
 
     return min(
         shell(
-            f'echo "{choices}" | fzf --height 40% --reverse --inline-info '
+            f'echo_dry_run "{choices}" | fzf --height 40% --reverse --inline-info '
             f"{query_opt}{tac_opt}{select_one_opt}{exit_zero_opt} --cycle",
             quiet=True,
             return_lines=True,
@@ -211,9 +217,6 @@ def wait_for_process(process_name: str) -> None:
 @click.argument("directories", nargs=-1, required=True, type=click.Path(exists=True), metavar="[DIR1 [DIR2]...]")
 def rm_broken_symlinks(dry_run: bool, directories):
     """Remove broken symlinks from directories (asks for confirmation)."""
-    if dry_run:
-        click.secho("[DRY-RUN]", fg="cyan")
-
     clean_dirs = [dir_str.rstrip("/") for dir_str in directories]
     base_command = r"find {dir} -type l ! -exec test -e {{}} \; -print{extra}"
 
@@ -222,9 +225,9 @@ def rm_broken_symlinks(dry_run: bool, directories):
         broken_links = shell_find(base_command.format(dir=clean_dir, extra=""), quiet=False)
         all_broken_links.extend(broken_links)
         for file in broken_links:
-            click.echo(file)
+            echo_dry_run(file, dry_run=dry_run)
     if not all_broken_links:
-        click.secho("There are no broken links to be removed", fg="green")
+        echo_dry_run("There are no broken links to be removed", dry_run=dry_run, fg="green")
         exit(0)
     if dry_run:
         exit(0)
@@ -353,12 +356,8 @@ def rename_batch(yes: bool, dry_run: bool, is_dir: bool, root_dir: Path, items: 
 
         relative_dir = str(item.parent.relative_to(root_dir))
 
-        if dry_run:
-            click.secho("[dry-run] ", fg="bright_red", nl=False)
-        click.echo(f"from: {relative_dir}/{item.name}")
-        if dry_run:
-            click.secho("[dry-run] ", fg="bright_red", nl=False)
-        click.echo(f"  to: {relative_dir}/", nl=False)
+        echo_dry_run(f"from: {relative_dir}/{item.name}", dry_run=dry_run)
+        echo_dry_run(f"  to: {relative_dir}/", nl=False, dry_run=dry_run)
         click.secho(new_name, fg="yellow")
         pairs.append((item, item.with_name(new_name)))
 
@@ -367,7 +366,10 @@ def rename_batch(yes: bool, dry_run: bool, is_dir: bool, root_dir: Path, items: 
         if not yes:
             click.confirm(f"{pretty_root}: Rename these {which_type}?", default=False, abort=True)
         for original, new in pairs:
-            os.rename(original, new)
+            if new.exists():
+                click.secho(f"New file already exists! {new}", err=True, fg="red")
+            else:
+                os.rename(original, new)
         click.secho(f"{pretty_root}: {which_type.capitalize()} renamed succesfully.", fg="yellow")
 
     return bool(pairs)
@@ -438,3 +440,60 @@ def rename_slugify(exclude, yes: bool, dry_run: bool, verbose: bool, directories
 
         if not files_found:
             click.secho(f"{relative_to_home(directory)}: All files already have correct names.", fg=COLOR_OK)
+
+
+@click.command()
+@dry_run_option
+@click.argument(
+    "target_directory", nargs=1, type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True
+)
+@click.argument(
+    "source_directories", nargs=-1, type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True
+)
+def merge_dirs(dry_run: bool, target_directory, source_directories):
+    """Merge directories into one, keeping sub-directories and renaming files with the same name."""
+    merge_directories(target_directory, *source_directories, dry_run=dry_run)
+
+
+def merge_directories(target_dir: PathOrStr, *source_dirs: PathOrStr, dry_run: bool = False):
+    """Merge directories into one, keeping sub-directories and renaming files with the same name."""
+    echo = partial(echo_dry_run, dry_run=dry_run)
+    target_color = "green"
+    source_color = "bright_blue"
+
+    echo(f"Target: {target_dir}", fg=target_color)
+    for source_dir in source_dirs:
+        echo(f"Source: {source_dir}", fg=source_color)
+        for path in sorted(Path(source_dir).rglob("*")):
+            if path.is_dir() or path.stem in IGNORE_FILES_ON_MERGE:
+                continue
+
+            new_path = unique_file_name(target_dir / path.relative_to(source_dir))
+            echo(f"Moving {source_dir}", nl=False)
+            click.secho(str(path.relative_to(source_dir)), fg=source_color, nl=False)
+            click.secho(f" to {target_dir}", nl=False)
+            click.secho(str(new_path.relative_to(target_dir)), fg=target_color)
+            if not dry_run:
+                new_path.parent.mkdir(parents=True, exist_ok=True)
+                path.rename(new_path)
+
+
+def unique_file_name(path_or_str: PathOrStr) -> Path:
+    """Unique file name: append a number to the file name until the file is not found."""
+    path = Path(path_or_str)
+    while path.exists():
+        original_stem = None
+        index = None
+        for match in REGEX_UNIQUE_FILE.finditer(path.stem):
+            original_stem = match.group("original_stem")
+            index = int(match.group("index") or 0) + 1
+
+        if not original_stem:
+            new_stem = path.stem
+        else:
+            new_stem = original_stem
+
+        new_name = f"{new_stem}_Copy{index if index else ''}{path.suffix}"
+        path = path.with_name(new_name)
+
+    return path
