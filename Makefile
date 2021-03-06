@@ -48,7 +48,7 @@ fix-isort:
 	isort --recursive *.py clib tests
 
 lint:
-	python setup.py flake8
+	pre-commit run --all-files
 
 lt: lint test
 

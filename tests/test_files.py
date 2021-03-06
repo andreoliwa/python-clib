@@ -1,5 +1,8 @@
 """File tests."""
 from pathlib import Path
+from textwrap import dedent
+
+from testfixtures import compare
 
 from clib.files import merge_directories, unique_file_name
 
@@ -23,11 +26,13 @@ def test_unique_file_name(tmp_path):
 
 
 def create(file: Path):
+    """Create an empty file and its parent dirs."""
     file.parent.mkdir(parents=True, exist_ok=True)
     file.touch()
 
 
 def test_merge_directories(tmp_path):
+    """Test merge directories."""
     create(tmp_path / "2020" / "12" / "one.txt")
     create(tmp_path / "2020" / "root.txt")
 
@@ -44,31 +49,16 @@ def test_merge_directories(tmp_path):
 
     merge_directories(tmp_path, other, another)
 
-    files = [
-        (tmp_path / "2020" / "12" / "one.txt"),
-        (tmp_path / "2020" / "12" / "one_Copy.txt"),
-        (tmp_path / "2020" / "root.txt"),
-        (tmp_path / "2020" / "root_Copy.txt"),
-        (tmp_path / "2020" / "12" / "two.txt"),
-        (tmp_path / "2021" / "01" / "three.txt"),
-        (tmp_path / "2020" / "12" / "one_Copy2.txt"),
-        (tmp_path / "2020" / "12" / "two_Copy.txt"),
-        (tmp_path / "2020" / "root_Copy2.txt"),
-    ]
+    expected = """
+        2020/12/one.txt
+        2020/12/one_Copy.txt
+        2020/12/one_Copy1.txt
+        2020/12/two.txt
+        2020/12/two_Copy.txt
+        2020/root.txt
+        2020/root_Copy.txt
+        2020/root_Copy1.txt
+        2021/01/three.txt
     """
-    2020/12/one.txt
-    2020/12/one_Copy.txt
-    2020/12/one_Copy2.txt
-    2020/12/two.txt
-    2020/12/two_Copy.txt
-    2020/root.txt
-    2020/root_Copy.txt
-    2020/root_Copy2.txt
-    2021/01/three.txt
-    """
-    for file in sorted(files):
-        print(file.relative_to(tmp_path))
-        # assert file.exists()
-    actual = sorted(tmp_path.rglob("*"))
-    compare
-    assert False
+    actual = sorted(str(path.relative_to(tmp_path)) for path in tmp_path.rglob("*") if path.is_file())
+    compare(actual=actual, expected=dedent(expected).strip().splitlines())

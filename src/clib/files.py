@@ -165,7 +165,7 @@ def fzf(
 
     return min(
         shell(
-            f'echo_dry_run "{choices}" | fzf --height 40% --reverse --inline-info '
+            f'echo "{choices}" | fzf --height 40% --reverse --inline-info '
             f"{query_opt}{tac_opt}{select_one_opt}{exit_zero_opt} --cycle",
             quiet=True,
             return_lines=True,
