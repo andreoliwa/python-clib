@@ -469,9 +469,9 @@ def merge_directories(target_dir: PathOrStr, *source_dirs: PathOrStr, dry_run: b
                 continue
 
             new_path = unique_file_name(target_dir / path.relative_to(source_dir))
-            echo(f"Moving {source_dir}", nl=False)
+            echo(f"Moving {source_dir}/", nl=False)
             click.secho(str(path.relative_to(source_dir)), fg=source_color, nl=False)
-            click.secho(f" to {target_dir}", nl=False)
+            click.secho(f" to {target_dir}/", nl=False)
             click.secho(str(new_path.relative_to(target_dir)), fg=target_color)
             if not dry_run:
                 new_path.parent.mkdir(parents=True, exist_ok=True)

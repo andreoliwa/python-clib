@@ -61,6 +61,7 @@ tox = "*"
 ipython = "*"
 ipdb = "*"
 pylint = "*"
+testfixtures = "*"
 
 [tool.black]
 line-length = 120
