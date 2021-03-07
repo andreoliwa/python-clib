@@ -21,6 +21,8 @@ from clib.constants import COLOR_OK
 from clib.types import PathOrStr
 from clib.ui import echo_dry_run
 
+REMOVE_CHARS_FROM_DIR = "/ \t\n"
+
 SLUG_SEPARATOR = "_"
 REGEX_EXISTING_TIME = re.compile(r"(-[0-9]{2})[ _]?[Aa]?[Tt][ _]?([0-9]{2}[-._])")
 REGEX_UPPER_CASE_LETTER = re.compile(r"([a-z])([A-Z]+)")
@@ -469,13 +471,32 @@ def merge_directories(target_dir: PathOrStr, *source_dirs: PathOrStr, dry_run: b
                 continue
 
             new_path = unique_file_name(target_dir / path.relative_to(source_dir))
-            echo(f"Moving {source_dir}/", nl=False)
+            echo(f"Moving {dir_with_end_slash(source_dir)}", nl=False)
             click.secho(str(path.relative_to(source_dir)), fg=source_color, nl=False)
-            click.secho(f" to {target_dir}/", nl=False)
+            click.secho(f" to {dir_with_end_slash(target_dir)}", nl=False)
             click.secho(str(new_path.relative_to(target_dir)), fg=target_color)
             if not dry_run:
                 new_path.parent.mkdir(parents=True, exist_ok=True)
                 path.rename(new_path)
+
+
+def dir_with_end_slash(path: PathOrStr) -> str:
+    r"""Always add a slash at the end of a directory.
+
+    >>> dir_with_end_slash('/tmp/dir \t\n')
+    '/tmp/dir/'
+    >>> dir_with_end_slash(Path('/tmp/dir'))
+    '/tmp/dir/'
+    >>> dir_with_end_slash('/tmp/dir/file.txt')
+    '/tmp/dir/file.txt/'
+    >>> dir_with_end_slash(Path('/tmp/dir/file.txt'))
+    '/tmp/dir/file.txt/'
+    """
+    if isinstance(path, str):
+        path = Path(path.rstrip(REMOVE_CHARS_FROM_DIR))
+    else:
+        path = Path(path)
+    return str(path) + os.sep
 
 
 def unique_file_name(path_or_str: PathOrStr) -> Path:
