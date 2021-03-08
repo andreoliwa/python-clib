@@ -7,11 +7,11 @@ from subprocess import PIPE, CalledProcessError
 
 import click
 
-from clib.files import shell
-
 
 def notify(title, message):
     """If terminal-notifier is installed, use it to display a notification."""
+    from clib.files import shell
+
     check = "which" if sys.platform == "linux" else "command -v"
     try:
         terminal_notifier_path = shell("{} terminal-notifier".format(check), check=True, stdout=PIPE).stdout.strip()
@@ -43,6 +43,13 @@ def failure(message: str, exit_code: int = None) -> None:
     click.secho(message, fg="bright_red", err=True)
     if exit_code is not None:
         sys.exit(exit_code)
+
+
+def echo_dry_run(message: str, *, nl: bool = True, dry_run: bool = False, **styles) -> None:
+    """Display a message with the optional dry-run prefix on each line."""
+    if dry_run:
+        click.secho("[dry-run] ", fg="bright_cyan", nl=False)
+    click.secho(message, nl=nl, **styles)
 
 
 class AliasedGroup(click.Group):
