@@ -368,7 +368,8 @@ def rename_batch(yes: bool, dry_run: bool, is_dir: bool, root_dir: Path, items: 
         if not yes:
             click.confirm(f"{pretty_root}: Rename these {which_type}?", default=False, abort=True)
         for original, new in pairs:
-            if new.exists():
+            if str(original) == str(new) and new.exists():
+                # Don't rename files with the exact same name that already exist
                 click.secho(f"New file already exists! {new}", err=True, fg="red")
             else:
                 os.rename(original, new)

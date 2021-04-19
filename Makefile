@@ -85,7 +85,7 @@ dist: clean
 install: clean # Install the project on ~/.local/bin using pipx
 	poetry install
 
-	pipx uninstall clib
+	-pipx uninstall clib
 	pipx install --verbose .
 .PHONY: install
 
