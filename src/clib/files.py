@@ -372,7 +372,13 @@ def rename_batch(yes: bool, dry_run: bool, is_dir: bool, root_dir: Path, items: 
                 # Don't rename files with the exact same name that already exist
                 click.secho(f"New file already exists! {new}", err=True, fg="red")
             else:
-                os.rename(original, new)
+                try:
+                    os.rename(original, new)
+                except OSError as err:
+                    if err.errno == 66:  # Directory not empty
+                        merge_directories(new, original)
+                    else:
+                        raise err
         click.secho(f"{pretty_root}: {which_type.capitalize()} renamed succesfully.", fg="yellow")
 
     return bool(pairs)
@@ -465,8 +471,16 @@ def merge_directories(target_dir: PathOrStr, *source_dirs: PathOrStr, dry_run: b
     source_color = "bright_blue"
 
     echo(f"Target: {target_dir}", fg=target_color)
+    if not Path(target_dir).is_dir():
+        click.secho("Target is not a directory", err=True, fg="red")
+        return False
+
     for source_dir in source_dirs:
         echo(f"Source: {source_dir}", fg=source_color)
+        if not Path(source_dir).is_dir():
+            click.secho("Source is not a directory", err=True, fg="red")
+            continue
+
         for path in sorted(Path(source_dir).rglob("*")):
             if path.is_dir() or path.stem in IGNORE_FILES_ON_MERGE:
                 continue

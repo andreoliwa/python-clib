@@ -3,7 +3,7 @@
 build:
 	clear
 	pre-commit run --all-files
-	# pytest
+	poetry run pytest
 .PHONY: build
 
 help:
@@ -55,7 +55,7 @@ lt: lint test
 ltd: lint test docs
 
 test:
-	python setup.py test
+	poetry run pytest
 
 test-all:
 	tox
