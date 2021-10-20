@@ -388,7 +388,8 @@ def rename_batch(yes: bool, dry_run: bool, is_dir: bool, root_dir: Path, items: 
 @click.option(
     "-x",
     "--exclude",
-    type=click.Path(exists=True, resolve_path=True),
+    # resolve_path doesn't expand the tilde (~) to the home dir
+    type=click.Path(exists=False, resolve_path=False),
     multiple=True,
     help="Exclude one or more directories",
 )
@@ -401,7 +402,9 @@ def rename_slugify(exclude, yes: bool, dry_run: bool, verbose: bool, directories
     excluded_dirs = set()
     excluded_files = set()
     for file_system_object in exclude:
-        path = Path(file_system_object)
+        path = Path(file_system_object).expanduser()
+        if not path.exists():
+            continue
         if path.is_dir():
             excluded_dirs.add(path)
         else:
@@ -414,7 +417,7 @@ def rename_slugify(exclude, yes: bool, dry_run: bool, verbose: bool, directories
         click.echo(f"Excluding files: {', '.join(pretty_files)}")
 
     for directory in directories:
-        original_dir = Path(directory)
+        original_dir = Path(directory).expanduser()
 
         dirs_to_rename = set()
         files_to_rename = set()
