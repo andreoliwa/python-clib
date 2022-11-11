@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Main module for clib."""
 import logging
 import os

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Development helpers."""
 import os
 import re
@@ -25,7 +24,6 @@ LIBRARY_LOGS_DIR = Path.home() / "Library/Logs/JetBrains"
 @click.group()
 def pycharmx():
     """Extra commands for PyCharm."""
-    pass
 
 
 @pycharmx.command()
@@ -68,7 +66,6 @@ def logs():
 @click.group()
 def pytestx():
     """Extra commands for py.test."""
-    pass
 
 
 @pytestx.command()

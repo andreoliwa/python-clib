@@ -12,11 +12,10 @@ insert_final_newline = true
 charset = utf-8
 end_of_line = lf
 
-[*.{js,json}]
-charset = utf-8
+[*.{js,json,json5}]
 indent_size = 2
 
-[*.{yml,yaml,md}]
+[*.{yml,yaml,md,rb}]
 indent_size = 2
 
 [Makefile]

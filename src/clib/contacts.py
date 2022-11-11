@@ -22,7 +22,6 @@ KEY_CONTACTS = "contacts"
 @click.group()
 def contacts():
     """Utilities to deal with contact data (people and places with name, address, phone)."""
-    pass
 
 
 class Contact:

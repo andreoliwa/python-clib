@@ -179,7 +179,7 @@ def fzf(
 def relative_to_home(full_path: Union[str, Path]):
     """Return a directory with ``~`` instead of printing the home dir full path."""
     path_obj = Path(full_path)
-    return "~/{}".format(path_obj.relative_to(path_obj.home()))
+    return f"~/{path_obj.relative_to(path_obj.home())}"
 
 
 def _check_type(full_path, method, msg):

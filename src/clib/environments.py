@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Environment variables."""
 import os
 from typing import List

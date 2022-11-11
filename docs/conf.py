@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """
 clib documentation build configuration file, created by sphinx-quickstart on Tue Jul  9 22:26:36 2013.
 
@@ -56,8 +55,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"clib"
-copyright = u"2015, W. Augusto Andreoli"
+project = "clib"
+copyright = "2015, W. Augusto Andreoli"
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -207,7 +206,7 @@ latex_elements: Dict[str, str] = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass
 # [howto/manual]).
-latex_documents = [("index", "clib.tex", u"clib Documentation", u"W. Augusto Andreoli", "manual")]
+latex_documents = [("index", "clib.tex", "clib Documentation", "W. Augusto Andreoli", "manual")]
 
 # The name of an image file (relative to this directory) to place at
 # the top of the title page.
@@ -234,7 +233,7 @@ latex_documents = [("index", "clib.tex", u"clib Documentation", u"W. Augusto And
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [("index", "clib", u"clib Documentation", [u"W. Augusto Andreoli"], 1)]
+man_pages = [("index", "clib", "clib Documentation", ["W. Augusto Andreoli"], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -249,8 +248,8 @@ texinfo_documents = [
     (
         "index",
         "clib",
-        u"clib Documentation",
-        u"W. Augusto Andreoli",
+        "clib Documentation",
+        "W. Augusto Andreoli",
         "clib",
         "One line description of project.",
         "Miscellaneous",

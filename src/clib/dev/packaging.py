@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Packaging tools to publish projects on PyPI and GitHub."""
 import os
 from pathlib import Path
@@ -343,7 +342,6 @@ def remove_previous_builds() -> bool:
 @click.group()
 def pypub():
     """Commands to publish packages on PyPI."""
-    pass
 
 
 @pypub.command()

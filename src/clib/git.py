@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Git tools."""
 from shlex import split
 
@@ -24,7 +23,7 @@ def run_git(*args, dry_run=False, quiet=False):
 def branch_exists(branch):
     """Return True if the branch exists."""
     try:
-        run_git("rev-parse --verify {}".format(branch), quiet=True)
+        run_git(f"rev-parse --verify {branch}", quiet=True)
         return True
     except ProcessExecutionError:
         return False

@@ -1,16 +1,12 @@
 {
-  "extends": [
-    "config:base"
-  ],
+  extends: ["config:base"],
   // https://docs.renovatebot.com/presets-default/#automergeall
-  "automerge": true,
+  automerge: true,
   // https://docs.renovatebot.com/presets-default/#automergebranch
-  "automergeType": "branch",
+  automergeType: "branch",
   // https://docs.renovatebot.com/modules/manager/pre-commit/
   "pre-commit": {
-    "enabled": true
+    enabled: true,
   },
-  "ignoreDeps": [
-    "jedi"
-  ]
+  ignoreDeps: ["jedi"],
 }

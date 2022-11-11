@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Docker module."""
 import argparse
 import json
@@ -163,10 +162,10 @@ def restore(parser, args):
     )
 
     # Delete the destination directory before restoring
-    shell(busybox + "rm -rf /docker/volumes/{new_volume_name}".format(new_volume_name=new_volume_name))
+    shell(busybox + f"rm -rf /docker/volumes/{new_volume_name}")
 
     # Create the full path
-    shell(busybox + "mkdir /docker/volumes/{new_volume_name}".format(new_volume_name=new_volume_name))
+    shell(busybox + f"mkdir /docker/volumes/{new_volume_name}")
 
     # Restore the .tgz file in the new empty directory
     shell(

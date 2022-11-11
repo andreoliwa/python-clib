@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """User interface."""
 import sys
 import time
@@ -14,7 +13,7 @@ def notify(title, message):
 
     check = "which" if sys.platform == "linux" else "command -v"
     try:
-        terminal_notifier_path = shell("{} terminal-notifier".format(check), check=True, stdout=PIPE).stdout.strip()
+        terminal_notifier_path = shell(f"{check} terminal-notifier", check=True, stdout=PIPE).stdout.strip()
     except CalledProcessError:
         terminal_notifier_path = ""
     if terminal_notifier_path:
