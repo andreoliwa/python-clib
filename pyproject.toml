@@ -28,9 +28,9 @@ pycharmx = "clib.dev:pycharmx"
 pypub = "clib.dev.packaging:pypub"
 pytestx = "clib.dev:pytestx"
 rm-broken-symlinks = "clib.files:rm_broken_symlinks"
-rename-slugify = "clib.files:rename_slugify"
+rename-slugify = "clib.rename:rename_slugify"
 contacts = "clib.contacts:contacts"
-merge-dirs = "clib.files:merge_dirs"
+merge-dirs = "clib.rename:merge_dirs"
 
 [tool.poetry.dependencies]
 python = "^3.9"

@@ -4,7 +4,7 @@ from textwrap import dedent
 
 from testfixtures import compare
 
-from clib.files import merge_directories, unique_file_name
+from clib.rename import merge_directories, unique_file_name
 
 
 def test_unique_file_name(tmp_path):
