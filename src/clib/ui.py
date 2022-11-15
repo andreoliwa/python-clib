@@ -25,7 +25,8 @@ def notify(title, message):
 
 
 def prompt(message: str, fg: str = "bright_white") -> None:
-    """Display a prompt with a message. Wait a little bit before, so stdout is flushed before the input message."""
+    """Display a prompt with a message. Wait a little before, so stdout is flushed before the input message."""
+    # TODO: moved to conjuring as ask_user_prompt()
     print()
     click.secho(message, fg=fg)
     time.sleep(0.2)
