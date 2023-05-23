@@ -2,7 +2,7 @@
 import os
 import re
 from pathlib import Path
-from typing import List, Tuple
+from typing import Tuple
 
 import click
 from plumbum import FG, RETCODE
@@ -19,48 +19,6 @@ TEST_NAMES_REGEX = re.compile(r"___ .*(test[^\[\] ]+)[\[\]A-Za-z]* ___")
 # https://www.jetbrains.com/help/pycharm/directories-used-by-the-ide-to-store-settings-caches-plugins-and-logs.html
 PYCHARM_MACOS_APP_PATH = Path("/Applications/PyCharm.app/Contents/MacOS/pycharm")
 LIBRARY_LOGS_DIR = Path.home() / "Library/Logs/JetBrains"
-
-
-@click.group()
-def pycharmx():
-    """Extra commands for PyCharm."""
-
-
-@pycharmx.command()
-@click.argument("files", nargs=-1)
-def open(files):
-    """Invoke PyCharm on the command line.
-
-    If a file doesn't exist, call `which` to find out the real location.
-    """
-    full_paths: List[str] = []
-    errors = False
-    for possible_file in files:
-        path = Path(possible_file).absolute()
-        if path.is_file():
-            full_paths.append(str(path))
-        else:
-            which_file = shell(f"which {possible_file}", quiet=True, return_lines=True)
-            if which_file:
-                full_paths.append(which_file[0])
-            else:
-                click.secho(f"File not found on $PATH: {possible_file}", fg="red")
-                errors = True
-    if full_paths:
-        shell(f"{PYCHARM_MACOS_APP_PATH} {' '.join(full_paths)}")
-    exit(1 if errors else 0)
-
-
-@pycharmx.command()
-def logs():
-    """Tail the logs on PyCharm's latest version."""
-    all_versions = sorted(LIBRARY_LOGS_DIR.glob("PyCharm20*"), reverse=True)
-    if not all_versions:
-        click.echo(f"No PyCharm logs found on {str(LIBRARY_LOGS_DIR)}")
-        exit(0)
-
-    log_dir = LIBRARY_LOGS_DIR / all_versions[0]
-    shell(f"tail -f {str(log_dir)}/*.log")
 
 
 @click.group()
