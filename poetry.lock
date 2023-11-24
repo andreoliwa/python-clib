@@ -838,13 +838,13 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "plumbum"
-version = "1.8.0"
+version = "1.8.2"
 description = "Plumbum: shell combinators library"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "plumbum-1.8.0-py3-none-any.whl", hash = "sha256:0f6b59c8a03bfcdddd1efc04a126062663348e892ce7ddef49ec60e47b9e2c09"},
-    {file = "plumbum-1.8.0.tar.gz", hash = "sha256:f1da1f167a2afe731a85de3f56810f424926c0a1a8fd1999ceb2ef20b618246d"},
+    {file = "plumbum-1.8.2-py3-none-any.whl", hash = "sha256:3ad9e5f56c6ec98f6f7988f7ea8b52159662ea9e915868d369dbccbfca0e367e"},
+    {file = "plumbum-1.8.2.tar.gz", hash = "sha256:9e6dc032f4af952665f32f3206567bc23b7858b1413611afe603a3f8ad9bfd75"},
 ]
 
 [package.dependencies]
@@ -852,7 +852,7 @@ pywin32 = {version = "*", markers = "platform_system == \"Windows\" and platform
 
 [package.extras]
 dev = ["paramiko", "psutil", "pytest (>=6.0)", "pytest-cov", "pytest-mock", "pytest-timeout"]
-docs = ["Sphinx (>=4.0.0)", "sphinx-rtd-theme (>=1.0.0)"]
+docs = ["sphinx (>=4.0.0)", "sphinx-rtd-theme (>=1.0.0)"]
 ssh = ["paramiko"]
 
 [[package]]
