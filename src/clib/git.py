@@ -1,4 +1,5 @@
 """Git tools."""
+
 from shlex import split
 
 from plumbum import ProcessExecutionError

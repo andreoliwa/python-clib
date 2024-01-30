@@ -1,4 +1,5 @@
 """File tests."""
+
 from pathlib import Path
 from textwrap import dedent
 

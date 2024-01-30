@@ -1,4 +1,5 @@
 """Packaging tools to publish projects on PyPI and GitHub."""
+
 import os
 from pathlib import Path
 from shutil import rmtree
