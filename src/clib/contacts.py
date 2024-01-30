@@ -1,4 +1,5 @@
 """Utilities to deal with contact data (people and places with name, address, phone)."""
+
 from collections import defaultdict
 from pathlib import Path
 from tempfile import NamedTemporaryFile
