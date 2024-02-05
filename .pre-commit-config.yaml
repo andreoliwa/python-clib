@@ -111,7 +111,7 @@ repos:
   #        types:
   #          - python
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v3.14.0
+    rev: v3.14.1
     hooks:
       - id: commitizen
         stages:
