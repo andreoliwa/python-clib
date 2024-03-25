@@ -1,4 +1,5 @@
 """Rename dirs and files and merge dirs in the process."""
+
 import os
 import re
 import unicodedata

@@ -1,4 +1,5 @@
 """Tools for iterators and iterables."""
+
 from itertools import cycle, islice
 
 
