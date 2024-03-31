@@ -45,6 +45,9 @@ style = [
   "py://nitpick/resources/python/pre-commit-hooks",
   "py://nitpick/resources/python/radon",
   "py://nitpick/resources/python/sonar-python",
+  "py://nitpick/resources/shell/bashate",
+  "py://nitpick/resources/shell/shellcheck",
+  "py://nitpick/resources/shell/shfmt",
   "py://nitpick/resources/toml/toml-sort",
 ]
 

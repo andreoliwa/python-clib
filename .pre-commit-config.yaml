@@ -2,7 +2,7 @@ default_language_version:
   python: python3.11
 repos:
   - repo: https://github.com/andreoliwa/nitpick
-    rev: e2bca246e142b9e06766d0522e1cee24a8c1bc07
+    rev: v0.35.0
     hooks:
       - id: nitpick-suggest
       - id: nitpick
@@ -13,7 +13,7 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.1.0
+    rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
         stages:
@@ -35,7 +35,7 @@ repos:
           - --remove-duplicate-keys
           - --ignore-init-module-imports
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 23.12.1
+    rev: 24.3.0
     hooks:
       - id: black
         args: [--safe, --quiet]
@@ -117,7 +117,7 @@ repos:
         stages:
           - commit-msg
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.6
+    rev: v0.10.0.1
     hooks:
       - id: shellcheck
   - repo: https://github.com/pappasam/toml-sort
@@ -125,3 +125,7 @@ repos:
     hooks:
       - id: toml-sort-fix
         exclude: poetry.lock
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+      - id: shfmt

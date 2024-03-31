@@ -1,4 +1,5 @@
 """Files, symbolic links, operating system utilities."""
+
 import os
 import sys
 from argparse import ArgumentTypeError

@@ -23,3 +23,5 @@ plugins:
       threshold: C
   sonar-python:
     enabled: true
+  shellcheck:
+    enabled: true

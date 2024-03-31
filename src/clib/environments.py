@@ -1,4 +1,5 @@
 """Environment variables."""
+
 import os
 from typing import List
 
