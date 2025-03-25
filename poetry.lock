@@ -922,16 +922,17 @@ six = "*"
 
 [[package]]
 name = "prettyconf"
-version = "2.2.1"
+version = "2.3.0"
 description = "Separation of settings from code."
 optional = false
-python-versions = "*"
+python-versions = ">=3.9"
 files = [
-    {file = "prettyconf-2.2.1.tar.gz", hash = "sha256:2478d16bc2596c9863e93dd182ca70b71f636f0e169ab23288906c53147cfdbc"},
+    {file = "prettyconf-2.3.0-py3-none-any.whl", hash = "sha256:9c83eb90472522b0f2bc196f7d561ff8c26a1833f838cc32f948ea4d3973cb64"},
+    {file = "prettyconf-2.3.0.tar.gz", hash = "sha256:d73e025b25ffb188227c88f15755a7e6bfe57203700a9b6f45146b7d6bc55c67"},
 ]
 
 [package.extras]
-aws = ["boto3"]
+aws = ["boto3 (>=1.28.0,<2.0.0)"]
 
 [[package]]
 name = "prompt-toolkit"
