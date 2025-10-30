@@ -1820,14 +1820,14 @@ tests = ["cython", "littleutils", "pygments", "pytest", "typeguard"]
 
 [[package]]
 name = "testfixtures"
-version = "9.2.0"
+version = "10.0.0"
 description = "A collection of helpers and mock objects for unit tests and doc tests."
 optional = false
 python-versions = ">=3.11"
 groups = ["dev"]
 files = [
-    {file = "testfixtures-9.2.0-py3-none-any.whl", hash = "sha256:6fc7cd859509a4dd2cf9ca18ca1114bb8fd55db6358925539525c067b275e805"},
-    {file = "testfixtures-9.2.0.tar.gz", hash = "sha256:1909e7889073c96adda774a01de6441da1a2cb47ea5c25c8c2fe56d42a7cf0c1"},
+    {file = "testfixtures-10.0.0-py3-none-any.whl", hash = "sha256:c54ed5c4cd93ad271a6add94a575a5843964ea3aaf590f4c3cb4df16a261b15f"},
+    {file = "testfixtures-10.0.0.tar.gz", hash = "sha256:2b9829bf7f42f0ca8600250762e6725575da59af18d9a7f82aae2c97b14f0f66"},
 ]
 
 [package.extras]
