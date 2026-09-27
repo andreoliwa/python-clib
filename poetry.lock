@@ -1497,14 +1497,14 @@ testing = ["covdefaults (>=2.3)", "coverage (>=7.5.4)", "pytest (>=8.3.5)", "pyt
 
 [[package]]
 name = "python-slugify"
-version = "9.1.1"
+version = "9.1.2"
 description = "A Python slugify application that also handles Unicode"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "python_slugify-9.1.1-py3-none-any.whl", hash = "sha256:6db0d9480b22a8867e2dbd725e0eea28e7893ee1dc00bdae467b345ad0eafafb"},
-    {file = "python_slugify-9.1.1.tar.gz", hash = "sha256:db48547ed6d43072af59c86c3bc80bfc3c6f4e88c130c99de11775d721a574b8"},
+    {file = "python_slugify-9.1.2-py3-none-any.whl", hash = "sha256:a470dafd2ad79672606cc0d1a5fcaf7a2ccf8f358073ff29b5b93c2bd7e288d6"},
+    {file = "python_slugify-9.1.2.tar.gz", hash = "sha256:bd36ca98e5ebb1cd2b9dfa2f27b948ce87402fb083b762cbd9d0fa3aed489a92"},
 ]
 
 [package.dependencies]
