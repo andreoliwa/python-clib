@@ -79,13 +79,11 @@ class Contact:
             flat_value = " ".join(address_dict.pop(key, [])).strip()
             valid[key] = flat_value
 
-        templated_address = dedent(
-            f"""
+        templated_address = dedent(f"""
             {valid["road"]} {valid["house_number"]}
             {valid["postcode"]} {valid["city"]}
             {valid["country"]}
-            """
-        )
+            """)
 
         # Remove empty lines
         valid_lines = []
