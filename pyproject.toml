@@ -80,7 +80,7 @@ colorlog = "*"
 pendulum = "*"
 phonenumbers = "*"
 plumbum = "*"
-postal = {optional = true, version = "*"}
+postal = { optional = true, version = "*" }
 prettyconf = "*"
 python = "^3.13"
 python-slugify = "*"
